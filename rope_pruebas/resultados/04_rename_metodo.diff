@@ -1,0 +1,42 @@
+Renaming <_maybe_add_error_listener> to <_ensure_error_listener> - today 10:16:25 :
+
+
+--- a/tornado/iostream.py
++++ b/tornado/iostream.py
+@@ -558,7 +558,7 @@
+             self._handle_write()
+             if self._write_buffer:
+                 self._add_io_state(self.io_loop.WRITE)
+-            self._maybe_add_error_listener()
++            self._ensure_error_listener()
+         return future
+ 
+     def set_close_callback(self, callback: Callable[[], None] | None) -> None:
+@@ -574,7 +574,7 @@
+         was not removed in Tornado 6.0.
+         """
+         self._close_callback = callback
+-        self._maybe_add_error_listener()
++        self._ensure_error_listener()
+ 
+     def close(
+         self,
+@@ -856,7 +856,7 @@
+             future = self._read_future
+             self._read_future = None
+             future_set_result_unless_cancelled(future, result)
+-        self._maybe_add_error_listener()
++        self._ensure_error_listener()
+ 
+     def _try_inline_read(self) -> None:
+         """Attempt to complete the current read operation from buffered data.
+@@ -1061,7 +1061,7 @@
+         if self.closed():
+             raise StreamClosedError(real_error=self.error)
+ 
+-    def _maybe_add_error_listener(self) -> None:
++    def _ensure_error_listener(self) -> None:
+         # This method is part of an optimization: to detect a connection that
+         # is closed when we're not actively reading or writing, we must listen
+         # for read events.  However, it is inefficient to do this when the
+

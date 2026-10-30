@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/ejecutar_pruebas_rope.py", line 499, in aplicar_rope
+    cambios = medir(tracker, 'rope', nombre, operacion, repeticion)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/ejecutar_pruebas_rope.py", line 201, in medir
+    return funcion()
+           ^^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/ejecutar_pruebas_rope.py", line 494, in operacion
+    cambios = funcion(proyecto)
+              ^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/ejecutar_pruebas_rope.py", line 379, in ref_extract_con_return
+    return ExtractMethod(p, r, inicio, fin).get_changes('_parse_range_bounds')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/.venv/lib/python3.12/site-packages/rope/refactor/extract.py", line 82, in get_changes
+    new_contents = _ExtractPerformer(info).extract()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/.venv/lib/python3.12/site-packages/rope/refactor/extract.py", line 284, in __init__
+    _ExceptionalConditionChecker()(self.info)
+  File "/Users/estebangarrido10/tornado_tesis/.venv/lib/python3.12/site-packages/rope/refactor/extract.py", line 442, in __call__
+    self.multi_line_conditions(info)
+  File "/Users/estebangarrido10/tornado_tesis/.venv/lib/python3.12/site-packages/rope/refactor/extract.py", line 497, in multi_line_conditions
+    raise RefactoringError("Return should be the last statement.")
+rope.base.exceptions.RefactoringError: Return should be the last statement.

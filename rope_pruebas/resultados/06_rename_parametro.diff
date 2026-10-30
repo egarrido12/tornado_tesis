@@ -1,0 +1,67 @@
+Renaming <plus> to <use_plus> - today 10:17:10 :
+
+
+--- a/tornado/escape.py
++++ b/tornado/escape.py
+@@ -109,7 +109,7 @@
+     return re.sub(r"[\x00-\x20]+", " ", value).strip()
+ 
+ 
+-def url_escape(value: str | bytes, plus: bool = True) -> str:
++def url_escape(value: str | bytes, use_plus: bool = True) -> str:
+     """Returns a URL-encoded version of the given value.
+ 
+     Equivalent to either `urllib.parse.quote_plus` or `urllib.parse.quote` depending on the ``plus``
+@@ -124,7 +124,7 @@
+     .. versionadded:: 3.1
+         The ``plus`` argument
+     """
+-    quote = urllib.parse.quote_plus if plus else urllib.parse.quote
++    quote = urllib.parse.quote_plus if use_plus else urllib.parse.quote
+     return quote(value)
+ 
+ 
+
+--- a/tornado/test/property_test.py
++++ b/tornado/test/property_test.py
+@@ -248,13 +248,13 @@
+ class EscapePropertyTest(TestCase):
+     @given(st.text(), st.booleans())
+     def test_url_escape_round_trip(self, s, plus):
+-        escaped = url_escape(s, plus=plus)
++        escaped = url_escape(s, use_plus=plus)
+         self.assertTrue(escaped.isascii())
+         self.assertEqual(url_unescape(escaped, plus=plus), s)
+ 
+     @given(st.binary(), st.booleans())
+     def test_url_escape_bytes_round_trip(self, b, plus):
+-        self.assertEqual(url_unescape(url_escape(b, plus=plus), None, plus=plus), b)
++        self.assertEqual(url_unescape(url_escape(b, use_plus=plus), None, plus=plus), b)
+ 
+     @given(st.text())
+     def test_xhtml_escape_round_trip(self, s):
+
+--- a/tornado/routing.py
++++ b/tornado/routing.py
+@@ -607,7 +607,7 @@
+         for a in args:
+             if not isinstance(a, (unicode_type, bytes)):
+                 a = str(a)
+-            converted_args.append(url_escape(utf8(a), plus=False))
++            converted_args.append(url_escape(utf8(a), use_plus=False))
+         return self._path % tuple(converted_args)
+ 
+     def _find_groups(self) -> tuple[str | None, int | None]:
+
+--- a/tornado/test/escape_test.py
++++ b/tornado/test/escape_test.py
+@@ -295,7 +295,7 @@
+         plus_escaped = "%2B+%23%25"
+         escaped = "%2B%20%23%25"
+         self.assertEqual(url_escape(unescaped), plus_escaped)
+-        self.assertEqual(url_escape(unescaped, plus=False), escaped)
++        self.assertEqual(url_escape(unescaped, use_plus=False), escaped)
+         self.assertEqual(url_unescape(plus_escaped), unescaped)
+         self.assertEqual(url_unescape(escaped, plus=False), unescaped)
+         self.assertEqual(url_unescape(plus_escaped, encoding=None), utf8(unescaped))
+

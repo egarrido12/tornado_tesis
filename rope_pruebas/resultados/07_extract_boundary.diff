@@ -1,0 +1,28 @@
+Extract method <_unquote_boundary> - today 10:17:30 :
+
+
+--- a/tornado/httputil.py
++++ b/tornado/httputil.py
+@@ -1115,8 +1115,7 @@
+     # xmpp).  I think we're also supposed to handle backslash-escapes
+     # here but I'll save that until we see a client that uses them
+     # in the wild.
+-    if boundary.startswith(b'"') and boundary.endswith(b'"'):
+-        boundary = boundary[1:-1]
++    boundary = _unquote_boundary(boundary)
+     final_boundary_index = data.rfind(b"--" + boundary + b"--")
+     if final_boundary_index == -1:
+         raise HTTPInputError("Invalid multipart/form-data: no final boundary found")
+@@ -1151,6 +1150,11 @@
+         else:
+             arguments.setdefault(name, []).append(value)
+ 
++def _unquote_boundary(boundary):
++    if boundary.startswith(b'"') and boundary.endswith(b'"'):
++        boundary = boundary[1:-1]
++    return boundary
++
+ 
+ def format_timestamp(
+     ts: int | float | tuple[int, ...] | time.struct_time | datetime.datetime,
+

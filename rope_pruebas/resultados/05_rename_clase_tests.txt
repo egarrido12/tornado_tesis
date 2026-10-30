@@ -1,0 +1,54 @@
+..............s......................................ss..................sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss.............................................................................................................................................s..................................................................................................ss....................................................................................................................................................................................................................................................................................................................................................................s........................................................sssssssssssssssssssssssssss..............................................................................................................s......................................................................................................................................................................s...........s................ss....FEFFF....................................................................................................................s...................................................................................................................................................................................................................................................................................
+======================================================================
+ERROR: test_config_class_args (tornado.test.util_test.ConfigurableTest.test_config_class_args)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/05_rename_clase/tornado/test/util_test.py", line 284, in test_config_class_args
+    obj = cast(TestConfig2, TestConfigurable())
+                            ^^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/05_rename_clase/tornado/util.py", line 359, in __new__
+    instance.initialize(*args, **init_kwargs)
+TypeError: TestConfig1.initialize() got an unexpected keyword argument 'b'
+
+======================================================================
+FAIL: test_config_class (tornado.test.util_test.ConfigurableTest.test_config_class)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/05_rename_clase/tornado/test/util_test.py", line 245, in test_config_class
+    self.assertIsInstance(obj, TestConfig2)
+AssertionError: <tornado.test.util_test.TestConfig1 object at 0x10436f1a0> is not an instance of <class 'tornado.test.util_test.TestConfig2'>
+
+======================================================================
+FAIL: test_config_inner_level (tornado.test.util_test.ConfigurableTest.test_config_inner_level)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/05_rename_clase/tornado/test/util_test.py", line 318, in test_config_inner_level
+    self.assertIsInstance(obj, TestConfig3B)
+AssertionError: <tornado.test.util_test.TestConfig3A object at 0x104508440> is not an instance of <class 'tornado.test.util_test.TestConfig3B'>
+
+======================================================================
+FAIL: test_config_multi_level (tornado.test.util_test.ConfigurableTest.test_config_multi_level)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/05_rename_clase/tornado/test/util_test.py", line 301, in test_config_multi_level
+    self.assertIsInstance(obj, TestConfig3A)
+AssertionError: <tornado.test.util_test.TestConfig1 object at 0x104375e50> is not an instance of <class 'tornado.test.util_test.TestConfig3A'>
+
+======================================================================
+FAIL: test_config_str (tornado.test.util_test.ConfigurableTest.test_config_str)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/05_rename_clase/tornado/test/util_test.py", line 257, in test_config_str
+    self.assertIsInstance(obj, TestConfig2)
+AssertionError: <tornado.test.util_test.TestConfig1 object at 0x104375670> is not an instance of <class 'tornado.test.util_test.TestConfig2'>
+
+----------------------------------------------------------------------
+Ran 1535 tests in 18.444s
+
+FAILED (failures=4, errors=1, skipped=111)
+Some tests were skipped because: API snapshot is generated on linux
+with CPython, abstract namespace unix sockets not supported on this
+platform, client does not decompress Content-Encoding: br, hypothesis
+module not present, needs fix, no testable future imports, py312 has
+its own check for test case returns, pycares module not present,
+pycurl module not present, twisted module not present

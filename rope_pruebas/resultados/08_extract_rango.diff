@@ -1,0 +1,28 @@
+Extract method <_split_range_header> - today 10:17:49 :
+
+
+--- a/tornado/httputil.py
++++ b/tornado/httputil.py
+@@ -890,8 +890,7 @@
+ 
+     [0]: http://greenbytes.de/tech/webdav/draft-ietf-httpbis-p5-range-latest.html#byte.ranges
+     """
+-    unit, _, value = range_header.partition("=")
+-    unit, value = unit.strip(), value.strip()
++    unit, value = _split_range_header(range_header)
+     if unit != "bytes":
+         return None
+     start_b, _, end_b = value.partition("-")
+@@ -908,6 +907,11 @@
+         else:
+             end += 1
+     return (start, end)
++
++def _split_range_header(range_header):
++    unit, _, value = range_header.partition("=")
++    unit, value = unit.strip(), value.strip()
++    return unit, value
+ 
+ 
+ def _get_content_range(start: int | None, end: int | None, total: int) -> str:
+

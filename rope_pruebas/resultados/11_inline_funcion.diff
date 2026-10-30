@@ -1,0 +1,20 @@
+Inline method <_int_or_none> - today 10:18:30 :
+
+
+--- a/tornado/httputil.py
++++ b/tornado/httputil.py
+@@ -923,13 +923,6 @@
+     start = start or 0
+     end = (end or total) - 1
+     return f"bytes {start}-{end}/{total}"
+-
+-
+-def _int_or_none(val: str) -> int | None:
+-    val = val.strip()
+-    if val == "":
+-        return None
+-    return int(val)
+ 
+ 
+ @dataclasses.dataclass
+

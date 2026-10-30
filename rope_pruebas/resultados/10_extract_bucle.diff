@@ -1,0 +1,29 @@
+Extract method <_merge_urlencoded_arguments> - today 10:18:08 :
+
+
+--- a/tornado/httputil.py
++++ b/tornado/httputil.py
+@@ -1061,9 +1061,7 @@
+             )
+         except Exception as e:
+             raise HTTPInputError("Invalid x-www-form-urlencoded body: %s" % e) from e
+-        for name, values in uri_arguments.items():
+-            if values:
+-                arguments.setdefault(name, []).extend(values)
++        _merge_urlencoded_arguments(uri_arguments, arguments)
+     elif content_type.startswith("multipart/form-data"):
+         if headers and "Content-Encoding" in headers:
+             raise HTTPInputError(
+@@ -1085,6 +1083,11 @@
+                 raise HTTPInputError("multipart boundary not found")
+         except Exception as e:
+             raise HTTPInputError("Invalid multipart/form-data: %s" % e) from e
++
++def _merge_urlencoded_arguments(uri_arguments, arguments):
++    for name, values in uri_arguments.items():
++        if values:
++            arguments.setdefault(name, []).extend(values)
+ 
+ 
+ def parse_multipart_form_data(
+
