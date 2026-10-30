@@ -1,0 +1,35 @@
+.......F......s......................................ss..................sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss.............................................................................................................................................s..................................................................................................ss....................................................................................................................................................................................................................................................................................................................................................................s........................................................sssssssssssssssssssssssssss..............................................................................................................s......................................................................................................................................................................s...........s................ss.............................................................................................................................s...................................................................................................................................................................................................................................................................................
+======================================================================
+FAIL: _to_header_case (tornado.httputil)
+Doctest: tornado.httputil._to_header_case
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/doctest.py", line 2256, in runTest
+    raise self.failureException(self.format_failure(new.getvalue()))
+AssertionError: Failed doctest test for tornado.httputil._to_header_case
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/14_rename_con_doctest/tornado/httputil.py", line unknown line number, in _to_header_case
+
+----------------------------------------------------------------------
+File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/14_rename_con_doctest/tornado/httputil.py", line ?, in tornado.httputil._to_header_case
+Failed example:
+    _normalize_header("coNtent-TYPE")
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/doctest.py", line 1368, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest tornado.httputil._to_header_case[0]>", line 1, in <module>
+        _normalize_header("coNtent-TYPE")
+        ^^^^^^^^^^^^^^^^^
+    NameError: name '_normalize_header' is not defined
+
+
+----------------------------------------------------------------------
+Ran 1535 tests in 18.375s
+
+FAILED (failures=1, skipped=111)
+Some tests were skipped because: API snapshot is generated on linux
+with CPython, abstract namespace unix sockets not supported on this
+platform, client does not decompress Content-Encoding: br, hypothesis
+module not present, needs fix, no testable future imports, py312 has
+its own check for test case returns, pycares module not present,
+pycurl module not present, twisted module not present

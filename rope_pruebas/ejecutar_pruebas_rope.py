@@ -91,10 +91,9 @@ def copia_limpia(nombre):
 def entorno(carpeta):
     """Variables de entorno para que se importe el tornado de la copia.
 
-    El .venv tiene tornado instalado en modo editable apuntando al
-    repositorio original; PYTHONPATH va antes en sys.path y lo tapa. Los
-    subprocesos que lanzan los propios tests (import_test, autoreload_test,
-    process_test) heredan la variable.
+    Tornado NO debe estar instalado en el .venv (ver
+    verificar_sin_tornado_instalado). Los subprocesos que lanzan los propios
+    tests (import_test, autoreload_test, process_test) heredan la variable.
     """
     env = dict(os.environ)
     env['PYTHONPATH'] = str(carpeta)
@@ -130,6 +129,24 @@ def correr_tests(carpeta):
                          - resumen['skipped'] - resumen['expected_failures'])
     resumen['passed'] = max(resumen['passed'], 0)
     return resumen, salida
+
+
+def verificar_sin_tornado_instalado():
+    """Aborta si tornado está instalado en el entorno.
+
+    Con `pip install -e .` setuptools registra un *finder* que, cuando un
+    submódulo NO existe en la copia (p. ej. tornado.locks después de
+    renombrarlo), lo busca en el repositorio original. Eso hizo pasar en
+    falso la refactorización 19 en una primera corrida. Sin tornado
+    instalado, PYTHONPATH es la única fuente.
+    """
+    import importlib.metadata
+    try:
+        importlib.metadata.distribution('tornado')
+    except importlib.metadata.PackageNotFoundError:
+        return
+    sys.exit('tornado está instalado en %s; desinstálalo (uv pip uninstall tornado) '
+             'para que los tests usen solo la copia.' % sys.prefix)
 
 
 def verificar_import(carpeta):
@@ -679,6 +696,7 @@ def escribir_resumen(base, analisis, filas, meta, carbono):
 
 
 def main():
+    verificar_sin_tornado_instalado()
     RESULTADOS.mkdir(exist_ok=True)
     for viejo in RESULTADOS.iterdir():
         viejo.unlink()

@@ -1,0 +1,22 @@
+..............s......................................ss..................sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss.............................................................................................................................................s..................................................................................................ss....................................................................................................................................................................................................................................................................................................................................................................s........................................................sssssssssssssssssssssssssss..............................................................................................................s......................................................................................................................................................................s...........s................ss.............................................................................................................................s.......F...........................................................................................................................................................................................................................................................................
+======================================================================
+FAIL: test_handler_by_name (tornado.test.web_test.HandlerByNameTest.test_handler_by_name)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/17_rename_verbo_http/tornado/testing.py", line 270, in _callTestMethod
+    result = method()
+             ^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/17_rename_verbo_http/tornado/test/web_test.py", line 3383, in test_handler_by_name
+    self.assertEqual(resp.body, b"hello")
+AssertionError: b'<html><title>405: Method Not Allowed</tit[42 chars]tml>' != b'hello'
+
+----------------------------------------------------------------------
+Ran 1535 tests in 18.011s
+
+FAILED (failures=1, skipped=111)
+Some tests were skipped because: API snapshot is generated on linux
+with CPython, abstract namespace unix sockets not supported on this
+platform, client does not decompress Content-Encoding: br, hypothesis
+module not present, needs fix, no testable future imports, py312 has
+its own check for test case returns, pycares module not present,
+pycurl module not present, twisted module not present

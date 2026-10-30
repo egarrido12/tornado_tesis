@@ -1,0 +1,24 @@
+Renaming <HelloHandler> to <GreetingHandler> - today 10:30:43 :
+
+
+--- a/tornado/test/web_test.py
++++ b/tornado/test/web_test.py
+@@ -106,7 +106,7 @@
+         return [("/", self.Handler)]
+ 
+ 
+-class HelloHandler(RequestHandler):
++class GreetingHandler(RequestHandler):
+     def get(self):
+         self.write("hello")
+ 
+@@ -3373,7 +3373,7 @@
+     def get_handlers(self):
+         # All three are equivalent.
+         return [
+-            ("/hello1", HelloHandler),
++            ("/hello1", GreetingHandler),
+             ("/hello2", "tornado.test.web_test.HelloHandler"),
+             url("/hello3", "tornado.test.web_test.HelloHandler"),
+         ]
+

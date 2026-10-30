@@ -1,14 +1,14 @@
 Traceback (most recent call last):
-  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/ejecutar_pruebas_rope.py", line 499, in aplicar_rope
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/ejecutar_pruebas_rope.py", line 516, in aplicar_rope
     cambios = medir(tracker, 'rope', nombre, operacion, repeticion)
               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/ejecutar_pruebas_rope.py", line 201, in medir
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/ejecutar_pruebas_rope.py", line 218, in medir
     return funcion()
            ^^^^^^^^^
-  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/ejecutar_pruebas_rope.py", line 494, in operacion
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/ejecutar_pruebas_rope.py", line 511, in operacion
     cambios = funcion(proyecto)
               ^^^^^^^^^^^^^^^^^
-  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/ejecutar_pruebas_rope.py", line 379, in ref_extract_con_return
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/ejecutar_pruebas_rope.py", line 396, in ref_extract_con_return
     return ExtractMethod(p, r, inicio, fin).get_changes('_parse_range_bounds')
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/estebangarrido10/tornado_tesis/.venv/lib/python3.12/site-packages/rope/refactor/extract.py", line 82, in get_changes

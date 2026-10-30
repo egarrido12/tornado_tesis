@@ -1,0 +1,96 @@
+Moving global <_format_addr> - today 10:28:19 :
+
+
+--- a/tornado/netutil.py
++++ b/tornado/netutil.py
+@@ -30,6 +30,20 @@
+ from tornado.concurrent import dummy_executor, run_on_executor
+ from tornado.ioloop import IOLoop
+ from tornado.util import Configurable, errno_from_exception
++
++
++def _format_addr(addr: Any) -> str:
++    """Format a socket address for use in error messages.
++
++    IPv4 addresses are formatted as ``1.2.3.4:443`` and IPv6 addresses as
++    ``[::1]:443``. Anything else is formatted with `str`.
++    """
++    if isinstance(addr, tuple) and len(addr) >= 2:
++        host, port = addr[:2]
++        if isinstance(host, str) and ":" in host:
++            return f"[{host}]:{port}"
++        return f"{host}:{port}"
++    return str(addr)
+ 
+ 
+ # Note that the naming of ssl.Purpose is confusing; the purpose
+
+--- a/tornado/test/tcpclient_test.py
++++ b/tornado/test/tcpclient_test.py
+@@ -21,9 +21,9 @@
+ 
+ from tornado.concurrent import Future
+ from tornado.iostream import IOStream
+-from tornado.netutil import Resolver, bind_sockets
++from tornado.netutil import Resolver, bind_sockets, _format_addr
+ from tornado.queues import Queue
+-from tornado.tcpclient import TCPClient, _Connector, _format_addr
++from tornado.tcpclient import TCPClient, _Connector
+ from tornado.tcpserver import TCPServer
+ from tornado.test.util import (
+     AsyncTestCase,
+
+--- a/tornado/tcpclient.py
++++ b/tornado/tcpclient.py
+@@ -22,29 +22,15 @@
+ import socket
+ import ssl
+ from collections.abc import Callable, Iterator
+-from typing import Any, Tuple
+-
+-from tornado import gen
++from typing import Any
++
++from tornado import gen, netutil
+ from tornado.concurrent import Future, future_add_done_callback
+ from tornado.ioloop import IOLoop
+ from tornado.iostream import IOStream
+ from tornado.netutil import Resolver
+ 
+ _INITIAL_CONNECT_TIMEOUT = 0.3
+-
+-
+-def _format_addr(addr: Any) -> str:
+-    """Format a socket address for use in error messages.
+-
+-    IPv4 addresses are formatted as ``1.2.3.4:443`` and IPv6 addresses as
+-    ``[::1]:443``. Anything else is formatted with `str`.
+-    """
+-    if isinstance(addr, tuple) and len(addr) >= 2:
+-        host, port = addr[:2]
+-        if isinstance(host, str) and ":" in host:
+-            return f"[{host}]:{port}"
+-        return f"{host}:{port}"
+-    return str(addr)
+ 
+ 
+ class _Connector:
+@@ -226,7 +212,7 @@
+         if not self.future.done():
+             if self.pending_addrs:
+                 message = "Timeout while connecting to %s" % ", ".join(
+-                    sorted(_format_addr(addr) for addr in self.pending_addrs)
++                    sorted(netutil._format_addr(addr) for addr in self.pending_addrs)
+                 )
+             else:
+                 message = "Timeout while connecting"
+@@ -346,7 +332,7 @@
+                         timeout,
+                         tls_future,
+                         message=lambda: "Timeout during TLS handshake with "
+-                        + _format_addr(addr),
++                        + netutil._format_addr(addr),
+                     )
+                 else:
+                     stream = await tls_future
+

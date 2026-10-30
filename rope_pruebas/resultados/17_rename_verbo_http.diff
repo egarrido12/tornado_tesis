@@ -1,0 +1,15 @@
+Renaming <get> to <handle_get> - today 10:30:19 :
+
+
+--- a/tornado/test/web_test.py
++++ b/tornado/test/web_test.py
+@@ -107,7 +107,7 @@
+ 
+ 
+ class HelloHandler(RequestHandler):
+-    def get(self):
++    def handle_get(self):
+         self.write("hello")
+ 
+ 
+

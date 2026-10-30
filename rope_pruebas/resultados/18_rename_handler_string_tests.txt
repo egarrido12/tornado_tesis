@@ -1,0 +1,48 @@
+..............s......................................ss..................sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss.............................................................................................................................................s..................................................................................................ss....................................................................................................................................................................................................................................................................................................................................................................s........................................................sssssssssssssssssssssssssss..............................................................................................................s......................................................................................................................................................................s...........s................ss.............................................................................................................................s.......E...Exception ignored in: <socket.socket fd=11, family=2, type=1, proto=6, laddr=('127.0.0.1', 58766)>
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/18_rename_handler_string/tornado/platform/asyncio.py", line 217, in call_at
+    functools.partial(callback, *args, **kwargs),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ResourceWarning: unclosed <socket.socket fd=11, family=2, type=1, proto=6, laddr=('127.0.0.1', 58766)>
+........................................................................................................................................................................................................................................................................
+======================================================================
+ERROR: test_handler_by_name (tornado.test.web_test.HandlerByNameTest.test_handler_by_name)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/18_rename_handler_string/tornado/util.py", line 230, in import_object
+    return getattr(obj, parts[-1])
+           ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'tornado.test.web_test' has no attribute 'HelloHandler'. Did you mean: 'EchoHandler'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/18_rename_handler_string/tornado/testing.py", line 392, in setUp
+    self._app = self.get_app()
+                ^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/18_rename_handler_string/tornado/test/web_test.py", line 87, in get_app
+    self.app = Application(self.get_handlers(), **self.get_app_kwargs())
+                           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/18_rename_handler_string/tornado/test/web_test.py", line 3378, in get_handlers
+    url("/hello3", "tornado.test.web_test.HelloHandler"),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/18_rename_handler_string/tornado/routing.py", line 687, in __init__
+    super().__init__(matcher, handler, kwargs, name)
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/18_rename_handler_string/tornado/routing.py", line 475, in __init__
+    target = import_object(target)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/18_rename_handler_string/tornado/util.py", line 232, in import_object
+    raise ImportError("No module named %s" % parts[-1])
+ImportError: No module named HelloHandler
+
+----------------------------------------------------------------------
+Ran 1535 tests in 18.374s
+
+FAILED (errors=1, skipped=111)
+Some tests were skipped because: API snapshot is generated on linux
+with CPython, abstract namespace unix sockets not supported on this
+platform, client does not decompress Content-Encoding: br, hypothesis
+module not present, needs fix, no testable future imports, py312 has
+its own check for test case returns, pycares module not present,
+pycurl module not present, twisted module not present
+[E 261030 10:31:02 runtests:208] logged 0 infos, 0 warnings, 0 errors, and 480 bytes to stderr

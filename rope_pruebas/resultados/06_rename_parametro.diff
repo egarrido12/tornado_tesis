@@ -1,4 +1,4 @@
-Renaming <plus> to <use_plus> - today 10:17:10 :
+Renaming <plus> to <use_plus> - today 10:26:36 :
 
 
 --- a/tornado/escape.py
@@ -21,6 +21,18 @@ Renaming <plus> to <use_plus> - today 10:17:10 :
      return quote(value)
  
  
+
+--- a/tornado/test/escape_test.py
++++ b/tornado/test/escape_test.py
+@@ -295,7 +295,7 @@
+         plus_escaped = "%2B+%23%25"
+         escaped = "%2B%20%23%25"
+         self.assertEqual(url_escape(unescaped), plus_escaped)
+-        self.assertEqual(url_escape(unescaped, plus=False), escaped)
++        self.assertEqual(url_escape(unescaped, use_plus=False), escaped)
+         self.assertEqual(url_unescape(plus_escaped), unescaped)
+         self.assertEqual(url_unescape(escaped, plus=False), unescaped)
+         self.assertEqual(url_unescape(plus_escaped, encoding=None), utf8(unescaped))
 
 --- a/tornado/test/property_test.py
 +++ b/tornado/test/property_test.py
@@ -52,16 +64,4 @@ Renaming <plus> to <use_plus> - today 10:17:10 :
          return self._path % tuple(converted_args)
  
      def _find_groups(self) -> tuple[str | None, int | None]:
-
---- a/tornado/test/escape_test.py
-+++ b/tornado/test/escape_test.py
-@@ -295,7 +295,7 @@
-         plus_escaped = "%2B+%23%25"
-         escaped = "%2B%20%23%25"
-         self.assertEqual(url_escape(unescaped), plus_escaped)
--        self.assertEqual(url_escape(unescaped, plus=False), escaped)
-+        self.assertEqual(url_escape(unescaped, use_plus=False), escaped)
-         self.assertEqual(url_unescape(plus_escaped), unescaped)
-         self.assertEqual(url_unescape(escaped, plus=False), unescaped)
-         self.assertEqual(url_unescape(plus_escaped, encoding=None), utf8(unescaped))
 

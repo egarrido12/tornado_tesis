@@ -1,0 +1,513 @@
+{
+  "python": "3.12.15",
+  "rope": "1.15.0",
+  "codecarbon": {
+    "codecarbon": "3.3.2",
+    "pais": "COL",
+    "modo_cpu": "cpu_load",
+    "cpu_modelo": "Apple M4",
+    "cpu_tdp_w": 20.0,
+    "cpu_tdp_generico": false,
+    "ram_potencia_w": 3.0,
+    "tracking_mode": "machine",
+    "plataforma": "macOS-15.6.1-arm64-arm-64bit"
+  },
+  "linea_base": {
+    "returncode": 0,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 111,
+    "expected_failures": 0,
+    "ran": 1535,
+    "passed": 1424
+  },
+  "analisis": {
+    "errores": 423,
+    "ocurrencias": {
+      "url_concat": 20,
+      "is_valid_ip": 20,
+      "Configurable": 26,
+      "_try_inline_read": 6,
+      "_normalize_header": 7,
+      "doctests": 1
+    },
+    "definicion": "tornado/httputil.py:801"
+  },
+  "refactorizaciones": [
+    {
+      "id": "02_rename_funcion",
+      "tipo": "Rename",
+      "descripcion": "httputil.url_concat -> concat_url_args (usada en auth, httpclient y tests)",
+      "tiempo_rope_s": 1.061,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/auth.py",
+        "tornado/httputil.py",
+        "tornado/test/auth_test.py",
+        "tornado/test/httputil_test.py",
+        "tornado/web.py"
+      ],
+      "tests": {
+        "returncode": 1,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1423
+      },
+      "veredicto": "ROMPE TESTS"
+    },
+    {
+      "id": "03_rename_funcion_importada",
+      "tipo": "Rename",
+      "descripcion": "netutil.is_valid_ip -> is_ip_address (también importada por caresresolver y los tests)",
+      "tiempo_rope_s": 1.043,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/httpserver.py",
+        "tornado/netutil.py",
+        "tornado/platform/caresresolver.py",
+        "tornado/simple_httpclient.py",
+        "tornado/test/netutil_test.py"
+      ],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "04_rename_metodo",
+      "tipo": "Rename",
+      "descripcion": "BaseIOStream._maybe_add_error_listener -> _ensure_error_listener",
+      "tiempo_rope_s": 1.13,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/iostream.py"
+      ],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "05_rename_clase",
+      "tipo": "Rename",
+      "descripcion": "util.Configurable -> ConfigurableBase (clase base de IOLoop, AsyncHTTPClient y Resolver)",
+      "tiempo_rope_s": 0.793,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/httpclient.py",
+        "tornado/httpserver.py",
+        "tornado/ioloop.py",
+        "tornado/netutil.py",
+        "tornado/test/util_test.py",
+        "tornado/util.py"
+      ],
+      "tests": {
+        "returncode": 1,
+        "failed": 4,
+        "errors": 1,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1419
+      },
+      "veredicto": "ROMPE TESTS"
+    },
+    {
+      "id": "06_rename_parametro",
+      "tipo": "Rename",
+      "descripcion": "parámetro plus de escape.url_escape -> use_plus (los llamadores lo pasan por nombre)",
+      "tiempo_rope_s": 0.646,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/escape.py",
+        "tornado/routing.py",
+        "tornado/test/escape_test.py",
+        "tornado/test/property_test.py"
+      ],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "07_extract_boundary",
+      "tipo": "Extract Method",
+      "descripcion": "quitar comillas del boundary en parse_multipart_form_data -> _unquote_boundary",
+      "tiempo_rope_s": 0.181,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "08_extract_rango",
+      "tipo": "Extract Method",
+      "descripcion": "separar unidad y valor en _parse_request_range -> _split_range_header (2 valores de salida)",
+      "tiempo_rope_s": 0.035,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "09_extract_con_return",
+      "tipo": "Extract Method",
+      "descripcion": "try/except con `return None` de _parse_request_range -> _parse_range_bounds (caso límite)",
+      "tiempo_rope_s": 0.007,
+      "estado_rope": "error: RefactoringError: Return should be the last statement.",
+      "veredicto": "RECHAZADA POR ROPE"
+    },
+    {
+      "id": "10_extract_bucle",
+      "tipo": "Extract Method",
+      "descripcion": "bucle que copia argumentos urlencoded en parse_body_arguments -> _merge_urlencoded_arguments",
+      "tiempo_rope_s": 0.033,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "11_inline_funcion",
+      "tipo": "Inline",
+      "descripcion": "inline de httputil._int_or_none en _parse_request_range (2 llamadas; reasigna su parámetro y tiene 2 return)",
+      "tiempo_rope_s": 0.506,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "tests": {
+        "returncode": 1,
+        "failed": 23,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1401
+      },
+      "veredicto": "ROMPE TESTS"
+    },
+    {
+      "id": "12_move_funcion",
+      "tipo": "Move",
+      "descripcion": "mover tcpclient._format_addr a netutil (los tests la importan)",
+      "tiempo_rope_s": 1.141,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/netutil.py",
+        "tornado/tcpclient.py",
+        "tornado/test/tcpclient_test.py"
+      ],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "13_rename_parcheada",
+      "tipo": "Rename",
+      "descripcion": "BaseIOStream._try_inline_read -> _read_inline_if_possible (los tests la parchean con mock.patch(\"tornado.iostream.BaseIOStream._try_inline_read\"))",
+      "tiempo_rope_s": 0.966,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/iostream.py"
+      ],
+      "tests": {
+        "returncode": 1,
+        "failed": 0,
+        "errors": 3,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1421
+      },
+      "veredicto": "ROMPE TESTS"
+    },
+    {
+      "id": "14_rename_con_doctest",
+      "tipo": "Rename",
+      "descripcion": "httputil._normalize_header -> _to_header_case (tiene un doctest en su docstring)",
+      "tiempo_rope_s": 0.767,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "tests": {
+        "returncode": 1,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1423
+      },
+      "veredicto": "ROMPE TESTS"
+    },
+    {
+      "id": "15_rename_con_doctest_docs",
+      "tipo": "Rename",
+      "descripcion": "igual que 14 pero con docs=True",
+      "tiempo_rope_s": 0.756,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "16_rename_en_test_modules",
+      "tipo": "Rename",
+      "descripcion": "httputil.doctests -> doctest_suite (runtests.TEST_MODULES la nombra como string)",
+      "tiempo_rope_s": 0.662,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "tests": {
+        "returncode": 1,
+        "failed": 0,
+        "errors": 1,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1523,
+        "passed": 1411
+      },
+      "veredicto": "ROMPE TESTS"
+    },
+    {
+      "id": "17_rename_verbo_http",
+      "tipo": "Rename",
+      "descripcion": "método get de HelloHandler -> handle_get (Tornado despacha con getattr(self, método_http))",
+      "tiempo_rope_s": 1.921,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/test/web_test.py"
+      ],
+      "tests": {
+        "returncode": 1,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1423
+      },
+      "veredicto": "ROMPE TESTS"
+    },
+    {
+      "id": "18_rename_handler_string",
+      "tipo": "Rename",
+      "descripcion": "clase HelloHandler -> GreetingHandler (las rutas la nombran como string \"tornado.test.web_test.HelloHandler\")",
+      "tiempo_rope_s": 1.141,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/test/web_test.py"
+      ],
+      "tests": {
+        "returncode": 1,
+        "failed": 0,
+        "errors": 1,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1423
+      },
+      "veredicto": "ROMPE TESTS"
+    },
+    {
+      "id": "19_rename_modulo",
+      "tipo": "Rename (módulo)",
+      "descripcion": "módulo tornado/locks.py -> tornado/sync.py (tornado.__all__ lo nombra como string)",
+      "tiempo_rope_s": 1.206,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/locks.py",
+        "tornado/queues.py",
+        "tornado/sync.py",
+        "tornado/test/http1connection_test.py",
+        "tornado/test/httpclient_test.py",
+        "tornado/test/httpserver_test.py",
+        "tornado/test/iostream_test.py",
+        "tornado/test/locks_test.py",
+        "tornado/test/simple_httpclient_test.py",
+        "tornado/test/testing_test.py",
+        "tornado/test/web_test.py",
+        "tornado/test/websocket_test.py"
+      ],
+      "tests": {
+        "returncode": 1,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1423
+      },
+      "veredicto": "ROMPE TESTS"
+    },
+    {
+      "id": "20_extract_await",
+      "tipo": "Extract Method",
+      "descripcion": "bloque con `await` de RequestHandler._execute (async def) -> _run_prepare",
+      "tiempo_rope_s": 0.603,
+      "estado_rope": "aplicada",
+      "archivos_modificados": [
+        "tornado/web.py"
+      ],
+      "tests": {
+        "returncode": 1,
+        "failed": 0,
+        "errors": 1,
+        "skipped": 0,
+        "expected_failures": 0,
+        "ran": 0,
+        "passed": 0
+      },
+      "veredicto": "ROMPE TESTS"
+    }
+  ],
+  "carbono": {
+    "reposo": {
+      "duracion_s": 20.005619333998766,
+      "potencia_media_w": 5.68915128890109,
+      "emisiones_kg": 8.204511992347034e-06
+    },
+    "factor_emision_kg_por_kwh": 0.25951100000000005,
+    "linea_base_tests": {
+      "duracion_s": {
+        "media": 18.420211805331444,
+        "desv": 0.5925320927951305,
+        "min": 18.04753774999699,
+        "max": 19.10346916600247,
+        "n": 3
+      },
+      "energia_kwh": {
+        "media": 2.8527294662955246e-05,
+        "desv": 2.0370386639897096e-06,
+        "min": 2.6941953515922644e-05,
+        "max": 3.082480629260771e-05,
+        "n": 3
+      },
+      "emisiones_kg": {
+        "media": 7.40314676527818e-06,
+        "desv": 5.286339407306335e-07,
+        "min": 6.991733298870601e-06,
+        "max": 7.99937630580092e-06,
+        "n": 3
+      }
+    },
+    "rope_por_operacion": {
+      "duracion_s": {
+        "media": 0.8016834176256792,
+        "desv": 0.6487769856494593,
+        "min": 0.007055667010718025,
+        "max": 2.405851207993692,
+        "n": 91
+      },
+      "energia_kwh": {
+        "media": 1.5510788561094566e-06,
+        "desv": 1.3966266504536664e-06,
+        "min": 9.827036382282616e-09,
+        "max": 5.850387441540391e-06,
+        "n": 91
+      },
+      "emisiones_kg": {
+        "media": 4.025220250278209e-07,
+        "desv": 3.6243997868588073e-07,
+        "min": 2.5502240386040013e-09,
+        "max": 1.5182398953415894e-06,
+        "n": 91
+      }
+    },
+    "total_rope": {
+      "duracion_s": 72.95319100393681,
+      "energia_kwh": 0.00014114817590596054,
+      "emisiones_kg": 3.6629504277531704e-05
+    },
+    "total_analisis": {
+      "duracion_s": 1.9020550419954816,
+      "energia_kwh": 4.25382810290957e-06,
+      "emisiones_kg": 1.1039151848141687e-06
+    },
+    "total_tests": {
+      "duracion_s": 373.96733545798634,
+      "energia_kwh": 0.0005885245266009838,
+      "emisiones_kg": 0.00015272858842274795
+    },
+    "total_experimento": {
+      "duracion_s": 448.8225815039186,
+      "energia_kwh": 0.000733926530609854,
+      "emisiones_kg": 0.00019046200788509383
+    },
+    "sensibilidad_tdp_generico": {
+      "tdp_w": 85.0,
+      "energia_kwh": 0.0019036577717998276
+    }
+  }
+}

@@ -1,0 +1,29 @@
+Extract method <_run_prepare> - today 10:31:30 :
+
+
+--- a/tornado/web.py
++++ b/tornado/web.py
+@@ -1979,9 +1979,7 @@
+             # XSRF checks (if enabled): cookie-based and/or cross-origin protection.
+             self._cross_origin_protection()
+ 
+-            result = self.prepare()
+-            if result is not None:
+-                result = await result  # type: ignore
++            self._run_prepare()  # type: ignore
+             if self._prepared_future is not None:
+                 # Tell the Application we've finished with prepare()
+                 # and are ready for the body to arrive.
+@@ -2036,6 +2034,11 @@
+                 # In case we failed before setting _prepared_future, do it
+                 # now (to unblock the HTTP server).
+                 self._prepared_future.set_result(None)
++
++    def _run_prepare(self):
++        result = self.prepare()
++        if result is not None:
++            result = await result  # type: ignore
+ 
+     def data_received(self, chunk: bytes) -> Awaitable[None] | None:
+         """Implement this method to handle streamed request data.
+

@@ -1,0 +1,15 @@
+Renaming <doctests> to <doctest_suite> - today 10:29:50 :
+
+
+--- a/tornado/httputil.py
++++ b/tornado/httputil.py
+@@ -1342,7 +1342,7 @@
+     return utf8(username) + b":" + utf8(password)
+ 
+ 
+-def doctests() -> unittest.TestSuite:
++def doctest_suite() -> unittest.TestSuite:
+     import doctest
+ 
+     return doctest.DocTestSuite(optionflags=doctest.ELLIPSIS)
+

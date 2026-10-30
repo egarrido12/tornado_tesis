@@ -1,0 +1,341 @@
+.......F......s......................................ss..................sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss.............................................................................................................................................s..................................................................................................ss....................................................................................................................................................................................................................................................................................................................................................................s........................................................sssssssssssssssssssssssssss..............................................................................................................s......................................................................................................................................................................s...........s................ss.............................................................................................................................s................................................................................................................FF....FFFFFF..FFFFFFFFFFFFFF..................................................................................................................................................
+======================================================================
+FAIL: _parse_request_range (tornado.httputil)
+Doctest: tornado.httputil._parse_request_range
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/doctest.py", line 2256, in runTest
+    raise self.failureException(self.format_failure(new.getvalue()))
+AssertionError: Failed doctest test for tornado.httputil._parse_request_range
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 864, in _parse_request_range
+
+----------------------------------------------------------------------
+File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 871, in tornado.httputil._parse_request_range
+Failed example:
+    start, end = _parse_request_range("bytes=1-2")
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/doctest.py", line 1368, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest tornado.httputil._parse_request_range[0]>", line 1, in <module>
+        start, end = _parse_request_range("bytes=1-2")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range
+        start = _int_or_none(start_b)
+                ^^^^^^^^^^^^
+    NameError: name '_int_or_none' is not defined
+----------------------------------------------------------------------
+File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 872, in tornado.httputil._parse_request_range
+Failed example:
+    start, end
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/doctest.py", line 1368, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest tornado.httputil._parse_request_range[1]>", line 1, in <module>
+        start, end
+        ^^^^^
+    NameError: name 'start' is not defined
+----------------------------------------------------------------------
+File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 874, in tornado.httputil._parse_request_range
+Failed example:
+    [0, 1, 2, 3, 4][start:end]
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/doctest.py", line 1368, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest tornado.httputil._parse_request_range[2]>", line 1, in <module>
+        [0, 1, 2, 3, 4][start:end]
+                        ^^^^^
+    NameError: name 'start' is not defined
+----------------------------------------------------------------------
+File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 876, in tornado.httputil._parse_request_range
+Failed example:
+    _parse_request_range("bytes=6-")
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/doctest.py", line 1368, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest tornado.httputil._parse_request_range[3]>", line 1, in <module>
+        _parse_request_range("bytes=6-")
+      File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range
+        start = _int_or_none(start_b)
+                ^^^^^^^^^^^^
+    NameError: name '_int_or_none' is not defined
+----------------------------------------------------------------------
+File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 878, in tornado.httputil._parse_request_range
+Failed example:
+    _parse_request_range("bytes=-6")
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/doctest.py", line 1368, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest tornado.httputil._parse_request_range[4]>", line 1, in <module>
+        _parse_request_range("bytes=-6")
+      File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range
+        start = _int_or_none(start_b)
+                ^^^^^^^^^^^^
+    NameError: name '_int_or_none' is not defined
+----------------------------------------------------------------------
+File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 880, in tornado.httputil._parse_request_range
+Failed example:
+    _parse_request_range("bytes=-0")
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/doctest.py", line 1368, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest tornado.httputil._parse_request_range[5]>", line 1, in <module>
+        _parse_request_range("bytes=-0")
+      File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range
+        start = _int_or_none(start_b)
+                ^^^^^^^^^^^^
+    NameError: name '_int_or_none' is not defined
+----------------------------------------------------------------------
+File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 882, in tornado.httputil._parse_request_range
+Failed example:
+    _parse_request_range("bytes=")
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/doctest.py", line 1368, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest tornado.httputil._parse_request_range[6]>", line 1, in <module>
+        _parse_request_range("bytes=")
+      File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range
+        start = _int_or_none(start_b)
+                ^^^^^^^^^^^^
+    NameError: name '_int_or_none' is not defined
+----------------------------------------------------------------------
+File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 885, in tornado.httputil._parse_request_range
+Failed example:
+    _parse_request_range("bytes=1-2,6-10")
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/doctest.py", line 1368, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest tornado.httputil._parse_request_range[8]>", line 1, in <module>
+        _parse_request_range("bytes=1-2,6-10")
+      File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range
+        start = _int_or_none(start_b)
+                ^^^^^^^^^^^^
+    NameError: name '_int_or_none' is not defined
+
+
+======================================================================
+FAIL: test_static_head_range (tornado.test.web_test.StaticFileTest.test_static_head_range)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/testing.py", line 270, in _callTestMethod
+    result = method()
+             ^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/test/web_test.py", line 1643, in test_static_head_range
+    self.assertEqual(response.code, 206)
+AssertionError: 500 != 206
+
+======================================================================
+FAIL: test_static_head_range (tornado.test.web_test.StaticFileTest.test_static_head_range)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/_log.py", line 75, in __exit__
+    self._raiseFailure(
+AssertionError: Unexpected logs found: ['ERROR:tornado.application:Uncaught exception HEAD /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54862\', method=\'HEAD\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined']
+
+======================================================================
+FAIL: test_static_unsatisfiable_range_end_less_than_start (tornado.test.web_test.StaticFileTest.test_static_unsatisfiable_range_end_less_than_start)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/testing.py", line 270, in _callTestMethod
+    result = method()
+             ^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/test/web_test.py", line 1626, in test_static_unsatisfiable_range_end_less_than_start
+    self.assertEqual(response.code, 416)
+AssertionError: 500 != 416
+
+======================================================================
+FAIL: test_static_unsatisfiable_range_end_less_than_start (tornado.test.web_test.StaticFileTest.test_static_unsatisfiable_range_end_less_than_start)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/_log.py", line 75, in __exit__
+    self._raiseFailure(
+AssertionError: Unexpected logs found: ['ERROR:tornado.application:Uncaught exception HEAD /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54878\', method=\'HEAD\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined', 'ERROR:tornado.application:Uncaught exception GET /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54878\', method=\'GET\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined']
+
+======================================================================
+FAIL: test_static_unsatisfiable_range_invalid_start (tornado.test.web_test.StaticFileTest.test_static_unsatisfiable_range_invalid_start)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/testing.py", line 270, in _callTestMethod
+    result = method()
+             ^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/test/web_test.py", line 1619, in test_static_unsatisfiable_range_invalid_start
+    self.assertEqual(response.code, 416)
+AssertionError: 500 != 416
+
+======================================================================
+FAIL: test_static_unsatisfiable_range_invalid_start (tornado.test.web_test.StaticFileTest.test_static_unsatisfiable_range_invalid_start)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/_log.py", line 75, in __exit__
+    self._raiseFailure(
+AssertionError: Unexpected logs found: ['ERROR:tornado.application:Uncaught exception HEAD /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54881\', method=\'HEAD\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined', 'ERROR:tornado.application:Uncaught exception GET /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54881\', method=\'GET\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined']
+
+======================================================================
+FAIL: test_static_unsatisfiable_range_zero_suffix (tornado.test.web_test.StaticFileTest.test_static_unsatisfiable_range_zero_suffix)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/testing.py", line 270, in _callTestMethod
+    result = method()
+             ^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/test/web_test.py", line 1612, in test_static_unsatisfiable_range_zero_suffix
+    self.assertEqual(response.headers.get("Content-Range"), "bytes */26")
+AssertionError: None != 'bytes */26'
+
+======================================================================
+FAIL: test_static_unsatisfiable_range_zero_suffix (tornado.test.web_test.StaticFileTest.test_static_unsatisfiable_range_zero_suffix)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/_log.py", line 75, in __exit__
+    self._raiseFailure(
+AssertionError: Unexpected logs found: ['ERROR:tornado.application:Uncaught exception HEAD /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54884\', method=\'HEAD\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined', 'ERROR:tornado.application:Uncaught exception GET /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54884\', method=\'GET\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined']
+
+======================================================================
+FAIL: test_static_with_range (tornado.test.web_test.StaticFileTest.test_static_with_range)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/testing.py", line 270, in _callTestMethod
+    result = method()
+             ^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/test/web_test.py", line 1534, in test_static_with_range
+    self.assertEqual(response.code, 206)
+AssertionError: 500 != 206
+
+======================================================================
+FAIL: test_static_with_range (tornado.test.web_test.StaticFileTest.test_static_with_range)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/_log.py", line 75, in __exit__
+    self._raiseFailure(
+AssertionError: Unexpected logs found: ['ERROR:tornado.application:Uncaught exception HEAD /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54896\', method=\'HEAD\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined', 'ERROR:tornado.application:Uncaught exception GET /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54896\', method=\'GET\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined']
+
+======================================================================
+FAIL: test_static_with_range_end_edge (tornado.test.web_test.StaticFileTest.test_static_with_range_end_edge)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/testing.py", line 270, in _callTestMethod
+    result = method()
+             ^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/test/web_test.py", line 1581, in test_static_with_range_end_edge
+    self.assertEqual(response.body, b": /\n")
+AssertionError: b'<html><title>500: Internal Server Error</[48 chars]tml>' != b': /\n'
+
+======================================================================
+FAIL: test_static_with_range_end_edge (tornado.test.web_test.StaticFileTest.test_static_with_range_end_edge)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/_log.py", line 75, in __exit__
+    self._raiseFailure(
+AssertionError: Unexpected logs found: ['ERROR:tornado.application:Uncaught exception HEAD /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54899\', method=\'HEAD\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined', 'ERROR:tornado.application:Uncaught exception GET /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54899\', method=\'GET\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined']
+
+======================================================================
+FAIL: test_static_with_range_full_file (tornado.test.web_test.StaticFileTest.test_static_with_range_full_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/testing.py", line 270, in _callTestMethod
+    result = method()
+             ^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/test/web_test.py", line 1548, in test_static_with_range_full_file
+    self.assertEqual(response.code, 200)
+AssertionError: 500 != 200
+
+======================================================================
+FAIL: test_static_with_range_full_file (tornado.test.web_test.StaticFileTest.test_static_with_range_full_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/_log.py", line 75, in __exit__
+    self._raiseFailure(
+AssertionError: Unexpected logs found: ['ERROR:tornado.application:Uncaught exception HEAD /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54902\', method=\'HEAD\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined', 'ERROR:tornado.application:Uncaught exception GET /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54902\', method=\'GET\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined']
+
+======================================================================
+FAIL: test_static_with_range_full_past_end (tornado.test.web_test.StaticFileTest.test_static_with_range_full_past_end)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/testing.py", line 270, in _callTestMethod
+    result = method()
+             ^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/test/web_test.py", line 1559, in test_static_with_range_full_past_end
+    self.assertEqual(response.code, 200)
+AssertionError: 500 != 200
+
+======================================================================
+FAIL: test_static_with_range_full_past_end (tornado.test.web_test.StaticFileTest.test_static_with_range_full_past_end)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/_log.py", line 75, in __exit__
+    self._raiseFailure(
+AssertionError: Unexpected logs found: ['ERROR:tornado.application:Uncaught exception HEAD /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54905\', method=\'HEAD\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined', 'ERROR:tornado.application:Uncaught exception GET /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54905\', method=\'GET\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined']
+
+======================================================================
+FAIL: test_static_with_range_neg_end (tornado.test.web_test.StaticFileTest.test_static_with_range_neg_end)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/testing.py", line 270, in _callTestMethod
+    result = method()
+             ^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/test/web_test.py", line 1589, in test_static_with_range_neg_end
+    self.assertEqual(response.body, b": /\n")
+AssertionError: b'<html><title>500: Internal Server Error</[48 chars]tml>' != b': /\n'
+
+======================================================================
+FAIL: test_static_with_range_neg_end (tornado.test.web_test.StaticFileTest.test_static_with_range_neg_end)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/_log.py", line 75, in __exit__
+    self._raiseFailure(
+AssertionError: Unexpected logs found: ['ERROR:tornado.application:Uncaught exception HEAD /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54908\', method=\'HEAD\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined', 'ERROR:tornado.application:Uncaught exception GET /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54908\', method=\'GET\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined']
+
+======================================================================
+FAIL: test_static_with_range_neg_past_start (tornado.test.web_test.StaticFileTest.test_static_with_range_neg_past_start)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/testing.py", line 270, in _callTestMethod
+    result = method()
+             ^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/test/web_test.py", line 1597, in test_static_with_range_neg_past_start
+    self.assertEqual(response.code, 200)
+AssertionError: 500 != 200
+
+======================================================================
+FAIL: test_static_with_range_neg_past_start (tornado.test.web_test.StaticFileTest.test_static_with_range_neg_past_start)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/_log.py", line 75, in __exit__
+    self._raiseFailure(
+AssertionError: Unexpected logs found: ['ERROR:tornado.application:Uncaught exception HEAD /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54911\', method=\'HEAD\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined', 'ERROR:tornado.application:Uncaught exception GET /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54911\', method=\'GET\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined']
+
+======================================================================
+FAIL: test_static_with_range_partial_past_end (tornado.test.web_test.StaticFileTest.test_static_with_range_partial_past_end)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/testing.py", line 270, in _callTestMethod
+    result = method()
+             ^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/test/web_test.py", line 1570, in test_static_with_range_partial_past_end
+    self.assertEqual(response.code, 206)
+AssertionError: 500 != 206
+
+======================================================================
+FAIL: test_static_with_range_partial_past_end (tornado.test.web_test.StaticFileTest.test_static_with_range_partial_past_end)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/_log.py", line 75, in __exit__
+    self._raiseFailure(
+AssertionError: Unexpected logs found: ['ERROR:tornado.application:Uncaught exception HEAD /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54914\', method=\'HEAD\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined', 'ERROR:tornado.application:Uncaught exception GET /static/robots.txt (127.0.0.1)\nHTTPServerRequest(protocol=\'http\', host=\'127.0.0.1:54914\', method=\'GET\', uri=\'/static/robots.txt\', version=\'HTTP/1.1\', remote_ip=\'127.0.0.1\')\nTraceback (most recent call last):\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 2005, in _execute\n    result = await result\n             ^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/web.py", line 3033, in get\n    request_range = httputil._parse_request_range(range_header)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/11_inline_funcion/tornado/httputil.py", line 899, in _parse_request_range\n    start = _int_or_none(start_b)\n            ^^^^^^^^^^^^\nNameError: name \'_int_or_none\' is not defined']
+
+----------------------------------------------------------------------
+Ran 1535 tests in 18.410s
+
+FAILED (failures=23, skipped=111)
+Some tests were skipped because: API snapshot is generated on linux
+with CPython, abstract namespace unix sockets not supported on this
+platform, client does not decompress Content-Encoding: br, hypothesis
+module not present, needs fix, no testable future imports, py312 has
+its own check for test case returns, pycares module not present,
+pycurl module not present, twisted module not present

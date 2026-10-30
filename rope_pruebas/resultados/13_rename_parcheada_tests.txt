@@ -1,0 +1,86 @@
+..............s......................................ss..................sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss.............................................................................................................................................s..................................................................................................ss......................................................................................................................................................E.........................................E......................................E............................................................................................................................s........................................................sssssssssssssssssssssssssss..............................................................................................................s......................................................................................................................................................................s...........s................ss.............................................................................................................................s...................................................................................................................................................................................................................................................................................
+======================================================================
+ERROR: test_read_until_close_with_error (tornado.test.iostream_test.TestIOStream.test_read_until_close_with_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/13_rename_parcheada/tornado/testing.py", line 270, in _callTestMethod
+    result = method()
+             ^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/13_rename_parcheada/tornado/testing.py", line 617, in post_coroutine
+    self.io_loop.run_sync(
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/13_rename_parcheada/tornado/ioloop.py", line 550, in run_sync
+    return future_cell["future"].result()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/13_rename_parcheada/tornado/gen.py", line 835, in run
+    yielded = self.gen.send(value)
+              ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/13_rename_parcheada/tornado/test/iostream_test.py", line 930, in test_read_until_close_with_error
+    with mock.patch(
+         ^^^^^^^^^^^
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/mock.py", line 1467, in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/mock.py", line 1437, in get_original
+    raise AttributeError(
+AttributeError: <class 'tornado.iostream.BaseIOStream'> does not have the attribute '_try_inline_read'
+
+======================================================================
+ERROR: test_read_until_close_with_error (tornado.test.iostream_test.TestIOStreamSSL.test_read_until_close_with_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/13_rename_parcheada/tornado/testing.py", line 270, in _callTestMethod
+    result = method()
+             ^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/13_rename_parcheada/tornado/testing.py", line 617, in post_coroutine
+    self.io_loop.run_sync(
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/13_rename_parcheada/tornado/ioloop.py", line 550, in run_sync
+    return future_cell["future"].result()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/13_rename_parcheada/tornado/gen.py", line 835, in run
+    yielded = self.gen.send(value)
+              ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/13_rename_parcheada/tornado/test/iostream_test.py", line 930, in test_read_until_close_with_error
+    with mock.patch(
+         ^^^^^^^^^^^
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/mock.py", line 1467, in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/mock.py", line 1437, in get_original
+    raise AttributeError(
+AttributeError: <class 'tornado.iostream.BaseIOStream'> does not have the attribute '_try_inline_read'
+
+======================================================================
+ERROR: test_read_until_close_with_error (tornado.test.iostream_test.TestIOStreamSSLContext.test_read_until_close_with_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/13_rename_parcheada/tornado/testing.py", line 270, in _callTestMethod
+    result = method()
+             ^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/13_rename_parcheada/tornado/testing.py", line 617, in post_coroutine
+    self.io_loop.run_sync(
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/13_rename_parcheada/tornado/ioloop.py", line 550, in run_sync
+    return future_cell["future"].result()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/13_rename_parcheada/tornado/gen.py", line 835, in run
+    yielded = self.gen.send(value)
+              ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/13_rename_parcheada/tornado/test/iostream_test.py", line 930, in test_read_until_close_with_error
+    with mock.patch(
+         ^^^^^^^^^^^
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/mock.py", line 1467, in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/unittest/mock.py", line 1437, in get_original
+    raise AttributeError(
+AttributeError: <class 'tornado.iostream.BaseIOStream'> does not have the attribute '_try_inline_read'
+
+----------------------------------------------------------------------
+Ran 1535 tests in 18.636s
+
+FAILED (errors=3, skipped=111)
+Some tests were skipped because: API snapshot is generated on linux
+with CPython, abstract namespace unix sockets not supported on this
+platform, client does not decompress Content-Encoding: br, hypothesis
+module not present, needs fix, no testable future imports, py312 has
+its own check for test case returns, pycares module not present,
+pycurl module not present, twisted module not present

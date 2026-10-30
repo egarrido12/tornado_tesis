@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/20_extract_await/tornado/test/runtests.py", line 16, in <module>
+    from tornado.test.util import ABT_SKIP_MESSAGE
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/20_extract_await/tornado/test/util.py", line 15, in <module>
+    import tornado.testing
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/20_extract_await/tornado/testing.py", line 37, in <module>
+    from tornado.web import Application
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/20_extract_await/tornado/web.py", line 2041
+    result = await result  # type: ignore
+             ^^^^^^^^^^^^
+SyntaxError: 'await' outside async function
