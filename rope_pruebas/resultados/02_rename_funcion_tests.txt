@@ -1,0 +1,59 @@
+........F.....s......................................ss..................sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss.............................................................................................................................................s..................................................................................................ss....................................................................................................................................................................................................................................................................................................................................................................s........................................................sssssssssssssssssssssssssss..............................................................................................................s......................................................................................................................................................................s...........s................ss.............................................................................................................................s...................................................................................................................................................................................................................................................................................
+======================================================================
+FAIL: concat_url_args (tornado.httputil)
+Doctest: tornado.httputil.concat_url_args
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/doctest.py", line 2256, in runTest
+    raise self.failureException(self.format_failure(new.getvalue()))
+AssertionError: Failed doctest test for tornado.httputil.concat_url_args
+  File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/02_rename_funcion/tornado/httputil.py", line 804, in concat_url_args
+
+----------------------------------------------------------------------
+File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/02_rename_funcion/tornado/httputil.py", line 811, in tornado.httputil.concat_url_args
+Failed example:
+    url_concat("http://example.com/foo", dict(c="d"))
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/doctest.py", line 1368, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest tornado.httputil.concat_url_args[0]>", line 1, in <module>
+        url_concat("http://example.com/foo", dict(c="d"))
+        ^^^^^^^^^^
+    NameError: name 'url_concat' is not defined
+----------------------------------------------------------------------
+File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/02_rename_funcion/tornado/httputil.py", line 813, in tornado.httputil.concat_url_args
+Failed example:
+    url_concat("http://example.com/foo?a=b", dict(c="d"))
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/doctest.py", line 1368, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest tornado.httputil.concat_url_args[1]>", line 1, in <module>
+        url_concat("http://example.com/foo?a=b", dict(c="d"))
+        ^^^^^^^^^^
+    NameError: name 'url_concat' is not defined
+----------------------------------------------------------------------
+File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/02_rename_funcion/tornado/httputil.py", line 815, in tornado.httputil.concat_url_args
+Failed example:
+    url_concat("http://example.com/foo?a=b", [("c", "d"), ("c", "d2")])
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/estebangarrido10/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/doctest.py", line 1368, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest tornado.httputil.concat_url_args[2]>", line 1, in <module>
+        url_concat("http://example.com/foo?a=b", [("c", "d"), ("c", "d2")])
+        ^^^^^^^^^^
+    NameError: name 'url_concat' is not defined
+
+
+----------------------------------------------------------------------
+Ran 1535 tests in 18.444s
+
+FAILED (failures=1, skipped=111)
+Some tests were skipped because: API snapshot is generated on linux
+with CPython, abstract namespace unix sockets not supported on this
+platform, client does not decompress Content-Encoding: br, hypothesis
+module not present, needs fix, no testable future imports, py312 has
+its own check for test case returns, pycares module not present,
+pycurl module not present, twisted module not present

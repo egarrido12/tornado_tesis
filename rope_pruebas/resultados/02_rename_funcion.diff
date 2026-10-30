@@ -1,0 +1,154 @@
+Renaming <url_concat> to <concat_url_args> - today 10:15:39 :
+
+
+--- a/tornado/web.py
++++ b/tornado/web.py
+@@ -2861,7 +2861,7 @@
+             raise HTTPError(400, "Redirect URL cannot change the scheme or netloc")
+         if self.request.query_arguments:
+             # TODO: figure out typing for the next line.
+-            to_url = httputil.url_concat(
++            to_url = httputil.concat_url_args(
+                 to_url,
+                 list(httputil.qs_to_qsl(self.request.query_arguments)),  # type: ignore
+             )
+
+--- a/tornado/test/auth_test.py
++++ b/tornado/test/auth_test.py
+@@ -15,7 +15,7 @@
+ )
+ from tornado.escape import json_decode
+ from tornado.httpclient import HTTPClientError
+-from tornado.httputil import url_concat
++from tornado.httputil import concat_url_args
+ from tornado.log import app_log
+ from tornado.testing import ExpectLog
+ from tornado.test.util import AsyncHTTPTestCase
+@@ -510,7 +510,7 @@
+     def get(self):
+         # issue a fake auth code and redirect to redirect_uri
+         code = "fake-authorization-code"
+-        self.redirect(url_concat(self.get_argument("redirect_uri"), dict(code=code)))
++        self.redirect(concat_url_args(self.get_argument("redirect_uri"), dict(code=code)))
+ 
+ 
+ class GoogleOAuth2TokenHandler(RequestHandler):
+
+--- a/tornado/test/httputil_test.py
++++ b/tornado/test/httputil_test.py
+@@ -21,7 +21,7 @@
+     parse_multipart_form_data,
+     parse_request_start_line,
+     qs_to_qsl,
+-    url_concat,
++    concat_url_args,
+ )
+ from tornado.log import gen_log
+ from tornado.test.util import (
+@@ -44,51 +44,51 @@
+ 
+ class TestUrlConcat(TestCase):
+     def test_url_concat_no_query_params(self):
+-        url = url_concat("https://localhost/path", [("y", "y"), ("z", "z")])
++        url = concat_url_args("https://localhost/path", [("y", "y"), ("z", "z")])
+         self.assertEqual(url, "https://localhost/path?y=y&z=z")
+ 
+     def test_url_concat_encode_args(self):
+-        url = url_concat("https://localhost/path", [("y", "/y"), ("z", "z")])
++        url = concat_url_args("https://localhost/path", [("y", "/y"), ("z", "z")])
+         self.assertEqual(url, "https://localhost/path?y=%2Fy&z=z")
+ 
+     def test_url_concat_trailing_q(self):
+-        url = url_concat("https://localhost/path?", [("y", "y"), ("z", "z")])
++        url = concat_url_args("https://localhost/path?", [("y", "y"), ("z", "z")])
+         self.assertEqual(url, "https://localhost/path?y=y&z=z")
+ 
+     def test_url_concat_q_with_no_trailing_amp(self):
+-        url = url_concat("https://localhost/path?x", [("y", "y"), ("z", "z")])
++        url = concat_url_args("https://localhost/path?x", [("y", "y"), ("z", "z")])
+         self.assertEqual(url, "https://localhost/path?x=&y=y&z=z")
+ 
+     def test_url_concat_trailing_amp(self):
+-        url = url_concat("https://localhost/path?x&", [("y", "y"), ("z", "z")])
++        url = concat_url_args("https://localhost/path?x&", [("y", "y"), ("z", "z")])
+         self.assertEqual(url, "https://localhost/path?x=&y=y&z=z")
+ 
+     def test_url_concat_mult_params(self):
+-        url = url_concat("https://localhost/path?a=1&b=2", [("y", "y"), ("z", "z")])
++        url = concat_url_args("https://localhost/path?a=1&b=2", [("y", "y"), ("z", "z")])
+         self.assertEqual(url, "https://localhost/path?a=1&b=2&y=y&z=z")
+ 
+     def test_url_concat_no_params(self):
+-        url = url_concat("https://localhost/path?r=1&t=2", [])
++        url = concat_url_args("https://localhost/path?r=1&t=2", [])
+         self.assertEqual(url, "https://localhost/path?r=1&t=2")
+ 
+     def test_url_concat_none_params(self):
+-        url = url_concat("https://localhost/path?r=1&t=2", None)
++        url = concat_url_args("https://localhost/path?r=1&t=2", None)
+         self.assertEqual(url, "https://localhost/path?r=1&t=2")
+ 
+     def test_url_concat_with_frag(self):
+-        url = url_concat("https://localhost/path#tab", [("y", "y")])
++        url = concat_url_args("https://localhost/path#tab", [("y", "y")])
+         self.assertEqual(url, "https://localhost/path?y=y#tab")
+ 
+     def test_url_concat_multi_same_params(self):
+-        url = url_concat("https://localhost/path", [("y", "y1"), ("y", "y2")])
++        url = concat_url_args("https://localhost/path", [("y", "y1"), ("y", "y2")])
+         self.assertEqual(url, "https://localhost/path?y=y1&y=y2")
+ 
+     def test_url_concat_multi_same_query_params(self):
+-        url = url_concat("https://localhost/path?r=1&r=2", [("y", "y")])
++        url = concat_url_args("https://localhost/path?r=1&r=2", [("y", "y")])
+         self.assertEqual(url, "https://localhost/path?r=1&r=2&y=y")
+ 
+     def test_url_concat_dict_params(self):
+-        url = url_concat("https://localhost/path", dict(y="y"))
++        url = concat_url_args("https://localhost/path", dict(y="y"))
+         self.assertEqual(url, "https://localhost/path?y=y")
+ 
+ 
+
+--- a/tornado/auth.py
++++ b/tornado/auth.py
+@@ -80,7 +80,7 @@
+ from typing import Any, cast
+ 
+ from tornado import escape, httpclient
+-from tornado.httputil import url_concat
++from tornado.httputil import concat_url_args
+ from tornado.util import unicode_type
+ from tornado.web import RequestHandler
+ 
+@@ -406,7 +406,7 @@
+         if scope:
+             args["scope"] = " ".join(scope)
+         url = self._OAUTH_AUTHORIZE_URL  # type: ignore
+-        handler.redirect(url_concat(url, args))
++        handler.redirect(concat_url_args(url, args))
+ 
+     def _oauth_request_token_url(
+         self,
+@@ -428,7 +428,7 @@
+             args["client_secret"] = client_secret
+         if extra_params:
+             args.update(extra_params)
+-        return url_concat(url, args)
++        return concat_url_args(url, args)
+ 
+     async def oauth2_request(
+         self,
+
+--- a/tornado/httputil.py
++++ b/tornado/httputil.py
+@@ -798,7 +798,7 @@
+         raise NotImplementedError()
+ 
+ 
+-def url_concat(
++def concat_url_args(
+     url: str,
+     args: None | dict[str, str] | list[tuple[str, str]] | tuple[tuple[str, str], ...],
+ ) -> str:
+

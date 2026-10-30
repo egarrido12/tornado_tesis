@@ -1,0 +1,114 @@
+Renaming <is_valid_ip> to <is_ip_address> - today 10:16:02 :
+
+
+--- a/tornado/platform/caresresolver.py
++++ b/tornado/platform/caresresolver.py
+@@ -8,7 +8,7 @@
+ from tornado import gen
+ from tornado.concurrent import Future
+ from tornado.ioloop import IOLoop
+-from tornado.netutil import Resolver, is_valid_ip
++from tornado.netutil import Resolver, is_ip_address
+ 
+ 
+ class CaresResolver(Resolver):
+@@ -62,7 +62,7 @@
+     def resolve(
+         self, host: str, port: int, family: int = 0
+     ) -> "Generator[Any, Any, list[tuple[int, Any]]]":
+-        if is_valid_ip(host):
++        if is_ip_address(host):
+             addresses = [host]
+         else:
+             # gethostbyname doesn't take callback as a kwarg
+
+--- a/tornado/test/netutil_test.py
++++ b/tornado/test/netutil_test.py
+@@ -12,7 +12,7 @@
+     OverrideResolver,
+     ThreadedResolver,
+     bind_sockets,
+-    is_valid_ip,
++    is_ip_address,
+ )
+ from tornado.test.util import (
+     AsyncTestCase,
+@@ -178,19 +178,19 @@
+ 
+ class IsValidIPTest(TestCase):
+     def test_is_valid_ip(self):
+-        self.assertTrue(is_valid_ip("127.0.0.1"))
+-        self.assertTrue(is_valid_ip("4.4.4.4"))
+-        self.assertTrue(is_valid_ip("::1"))
+-        self.assertTrue(is_valid_ip("2620:0:1cfe:face:b00c::3"))
+-        self.assertFalse(is_valid_ip("www.google.com"))
+-        self.assertFalse(is_valid_ip("localhost"))
+-        self.assertFalse(is_valid_ip("4.4.4.4<"))
+-        self.assertFalse(is_valid_ip(" 127.0.0.1"))
+-        self.assertFalse(is_valid_ip(""))
+-        self.assertFalse(is_valid_ip(" "))
+-        self.assertFalse(is_valid_ip("\n"))
+-        self.assertFalse(is_valid_ip("\x00"))
+-        self.assertFalse(is_valid_ip("a" * 100))
++        self.assertTrue(is_ip_address("127.0.0.1"))
++        self.assertTrue(is_ip_address("4.4.4.4"))
++        self.assertTrue(is_ip_address("::1"))
++        self.assertTrue(is_ip_address("2620:0:1cfe:face:b00c::3"))
++        self.assertFalse(is_ip_address("www.google.com"))
++        self.assertFalse(is_ip_address("localhost"))
++        self.assertFalse(is_ip_address("4.4.4.4<"))
++        self.assertFalse(is_ip_address(" 127.0.0.1"))
++        self.assertFalse(is_ip_address(""))
++        self.assertFalse(is_ip_address(" "))
++        self.assertFalse(is_ip_address("\n"))
++        self.assertFalse(is_ip_address("\x00"))
++        self.assertFalse(is_ip_address("a" * 100))
+ 
+ 
+ class TestPortAllocation(TestCase):
+
+--- a/tornado/simple_httpclient.py
++++ b/tornado/simple_httpclient.py
+@@ -31,7 +31,7 @@
+     OverrideResolver,
+     Resolver,
+     _client_ssl_defaults,
+-    is_valid_ip,
++    is_ip_address,
+ )
+ from tornado.tcpclient import TCPClient
+ 
+@@ -307,7 +307,7 @@
+ 
+             source_ip = None
+             if self.request.network_interface:
+-                if is_valid_ip(self.request.network_interface):
++                if is_ip_address(self.request.network_interface):
+                     source_ip = self.request.network_interface
+                 else:
+                     raise ValueError(
+
+--- a/tornado/netutil.py
++++ b/tornado/netutil.py
+@@ -309,7 +309,7 @@
+     return remove_handler
+ 
+ 
+-def is_valid_ip(ip: str) -> bool:
++def is_ip_address(ip: str) -> bool:
+     """Returns ``True`` if the given string is a well-formed IP address.
+ 
+     Supports IPv4 and IPv6.
+
+--- a/tornado/httpserver.py
++++ b/tornado/httpserver.py
+@@ -347,7 +347,7 @@
+             if ip not in self.trusted_downstream:
+                 break
+         ip = headers.get("X-Real-Ip", ip)
+-        if netutil.is_valid_ip(ip):
++        if netutil.is_ip_address(ip):
+             self.remote_ip = ip
+         # AWS uses X-Forwarded-Proto
+         proto_header = headers.get(
+
