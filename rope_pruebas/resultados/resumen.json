@@ -62,7 +62,7 @@
       "id": "03_rename_funcion_importada",
       "tipo": "Rename",
       "descripcion": "netutil.is_valid_ip -> is_ip_address (también importada por caresresolver y los tests)",
-      "tiempo_rope_s": 1.043,
+      "tiempo_rope_s": 0.791,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/httpserver.py",
@@ -86,7 +86,7 @@
       "id": "04_rename_metodo",
       "tipo": "Rename",
       "descripcion": "BaseIOStream._maybe_add_error_listener -> _ensure_error_listener",
-      "tiempo_rope_s": 1.13,
+      "tiempo_rope_s": 1.186,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/iostream.py"
@@ -106,7 +106,7 @@
       "id": "05_rename_clase",
       "tipo": "Rename",
       "descripcion": "util.Configurable -> ConfigurableBase (clase base de IOLoop, AsyncHTTPClient y Resolver)",
-      "tiempo_rope_s": 0.793,
+      "tiempo_rope_s": 0.846,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/httpclient.py",
@@ -131,7 +131,7 @@
       "id": "06_rename_parametro",
       "tipo": "Rename",
       "descripcion": "parámetro plus de escape.url_escape -> use_plus (los llamadores lo pasan por nombre)",
-      "tiempo_rope_s": 0.646,
+      "tiempo_rope_s": 0.594,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/escape.py",
@@ -154,7 +154,7 @@
       "id": "07_extract_boundary",
       "tipo": "Extract Method",
       "descripcion": "quitar comillas del boundary en parse_multipart_form_data -> _unquote_boundary",
-      "tiempo_rope_s": 0.181,
+      "tiempo_rope_s": 0.159,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/httputil.py"
@@ -174,7 +174,7 @@
       "id": "08_extract_rango",
       "tipo": "Extract Method",
       "descripcion": "separar unidad y valor en _parse_request_range -> _split_range_header (2 valores de salida)",
-      "tiempo_rope_s": 0.035,
+      "tiempo_rope_s": 0.027,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/httputil.py"
@@ -194,7 +194,7 @@
       "id": "09_extract_con_return",
       "tipo": "Extract Method",
       "descripcion": "try/except con `return None` de _parse_request_range -> _parse_range_bounds (caso límite)",
-      "tiempo_rope_s": 0.007,
+      "tiempo_rope_s": 0.006,
       "estado_rope": "error: RefactoringError: Return should be the last statement.",
       "veredicto": "RECHAZADA POR ROPE"
     },
@@ -202,7 +202,7 @@
       "id": "10_extract_bucle",
       "tipo": "Extract Method",
       "descripcion": "bucle que copia argumentos urlencoded en parse_body_arguments -> _merge_urlencoded_arguments",
-      "tiempo_rope_s": 0.033,
+      "tiempo_rope_s": 0.029,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/httputil.py"
@@ -222,7 +222,7 @@
       "id": "11_inline_funcion",
       "tipo": "Inline",
       "descripcion": "inline de httputil._int_or_none en _parse_request_range (2 llamadas; reasigna su parámetro y tiene 2 return)",
-      "tiempo_rope_s": 0.506,
+      "tiempo_rope_s": 0.434,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/httputil.py"
@@ -242,7 +242,7 @@
       "id": "12_move_funcion",
       "tipo": "Move",
       "descripcion": "mover tcpclient._format_addr a netutil (los tests la importan)",
-      "tiempo_rope_s": 1.141,
+      "tiempo_rope_s": 0.894,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/netutil.py",
@@ -264,7 +264,7 @@
       "id": "13_rename_parcheada",
       "tipo": "Rename",
       "descripcion": "BaseIOStream._try_inline_read -> _read_inline_if_possible (los tests la parchean con mock.patch(\"tornado.iostream.BaseIOStream._try_inline_read\"))",
-      "tiempo_rope_s": 0.966,
+      "tiempo_rope_s": 0.698,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/iostream.py"
@@ -284,7 +284,7 @@
       "id": "14_rename_con_doctest",
       "tipo": "Rename",
       "descripcion": "httputil._normalize_header -> _to_header_case (tiene un doctest en su docstring)",
-      "tiempo_rope_s": 0.767,
+      "tiempo_rope_s": 0.506,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/httputil.py"
@@ -304,7 +304,7 @@
       "id": "15_rename_con_doctest_docs",
       "tipo": "Rename",
       "descripcion": "igual que 14 pero con docs=True",
-      "tiempo_rope_s": 0.756,
+      "tiempo_rope_s": 0.513,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/httputil.py"
@@ -324,7 +324,7 @@
       "id": "16_rename_en_test_modules",
       "tipo": "Rename",
       "descripcion": "httputil.doctests -> doctest_suite (runtests.TEST_MODULES la nombra como string)",
-      "tiempo_rope_s": 0.662,
+      "tiempo_rope_s": 0.622,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/httputil.py"
@@ -344,7 +344,7 @@
       "id": "17_rename_verbo_http",
       "tipo": "Rename",
       "descripcion": "método get de HelloHandler -> handle_get (Tornado despacha con getattr(self, método_http))",
-      "tiempo_rope_s": 1.921,
+      "tiempo_rope_s": 1.555,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/test/web_test.py"
@@ -364,7 +364,7 @@
       "id": "18_rename_handler_string",
       "tipo": "Rename",
       "descripcion": "clase HelloHandler -> GreetingHandler (las rutas la nombran como string \"tornado.test.web_test.HelloHandler\")",
-      "tiempo_rope_s": 1.141,
+      "tiempo_rope_s": 0.767,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/test/web_test.py"
@@ -384,7 +384,7 @@
       "id": "19_rename_modulo",
       "tipo": "Rename (módulo)",
       "descripcion": "módulo tornado/locks.py -> tornado/sync.py (tornado.__all__ lo nombra como string)",
-      "tiempo_rope_s": 1.206,
+      "tiempo_rope_s": 1.416,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/locks.py",
@@ -415,7 +415,7 @@
       "id": "20_extract_await",
       "tipo": "Extract Method",
       "descripcion": "bloque con `await` de RequestHandler._execute (async def) -> _run_prepare",
-      "tiempo_rope_s": 0.603,
+      "tiempo_rope_s": 0.57,
       "estado_rope": "aplicada",
       "archivos_modificados": [
         "tornado/web.py"
@@ -434,80 +434,80 @@
   ],
   "carbono": {
     "reposo": {
-      "duracion_s": 20.005619333998766,
-      "potencia_media_w": 5.68915128890109,
-      "emisiones_kg": 8.204511992347034e-06
+      "duracion_s": 20.0062323329621,
+      "potencia_media_w": 5.020376299754631,
+      "emisiones_kg": 7.240271452527802e-06
     },
     "factor_emision_kg_por_kwh": 0.25951100000000005,
     "linea_base_tests": {
       "duracion_s": {
-        "media": 18.420211805331444,
-        "desv": 0.5925320927951305,
-        "min": 18.04753774999699,
-        "max": 19.10346916600247,
+        "media": 18.404119624659263,
+        "desv": 0.2372976349493608,
+        "min": 18.13741345796734,
+        "max": 18.591888083028607,
         "n": 3
       },
       "energia_kwh": {
-        "media": 2.8527294662955246e-05,
-        "desv": 2.0370386639897096e-06,
-        "min": 2.6941953515922644e-05,
-        "max": 3.082480629260771e-05,
+        "media": 2.646943498055049e-05,
+        "desv": 9.792860494694396e-07,
+        "min": 2.571137526737185e-05,
+        "max": 2.757510798898747e-05,
         "n": 3
       },
       "emisiones_kg": {
-        "media": 7.40314676527818e-06,
-        "desv": 5.286339407306335e-07,
-        "min": 6.991733298870601e-06,
-        "max": 7.99937630580092e-06,
+        "media": 6.86910954123764e-06,
+        "desv": 2.541355019838642e-07,
+        "min": 6.672384707010937e-06,
+        "max": 7.156043849330129e-06,
         "n": 3
       }
     },
     "rope_por_operacion": {
       "duracion_s": {
-        "media": 0.8016834176256792,
-        "desv": 0.6487769856494593,
-        "min": 0.007055667010718025,
-        "max": 2.405851207993692,
+        "media": 0.6961396025393957,
+        "desv": 0.5560640983043286,
+        "min": 0.005813250027131289,
+        "max": 2.1821352500119247,
         "n": 91
       },
       "energia_kwh": {
-        "media": 1.5510788561094566e-06,
-        "desv": 1.3966266504536664e-06,
-        "min": 9.827036382282616e-09,
-        "max": 5.850387441540391e-06,
+        "media": 1.0701487897397295e-06,
+        "desv": 8.863001855791241e-07,
+        "min": 8.082430803248945e-09,
+        "max": 4.1453442792716716e-06,
         "n": 91
       },
       "emisiones_kg": {
-        "media": 4.025220250278209e-07,
-        "desv": 3.6243997868588073e-07,
-        "min": 2.5502240386040013e-09,
-        "max": 1.5182398953415894e-06,
+        "media": 2.7771538257414673e-07,
+        "desv": 2.3000464745982413e-07,
+        "min": 2.0974797001788344e-09,
+        "max": 1.0757624392580695e-06,
         "n": 91
       }
     },
     "total_rope": {
-      "duracion_s": 72.95319100393681,
-      "energia_kwh": 0.00014114817590596054,
-      "emisiones_kg": 3.6629504277531704e-05
+      "duracion_s": 63.348703831085004,
+      "energia_kwh": 9.738353986631539e-05,
+      "emisiones_kg": 2.5272099814247353e-05
     },
     "total_analisis": {
-      "duracion_s": 1.9020550419954816,
-      "energia_kwh": 4.25382810290957e-06,
-      "emisiones_kg": 1.1039151848141687e-06
+      "duracion_s": 2.2740341249736957,
+      "energia_kwh": 3.5205513204336083e-06,
+      "emisiones_kg": 9.136217937170462e-07
     },
     "total_tests": {
-      "duracion_s": 373.96733545798634,
-      "energia_kwh": 0.0005885245266009838,
-      "emisiones_kg": 0.00015272858842274795
+      "duracion_s": 377.3404750842019,
+      "energia_kwh": 0.0005295791060558782,
+      "emisiones_kg": 0.00013743160339166701
     },
     "total_experimento": {
-      "duracion_s": 448.8225815039186,
-      "energia_kwh": 0.000733926530609854,
-      "emisiones_kg": 0.00019046200788509383
+      "duracion_s": 442.9632130402606,
+      "energia_kwh": 0.0006304831972426272,
+      "emisiones_kg": 0.00016361732499963142
     },
     "sensibilidad_tdp_generico": {
       "tdp_w": 85.0,
-      "energia_kwh": 0.0019036577717998276
+      "energia_kwh": 0.0014798924119304789
     }
   }
 }

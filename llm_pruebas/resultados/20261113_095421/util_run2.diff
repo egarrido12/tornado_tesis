@@ -1,0 +1,163 @@
+--- a/tornado/util.py
++++ b/tornado/util.py
+@@ -62,6 +62,15 @@
+         self[name] = value
+ 
+ 
++# The two magic bytes that start every gzip member (RFC 1952 section 2.3.1).
++_GZIP_MAGIC = b"\x1f\x8b"
++
++# Magic parameter that makes the zlib module understand the gzip header
++# http://stackoverflow.com/questions/1838699/how-can-i-decompress-a-gzip-stream-with-zlib
++# This works on cpython and pypy, but not jython.
++_GZIP_WBITS = 16 + zlib.MAX_WBITS
++
++
+ class GzipDecompressor:
+     """Streaming gzip decompressor.
+ 
+@@ -93,10 +102,19 @@
+ 
+     @staticmethod
+     def _new_decompressobj() -> "zlib._Decompress":
+-        # Magic parameter makes zlib module understand gzip header
+-        # http://stackoverflow.com/questions/1838699/how-can-i-decompress-a-gzip-stream-with-zlib
+-        # This works on cpython and pypy, but not jython.
+-        return zlib.decompressobj(16 + zlib.MAX_WBITS)
++        return zlib.decompressobj(_GZIP_WBITS)
++
++    @classmethod
++    def _start_member(cls, value: bytes) -> "zlib._Decompress":
++        """Creates the decompressor for a new gzip member beginning with ``value``.
++
++        zlib would reject anything that is not a gzip header too, but with a
++        less helpful message. ``value`` may be a single byte, in which case
++        zlib checks the second one when it arrives.
++        """
++        if not _GZIP_MAGIC.startswith(value[:2]):
++            raise zlib.error("expected a gzip member, got %r" % value[:2])
++        return cls._new_decompressobj()
+ 
+     def decompress(self, value: bytes, max_length: int = 0) -> bytes:
+         """Decompress a chunk, returning newly-available data.
+@@ -144,13 +162,7 @@
+             self._unconsumed_tail = b""
+             return b""
+         if self._decompressobj is None:
+-            # This is the start of a member. zlib would reject anything
+-            # else too, but with a less helpful message. value may be a
+-            # single byte, in which case zlib checks the second one when it
+-            # arrives.
+-            if not b"\x1f\x8b".startswith(value[:2]):
+-                raise zlib.error("expected a gzip member, got %r" % value[:2])
+-            self._decompressobj = self._new_decompressobj()
++            self._decompressobj = self._start_member(value)
+         result = self._decompressobj.decompress(value, max_length)
+         if self._decompressobj.eof:
+             # The rest of the input is the next member (or an error), so
+@@ -221,15 +233,15 @@
+         ...
+     ImportError: No module named missing_module
+     """
+-    if name.count(".") == 0:
++    if "." not in name:
+         return __import__(name)
+ 
+-    parts = name.split(".")
+-    obj = __import__(".".join(parts[:-1]), fromlist=[parts[-1]])
++    module_name, _, attribute = name.rpartition(".")
++    obj = __import__(module_name, fromlist=[attribute])
+     try:
+-        return getattr(obj, parts[-1])
++        return getattr(obj, attribute)
+     except AttributeError:
+-        raise ImportError("No module named %s" % parts[-1])
++        raise ImportError("No module named %s" % attribute)
+ 
+ 
+ def exec_in(
+@@ -267,13 +279,11 @@
+     abstracts all that behavior to give you a safe way to get the
+     errno.
+     """
+-
+     if hasattr(e, "errno"):
+         return typing.cast(int | None, e.errno)
+-    elif e.args:
++    if e.args:
+         return typing.cast(int | None, e.args[0])
+-    else:
+-        return None
++    return None
+ 
+ 
+ _alphanum = frozenset("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+@@ -506,22 +516,28 @@
+     return td.total_seconds()
+ 
+ 
++_WEBSOCKET_MASK_LENGTH = 4
++
++
++def _check_websocket_mask(mask: bytes) -> None:
++    if len(mask) != _WEBSOCKET_MASK_LENGTH:
++        raise ValueError("mask must be 4 bytes")
++
++
+ def _websocket_mask_int(mask: bytes, data: bytes) -> bytes:
+     # Treat the data and the repeated mask as (very large) integers so the
+     # XOR happens in C instead of looping over each byte in Python. This is
+     # much faster on CPython, but slower than the simple loop on PyPy.
+-    if len(mask) != 4:
+-        raise ValueError("mask must be 4 bytes")
++    _check_websocket_mask(mask)
+     n = len(data)
+-    q, r = divmod(n, 4)
++    q, r = divmod(n, _WEBSOCKET_MASK_LENGTH)
+     full_mask = int.from_bytes(mask * q + mask[:r], "little")
+     return (int.from_bytes(data, "little") ^ full_mask).to_bytes(n, "little")
+ 
+ 
+ def _websocket_mask_loop(mask: bytes, data: bytes) -> bytes:
+     # A simple byte-at-a-time loop, which PyPy's JIT handles well.
+-    if len(mask) != 4:
+-        raise ValueError("mask must be 4 bytes")
++    _check_websocket_mask(mask)
+     mask_arr = array.array("B", mask)
+     unmasked_arr = array.array("B", data)
+     for i in range(len(data)):
+@@ -540,17 +556,26 @@
+     _websocket_mask_python = _websocket_mask_int
+ 
+ 
+-if os.environ.get("TORNADO_NO_EXTENSION") or os.environ.get("TORNADO_EXTENSION") == "0":
+-    # These environment variables exist to make it easier to do performance
+-    # comparisons; they are not guaranteed to remain supported in the future.
+-    _websocket_mask = _websocket_mask_python
+-else:
++def _select_websocket_mask() -> Callable[[bytes, bytes], bytes]:
++    """Chooses the implementation of the websocket masking function.
++
++    Prefers the C extension unless it has been disabled via environment
++    variables (which exist to make performance comparisons easier; they are
++    not guaranteed to remain supported in the future).
++    """
++    extension_setting = os.environ.get("TORNADO_EXTENSION")
++    if os.environ.get("TORNADO_NO_EXTENSION") or extension_setting == "0":
++        return _websocket_mask_python
+     try:
+-        from tornado.speedups import websocket_mask as _websocket_mask
++        from tornado.speedups import websocket_mask
+     except ImportError:
+-        if os.environ.get("TORNADO_EXTENSION") == "1":
++        if extension_setting == "1":
+             raise
+-        _websocket_mask = _websocket_mask_python
++        return _websocket_mask_python
++    return websocket_mask
++
++
++_websocket_mask = _select_websocket_mask()
+ 
+ 
+ def doctests() -> unittest.TestSuite:

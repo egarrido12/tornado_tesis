@@ -1,0 +1,1380 @@
+{
+  "python": "3.12.15",
+  "anthropic": "2.8.0",
+  "modelo": "claude-sonnet-5-5",
+  "effort": "high",
+  "prompt": "Eres un ingeniero de software experto en Python. Tu tarea es refactorizar un módulo del proyecto Tornado para mejorar su legibilidad y mantenibilidad, sin cambiar su comportamiento.\n\nReglas:\n- El comportamiento observable debe ser idéntico al original.\n- No cambies los nombres ni las firmas de las funciones, clases y métodos públicos (los que no empiezan con \"_\"), porque otros módulos y los tests los usan.\n- No agregues funcionalidades nuevas ni dependencias.\n- Modifica solo el archivo indicado; el resto del paquete se muestra como contexto de solo lectura.\n- Mantén la compatibilidad con las versiones de Python que el proyecto ya soporta.\n\nFormato de respuesta:\n1. El archivo completo refactorizado, en un único bloque ```python.\n2. Después, una sección \"## Refactorizaciones aplicadas\" con una lista: tipo de refactorización (según el catálogo de Fowler, por ejemplo Extract Method, Rename Variable, Inline Function...), elementos afectados y motivo.\n",
+  "linea_base": {
+    "returncode": 0,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 111,
+    "expected_failures": 0,
+    "ran": 1535,
+    "passed": 1424
+  },
+  "determinismo": {
+    "escape": {
+      "corridas": 3,
+      "diffs_distintos": 3
+    },
+    "httputil": {
+      "corridas": 3,
+      "diffs_distintos": 3
+    },
+    "iostream": {
+      "corridas": 3,
+      "diffs_distintos": 3
+    },
+    "locks": {
+      "corridas": 3,
+      "diffs_distintos": 3
+    },
+    "netutil": {
+      "corridas": 3,
+      "diffs_distintos": 3
+    },
+    "tcpclient": {
+      "corridas": 3,
+      "diffs_distintos": 3
+    },
+    "util": {
+      "corridas": 3,
+      "diffs_distintos": 3
+    },
+    "web": {
+      "corridas": 3,
+      "diffs_distintos": 3
+    }
+  },
+  "costo_total_usd": 9.0719,
+  "reposo": {
+    "experimento": "00_reposo",
+    "fase": "reposo",
+    "repeticion": 1,
+    "duracion_s": 20.01106162497308,
+    "energia_kwh": 2.7805472323503065e-05,
+    "energia_cpu_kwh": 1.1130193469363836e-05,
+    "energia_ram_kwh": 1.6675278854139228e-05,
+    "emisiones_kg": 7.215825928144605e-06,
+    "potencia_cpu_w": 2.0023739417405553,
+    "potencia_ram_w": 3.0,
+    "n_muestras": 189,
+    "energia_traza_kwh": 2.7693032465135456e-05,
+    "emisiones_traza_kg": 7.186646548059769e-06,
+    "potencia_pico_w": 5.028829034,
+    "potencia_media_traza_w": 5.000713152190476
+  },
+  "codecarbon": {
+    "codecarbon": "3.3.2",
+    "pais": "COL",
+    "modo_cpu": "cpu_load",
+    "cpu_modelo": "Apple M4",
+    "cpu_tdp_w": 20.0
+  },
+  "carbono_totales": {
+    "llm": {
+      "n": 24,
+      "duracion_s": 3386.4820051249117,
+      "energia_kwh": 0.0047877656106163555,
+      "energia_traza_kwh": 0.004731404702237086,
+      "emisiones_traza_kg": 0.001227851565682249,
+      "pico_w": 23.0
+    },
+    "tests": {
+      "n": 24,
+      "duracion_s": 457.4465853321599,
+      "energia_kwh": 0.0006512785676050075,
+      "energia_traza_kwh": 0.0006407356368487829,
+      "emisiones_traza_kg": 0.00016627794585426478,
+      "pico_w": 23.0
+    },
+    "reposo_potencia_w": 5.002218385040114
+  },
+  "corridas": [
+    {
+      "id": "escape_run1",
+      "modulo": "escape",
+      "corrida": 1,
+      "carbono": {
+        "llm": {
+          "duracion_s": 43.20540899998741,
+          "energia_kwh": 6.203731655046301e-05,
+          "energia_traza_kwh": 6.0637803481980076e-05,
+          "emisiones_kg": 1.609936605532721e-05,
+          "emisiones_traza_kg": 1.5736177019412136e-05,
+          "potencia_pico_w": 7.3877180000000005,
+          "potencia_media_traza_w": 5.061205737608696,
+          "n_muestras": 414
+        },
+        "tests": {
+          "duracion_s": 19.21821370802354,
+          "energia_kwh": 2.746932460367035e-05,
+          "energia_traza_kwh": 2.6844738147631068e-05,
+          "emisiones_kg": 7.128591897223095e-06,
+          "emisiones_traza_kg": 6.9665048414298855e-06,
+          "potencia_pico_w": 5.8970485759999995,
+          "potencia_media_traza_w": 5.040208282021739,
+          "n_muestras": 184
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch17v5uRcjt5BcGaKGRhE",
+      "tiempo_llm_s": 43.2,
+      "tokens": {
+        "input": 25,
+        "output": 7747,
+        "cache_write": 330535,
+        "cache_read": 0
+      },
+      "costo_usd": 0.9039,
+      "intentos": 1,
+      "lineas_agregadas": 58,
+      "lineas_eliminadas": 42,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "escape_run2",
+      "modulo": "escape",
+      "corrida": 2,
+      "carbono": {
+        "llm": {
+          "duracion_s": 42.181638000009116,
+          "energia_kwh": 5.860204170105756e-05,
+          "energia_traza_kwh": 5.850815797051043e-05,
+          "emisiones_kg": 1.5207874443883146e-05,
+          "emisiones_traza_kg": 1.5183510583085131e-05,
+          "potencia_pico_w": 5.057177414,
+          "potencia_media_traza_w": 5.000961619123762,
+          "n_muestras": 404
+        },
+        "tests": {
+          "duracion_s": 18.776852916984353,
+          "energia_kwh": 2.6340906068967598e-05,
+          "energia_traza_kwh": 2.6133315838172637e-05,
+          "emisiones_kg": 6.835754874863855e-06,
+          "emisiones_traza_kg": 6.781882926480025e-06,
+          "potencia_pico_w": 5.987696,
+          "potencia_media_traza_w": 5.0159803879,
+          "n_muestras": 180
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch17zh1u3s5or3bAGspYS",
+      "tiempo_llm_s": 42.2,
+      "tokens": {
+        "input": 25,
+        "output": 7731,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.1104,
+      "intentos": 1,
+      "lineas_agregadas": 58,
+      "lineas_eliminadas": 47,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "escape_run3",
+      "modulo": "escape",
+      "corrida": 3,
+      "carbono": {
+        "llm": {
+          "duracion_s": 46.30579758400563,
+          "energia_kwh": 6.434066787133394e-05,
+          "energia_traza_kwh": 6.429979954160633e-05,
+          "emisiones_kg": 1.6697111059957745e-05,
+          "emisiones_traza_kg": 1.6686505278841803e-05,
+          "potencia_pico_w": 5.139723056,
+          "potencia_media_traza_w": 5.001493544324324,
+          "n_muestras": 444
+        },
+        "tests": {
+          "duracion_s": 18.793419333989732,
+          "energia_kwh": 2.6240235353984043e-05,
+          "energia_traza_kwh": 2.609511065373033e-05,
+          "emisiones_kg": 6.809629716947758e-06,
+          "emisiones_traza_kg": 6.7719682608602155e-06,
+          "potencia_pico_w": 6.213544574,
+          "potencia_media_traza_w": 5.0146652778,
+          "n_muestras": 180
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch185CAwxQh17KMJ5SwGp",
+      "tiempo_llm_s": 46.3,
+      "tokens": {
+        "input": 25,
+        "output": 8194,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.115,
+      "intentos": 1,
+      "lineas_agregadas": 66,
+      "lineas_eliminadas": 48,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "netutil_run1",
+      "modulo": "netutil",
+      "corrida": 1,
+      "carbono": {
+        "llm": {
+          "duracion_s": 81.2999142499757,
+          "energia_kwh": 0.000113188642721113,
+          "energia_traza_kwh": 0.00011299363125822757,
+          "emisiones_kg": 2.9373697861198765e-05,
+          "emisiones_traza_kg": 2.9323090241453907e-05,
+          "potencia_pico_w": 6.3623654059999994,
+          "potencia_media_traza_w": 5.007189687107692,
+          "n_muestras": 780
+        },
+        "tests": {
+          "duracion_s": 18.75799991597887,
+          "energia_kwh": 2.627267030469541e-05,
+          "energia_traza_kwh": 2.6128707494833485e-05,
+          "emisiones_kg": 6.818046943441811e-06,
+          "emisiones_traza_kg": 6.780687010691732e-06,
+          "potencia_pico_w": 6.431126,
+          "potencia_media_traza_w": 5.0146714875,
+          "n_muestras": 180
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch189zPvGN6sPrqUA9gbA",
+      "tiempo_llm_s": 81.3,
+      "tokens": {
+        "input": 26,
+        "output": 13060,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.1637,
+      "intentos": 1,
+      "lineas_agregadas": 130,
+      "lineas_eliminadas": 97,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "netutil_run2",
+      "modulo": "netutil",
+      "corrida": 2,
+      "carbono": {
+        "llm": {
+          "duracion_s": 755.8193033330026,
+          "energia_kwh": 0.0011007878524931845,
+          "energia_traza_kwh": 0.0010641896231951254,
+          "emisiones_kg": 0.00028566655638835885,
+          "emisiones_traza_kg": 0.00027616891330499026,
+          "potencia_pico_w": 14.601411157999998,
+          "potencia_media_traza_w": 5.07117276150931,
+          "n_muestras": 6982
+        },
+        "tests": {
+          "duracion_s": 21.87722450000001,
+          "energia_kwh": 3.3137777634967844e-05,
+          "energia_traza_kwh": 3.154322283765242e-05,
+          "emisiones_kg": 8.599617811828148e-06,
+          "emisiones_traza_kg": 8.185813301822026e-06,
+          "potencia_pico_w": 11.718463999999999,
+          "potencia_media_traza_w": 5.193408903706161,
+          "n_muestras": 211
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1Dm2kMsqPoLfRsGizeM",
+      "tiempo_llm_s": 81.9,
+      "tokens": {
+        "input": 26,
+        "output": 13374,
+        "cache_write": 330535,
+        "cache_read": 0
+      },
+      "costo_usd": 0.9601,
+      "intentos": 2,
+      "lineas_agregadas": 121,
+      "lineas_eliminadas": 82,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "netutil_run3",
+      "modulo": "netutil",
+      "corrida": 3,
+      "carbono": {
+        "llm": {
+          "duracion_s": 82.0701342500397,
+          "energia_kwh": 0.00012034062853744153,
+          "energia_traza_kwh": 0.00011596571090243092,
+          "emisiones_kg": 3.1229716852379996e-05,
+          "emisiones_traza_kg": 3.0094377602000757e-05,
+          "potencia_pico_w": 12.901568000000001,
+          "potencia_media_traza_w": 5.089718486326169,
+          "n_muestras": 791
+        },
+        "tests": {
+          "duracion_s": 18.776242583000567,
+          "energia_kwh": 2.6911442933976728e-05,
+          "energia_traza_kwh": 2.6619885122513864e-05,
+          "emisiones_kg": 6.98381546723921e-06,
+          "emisiones_traza_kg": 6.908153008028671e-06,
+          "potencia_pico_w": 8.315960162,
+          "potencia_media_traza_w": 5.105191259911602,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1Dtgm3sV86y7MAN4pcG",
+      "tiempo_llm_s": 82.1,
+      "tokens": {
+        "input": 26,
+        "output": 14061,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.1737,
+      "intentos": 1,
+      "lineas_agregadas": 136,
+      "lineas_eliminadas": 90,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "locks_run1",
+      "modulo": "locks",
+      "corrida": 1,
+      "carbono": {
+        "llm": {
+          "duracion_s": 53.348032791982405,
+          "energia_kwh": 7.75370203203174e-05,
+          "energia_traza_kwh": 7.496410314039418e-05,
+          "emisiones_kg": 2.0121709680345908e-05,
+          "emisiones_traza_kg": 1.9454009370066857e-05,
+          "potencia_pico_w": 10.486781906,
+          "potencia_media_traza_w": 5.067565612421053,
+          "n_muestras": 513
+        },
+        "tests": {
+          "duracion_s": 18.962904458050616,
+          "energia_kwh": 2.820578738865938e-05,
+          "energia_traza_kwh": 2.6689025665228445e-05,
+          "emisiones_kg": 7.31971209101841e-06,
+          "emisiones_traza_kg": 6.926095739409124e-06,
+          "potencia_pico_w": 6.6732741859999996,
+          "potencia_media_traza_w": 5.092304008208791,
+          "n_muestras": 182
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1E27rccVXeZVaqg8UuL",
+      "tiempo_llm_s": 53.3,
+      "tokens": {
+        "input": 25,
+        "output": 8401,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.1171,
+      "intentos": 1,
+      "lineas_agregadas": 45,
+      "lineas_eliminadas": 36,
+      "sin_cambios": false,
+      "cambios_api_publica": [
+        "eliminado import Optional",
+        "eliminado import Type"
+      ],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "locks_run2",
+      "modulo": "locks",
+      "corrida": 2,
+      "carbono": {
+        "llm": {
+          "duracion_s": 54.17325004097074,
+          "energia_kwh": 7.64200611228969e-05,
+          "energia_traza_kwh": 7.558391728330083e-05,
+          "emisiones_kg": 1.983184648206407e-05,
+          "emisiones_traza_kg": 1.9614857958106654e-05,
+          "potencia_pico_w": 5.439002,
+          "potencia_media_traza_w": 5.023135813101728,
+          "n_muestras": 521
+        },
+        "tests": {
+          "duracion_s": 19.144708208041266,
+          "energia_kwh": 2.715565600771479e-05,
+          "energia_traza_kwh": 2.6686495333502884e-05,
+          "emisiones_kg": 7.047191446218079e-06,
+          "emisiones_traza_kg": 6.925439090492672e-06,
+          "potencia_pico_w": 6.401380694,
+          "potencia_media_traza_w": 5.044489027445652,
+          "n_muestras": 184
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1E7U6RG2UFvtizEhYEM",
+      "tiempo_llm_s": 54.2,
+      "tokens": {
+        "input": 25,
+        "output": 8897,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.1221,
+      "intentos": 1,
+      "lineas_agregadas": 50,
+      "lineas_eliminadas": 40,
+      "sin_cambios": false,
+      "cambios_api_publica": [
+        "eliminado import Optional",
+        "eliminado import Type"
+      ],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "locks_run3",
+      "modulo": "locks",
+      "corrida": 3,
+      "carbono": {
+        "llm": {
+          "duracion_s": 49.690496624971274,
+          "energia_kwh": 7.232173594871015e-05,
+          "energia_traza_kwh": 7.051876974040784e-05,
+          "emisiones_kg": 1.876828601778569e-05,
+          "emisiones_traza_kg": 1.8300396454102946e-05,
+          "potencia_pico_w": 11.916330494,
+          "potencia_media_traza_w": 5.11782902867364,
+          "n_muestras": 478
+        },
+        "tests": {
+          "duracion_s": 19.060324583027977,
+          "energia_kwh": 2.698332592918247e-05,
+          "energia_traza_kwh": 2.6717103007118364e-05,
+          "emisiones_kg": 7.002469895208124e-06,
+          "emisiones_traza_kg": 6.933382118480346e-06,
+          "potencia_pico_w": 5.964487394,
+          "potencia_media_traza_w": 5.050833352934783,
+          "n_muestras": 184
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1ECsFq1FsqHHnTJvEPr",
+      "tiempo_llm_s": 49.7,
+      "tokens": {
+        "input": 25,
+        "output": 8464,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.1177,
+      "intentos": 1,
+      "lineas_agregadas": 45,
+      "lineas_eliminadas": 34,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "tcpclient_run1",
+      "modulo": "tcpclient",
+      "corrida": 1,
+      "carbono": {
+        "llm": {
+          "duracion_s": 46.531753916991875,
+          "energia_kwh": 6.544534436086135e-05,
+          "energia_traza_kwh": 6.534827167519559e-05,
+          "emisiones_kg": 1.6983786760431472e-05,
+          "emisiones_traza_kg": 1.6958595330701663e-05,
+          "potencia_pico_w": 23.0,
+          "potencia_media_traza_w": 5.06651815166443,
+          "n_muestras": 447
+        },
+        "tests": {
+          "duracion_s": 19.137450166977942,
+          "energia_kwh": 2.7386296876184997e-05,
+          "energia_traza_kwh": 2.6728343099751723e-05,
+          "emisiones_kg": 7.107045288635701e-06,
+          "emisiones_traza_kg": 6.936299046159724e-06,
+          "potencia_pico_w": 6.471437072,
+          "potencia_media_traza_w": 5.046021199478261,
+          "n_muestras": 184
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1EHwn59HQS7ENsVftXg",
+      "tiempo_llm_s": 46.5,
+      "tokens": {
+        "input": 28,
+        "output": 8200,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.1151,
+      "intentos": 1,
+      "lineas_agregadas": 95,
+      "lineas_eliminadas": 64,
+      "sin_cambios": false,
+      "cambios_api_publica": [
+        "eliminado import Tuple"
+      ],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "tcpclient_run2",
+      "modulo": "tcpclient",
+      "corrida": 2,
+      "carbono": {
+        "llm": {
+          "duracion_s": 44.75036591599928,
+          "energia_kwh": 6.529789451881858e-05,
+          "energia_traza_kwh": 6.330525456905613e-05,
+          "emisiones_kg": 1.694552190447318e-05,
+          "emisiones_traza_kg": 1.6428409918470376e-05,
+          "potencia_pico_w": 23.0,
+          "potencia_media_traza_w": 5.095329397860789,
+          "n_muestras": 431
+        },
+        "tests": {
+          "duracion_s": 18.86478054098552,
+          "energia_kwh": 3.0145905582572557e-05,
+          "energia_traza_kwh": 2.798245954133346e-05,
+          "emisiones_kg": 7.823194103638987e-06,
+          "emisiones_traza_kg": 7.261756058030989e-06,
+          "potencia_pico_w": 12.294031999999998,
+          "potencia_media_traza_w": 5.344980346241758,
+          "n_muestras": 182
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1ENmve8eDijd2TCnmo8",
+      "tiempo_llm_s": 44.8,
+      "tokens": {
+        "input": 28,
+        "output": 8050,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.1136,
+      "intentos": 1,
+      "lineas_agregadas": 97,
+      "lineas_eliminadas": 56,
+      "sin_cambios": false,
+      "cambios_api_publica": [
+        "eliminado import Tuple"
+      ],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "tcpclient_run3",
+      "modulo": "tcpclient",
+      "corrida": 3,
+      "carbono": {
+        "llm": {
+          "duracion_s": 50.71660099999281,
+          "energia_kwh": 7.11692208491487e-05,
+          "energia_traza_kwh": 7.059358740247016e-05,
+          "emisiones_kg": 1.846919567178348e-05,
+          "emisiones_traza_kg": 1.8319812460402485e-05,
+          "potencia_pico_w": 5.541444158,
+          "potencia_media_traza_w": 5.020792064973306,
+          "n_muestras": 487
+        },
+        "tests": {
+          "duracion_s": 18.877354500000365,
+          "energia_kwh": 2.648294111619624e-05,
+          "energia_traza_kwh": 2.6294198748799336e-05,
+          "emisiones_kg": 6.872614532005251e-06,
+          "emisiones_traza_kg": 6.823633811499712e-06,
+          "potencia_pico_w": 5.541444158,
+          "potencia_media_traza_w": 5.019388966519337,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1ETU7D1jhJgK9nT3tBs",
+      "tiempo_llm_s": 50.7,
+      "tokens": {
+        "input": 28,
+        "output": 9031,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.1234,
+      "intentos": 1,
+      "lineas_agregadas": 130,
+      "lineas_eliminadas": 72,
+      "sin_cambios": false,
+      "cambios_api_publica": [
+        "eliminado import Tuple"
+      ],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "util_run1",
+      "modulo": "util",
+      "corrida": 1,
+      "carbono": {
+        "llm": {
+          "duracion_s": 54.17332816700218,
+          "energia_kwh": 7.60562273370625e-05,
+          "energia_traza_kwh": 7.574510830726623e-05,
+          "emisiones_kg": 1.973742761246847e-05,
+          "emisiones_traza_kg": 1.965668880192701e-05,
+          "potencia_pico_w": 7.834352000000001,
+          "potencia_media_traza_w": 5.033658647888462,
+          "n_muestras": 520
+        },
+        "tests": {
+          "duracion_s": 18.453725250030402,
+          "energia_kwh": 2.604689610228618e-05,
+          "energia_traza_kwh": 2.5823592775318614e-05,
+          "emisiones_kg": 6.759456054400361e-06,
+          "emisiones_traza_kg": 6.701506384715681e-06,
+          "potencia_pico_w": 7.25,
+          "potencia_media_traza_w": 5.041965635050848,
+          "n_muestras": 177
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1EYbu9z7SK4V6fs2Afu",
+      "tiempo_llm_s": 54.2,
+      "tokens": {
+        "input": 24,
+        "output": 10275,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.1359,
+      "intentos": 1,
+      "lineas_agregadas": 45,
+      "lineas_eliminadas": 21,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "util_run2",
+      "modulo": "util",
+      "corrida": 2,
+      "carbono": {
+        "llm": {
+          "duracion_s": 55.034343542007264,
+          "energia_kwh": 7.709834569507353e-05,
+          "energia_traza_kwh": 7.679114496628375e-05,
+          "emisiones_kg": 2.0007868789674262e-05,
+          "emisiones_traza_kg": 1.9928146821345293e-05,
+          "potencia_pico_w": 7.444341392,
+          "potencia_media_traza_w": 5.028953126478179,
+          "n_muestras": 527
+        },
+        "tests": {
+          "duracion_s": 18.79511254199315,
+          "energia_kwh": 2.6163808499810558e-05,
+          "energia_traza_kwh": 2.610895373560525e-05,
+          "emisiones_kg": 6.789796107594336e-06,
+          "emisiones_traza_kg": 6.775560692880653e-06,
+          "potencia_pico_w": 5.28125,
+          "potencia_media_traza_w": 5.0136201565,
+          "n_muestras": 180
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1EdxNrSLhCJ5FzogLMK",
+      "tiempo_llm_s": 55.0,
+      "tokens": {
+        "input": 24,
+        "output": 10451,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.1376,
+      "intentos": 1,
+      "lineas_agregadas": 58,
+      "lineas_eliminadas": 33,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "util_run3",
+      "modulo": "util",
+      "corrida": 3,
+      "carbono": {
+        "llm": {
+          "duracion_s": 54.51432499999646,
+          "energia_kwh": 7.662558423050716e-05,
+          "energia_traza_kwh": 7.604187399870332e-05,
+          "emisiones_kg": 1.9885181989243096e-05,
+          "emisiones_traza_kg": 1.973370276327745e-05,
+          "potencia_pico_w": 6.596897648000001,
+          "potencia_media_traza_w": 5.030663737930902,
+          "n_muestras": 521
+        },
+        "tests": {
+          "duracion_s": 18.653606250009034,
+          "energia_kwh": 2.7702734982976065e-05,
+          "energia_traza_kwh": 2.6406099555531287e-05,
+          "emisiones_kg": 7.189164458167138e-06,
+          "emisiones_traza_kg": 6.8526733017555145e-06,
+          "potencia_pico_w": 8.927009744,
+          "potencia_media_traza_w": 5.108887642949721,
+          "n_muestras": 179
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1EjQjm7YCBkmGRrA6dc",
+      "tiempo_llm_s": 54.5,
+      "tokens": {
+        "input": 24,
+        "output": 10255,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.1357,
+      "intentos": 1,
+      "lineas_agregadas": 52,
+      "lineas_eliminadas": 29,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "httputil_run1",
+      "modulo": "httputil",
+      "corrida": 1,
+      "carbono": {
+        "llm": {
+          "duracion_s": 159.6336054999847,
+          "energia_kwh": 0.00022184406083561748,
+          "energia_traza_kwh": 0.00022164680819709132,
+          "emisiones_kg": 5.757097407151199e-05,
+          "emisiones_traza_kg": 5.7519784842035426e-05,
+          "potencia_pico_w": 5.425518254,
+          "potencia_media_traza_w": 5.001787860133245,
+          "n_muestras": 1501
+        },
+        "tests": {
+          "duracion_s": 19.01316562498687,
+          "energia_kwh": 2.6472395434720165e-05,
+          "energia_traza_kwh": 2.692082745385214e-05,
+          "emisiones_kg": 6.869877811659683e-06,
+          "emisiones_traza_kg": 6.986250853376641e-06,
+          "potencia_pico_w": 23.0,
+          "potencia_media_traza_w": 5.1050792505423725,
+          "n_muestras": 177
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1EpoKT4iyhqx2MbZw1h",
+      "tiempo_llm_s": 159.6,
+      "tokens": {
+        "input": 26,
+        "output": 26223,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.2953,
+      "intentos": 1,
+      "lineas_agregadas": 191,
+      "lineas_eliminadas": 154,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "httputil_run2",
+      "modulo": "httputil",
+      "corrida": 2,
+      "carbono": {
+        "llm": {
+          "duracion_s": 136.17000066599576,
+          "energia_kwh": 0.00018936074344167364,
+          "energia_traza_kwh": 0.0001891928723446079,
+          "emisiones_kg": 4.914119589129217e-05,
+          "emisiones_traza_kg": 4.909763149502154e-05,
+          "potencia_pico_w": 7.25,
+          "potencia_media_traza_w": 5.004540179904988,
+          "n_muestras": 1263
+        },
+        "tests": {
+          "duracion_s": 19.07993870903738,
+          "energia_kwh": 2.654851733498685e-05,
+          "energia_traza_kwh": 2.638130483817402e-05,
+          "emisiones_kg": 6.889632282119722e-06,
+          "emisiones_traza_kg": 6.846238799859328e-06,
+          "potencia_pico_w": 5.065740752,
+          "potencia_media_traza_w": 5.001940425016949,
+          "n_muestras": 177
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1F3z3yfun1YAYbzQCC6",
+      "tiempo_llm_s": 136.2,
+      "tokens": {
+        "input": 26,
+        "output": 24328,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.2764,
+      "intentos": 1,
+      "lineas_agregadas": 184,
+      "lineas_eliminadas": 137,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "httputil_run3",
+      "modulo": "httputil",
+      "corrida": 3,
+      "carbono": {
+        "llm": {
+          "duracion_s": 133.6519007080351,
+          "energia_kwh": 0.00018567691586186298,
+          "energia_traza_kwh": 0.00018560245679668535,
+          "emisiones_kg": 4.8185202112227955e-05,
+          "emisiones_traza_kg": 4.816587916576464e-05,
+          "potencia_pico_w": 5.189062262,
+          "potencia_media_traza_w": 5.000750683980661,
+          "n_muestras": 1241
+        },
+        "tests": {
+          "duracion_s": 19.021558707987424,
+          "energia_kwh": 2.646904354161421e-05,
+          "energia_traza_kwh": 2.6324496456949512e-05,
+          "emisiones_kg": 6.8690079585278846e-06,
+          "emisiones_traza_kg": 6.831496400039464e-06,
+          "potencia_pico_w": 5.164327922,
+          "potencia_media_traza_w": 5.003532587340909,
+          "n_muestras": 176
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1FFRzFPbKmDF38jmzWV",
+      "tiempo_llm_s": 133.7,
+      "tokens": {
+        "input": 26,
+        "output": 24098,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.2741,
+      "intentos": 1,
+      "lineas_agregadas": 193,
+      "lineas_eliminadas": 142,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "iostream_run1",
+      "modulo": "iostream",
+      "corrida": 1,
+      "carbono": {
+        "llm": {
+          "duracion_s": 168.4309660839499,
+          "energia_kwh": 0.00023416344924682975,
+          "energia_traza_kwh": 0.00023393773879638413,
+          "emisiones_kg": 6.076799087749408e-05,
+          "emisiones_traza_kg": 6.070941653278849e-05,
+          "potencia_pico_w": 5.342614934,
+          "potencia_media_traza_w": 5.001894510399232,
+          "n_muestras": 1563
+        },
+        "tests": {
+          "duracion_s": 19.054539208009373,
+          "energia_kwh": 2.6518491098667923e-05,
+          "energia_traza_kwh": 2.645326027663307e-05,
+          "emisiones_kg": 6.881840143506445e-06,
+          "emisiones_traza_kg": 6.864912027649358e-06,
+          "potencia_pico_w": 5.312731622,
+          "potencia_media_traza_w": 5.006290049886363,
+          "n_muestras": 176
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1FSm61WPebY4qiAkEsD",
+      "tiempo_llm_s": 168.4,
+      "tokens": {
+        "input": 26,
+        "output": 32013,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.3532,
+      "intentos": 1,
+      "lineas_agregadas": 240,
+      "lineas_eliminadas": 177,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "iostream_run2",
+      "modulo": "iostream",
+      "corrida": 2,
+      "carbono": {
+        "llm": {
+          "duracion_s": 149.52012941701105,
+          "energia_kwh": 0.00020771763584573983,
+          "energia_traza_kwh": 0.000207573359765802,
+          "emisiones_kg": 5.390501139596374e-05,
+          "emisiones_traza_kg": 5.386757016618299e-05,
+          "potencia_pico_w": 5.144,
+          "potencia_media_traza_w": 5.000795427005054,
+          "n_muestras": 1385
+        },
+        "tests": {
+          "duracion_s": 19.03693383303471,
+          "energia_kwh": 2.647984338385043e-05,
+          "energia_traza_kwh": 2.6450357578476177e-05,
+          "emisiones_kg": 6.8718106363864495e-06,
+          "emisiones_traza_kg": 6.864158745547972e-06,
+          "potencia_pico_w": 5.064468386,
+          "potencia_media_traza_w": 5.002293672602272,
+          "n_muestras": 176
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1FgWHuWAgiEas5SukGz",
+      "tiempo_llm_s": 149.5,
+      "tokens": {
+        "input": 26,
+        "output": 29247,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.3256,
+      "intentos": 1,
+      "lineas_agregadas": 283,
+      "lineas_eliminadas": 218,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "iostream_run3",
+      "modulo": "iostream",
+      "corrida": 3,
+      "carbono": {
+        "llm": {
+          "duracion_s": 147.20691558299586,
+          "energia_kwh": 0.00020656009223562165,
+          "energia_traza_kwh": 0.00020546879021285285,
+          "emisiones_kg": 5.360461609615853e-05,
+          "emisiones_traza_kg": 5.332141121692778e-05,
+          "potencia_pico_w": 23.0,
+          "potencia_media_traza_w": 5.025393452804395,
+          "n_muestras": 1365
+        },
+        "tests": {
+          "duracion_s": 18.86132720898604,
+          "energia_kwh": 2.652306392347207e-05,
+          "energia_traza_kwh": 2.6212296503918995e-05,
+          "emisiones_kg": 6.883026841844131e-06,
+          "emisiones_traza_kg": 6.802379278028494e-06,
+          "potencia_pico_w": 5.421085808000001,
+          "potencia_media_traza_w": 5.016672434724137,
+          "n_muestras": 174
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1FtwJeELFohGYkCwu6s",
+      "tiempo_llm_s": 147.2,
+      "tokens": {
+        "input": 26,
+        "output": 28897,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.3221,
+      "intentos": 1,
+      "lineas_agregadas": 219,
+      "lineas_eliminadas": 163,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "web_run1",
+      "modulo": "web",
+      "corrida": 1,
+      "carbono": {
+        "llm": {
+          "duracion_s": 318.4725834999699,
+          "energia_kwh": 0.00044625970024899427,
+          "energia_traza_kwh": 0.0004448757020440977,
+          "emisiones_kg": 0.00011580930107131667,
+          "emisiones_traza_kg": 0.00011545013831316577,
+          "potencia_pico_w": 23.0,
+          "potencia_media_traza_w": 5.02978317407528,
+          "n_muestras": 2949
+        },
+        "tests": {
+          "duracion_s": 19.1274201250053,
+          "energia_kwh": 2.660469393781558e-05,
+          "energia_traza_kwh": 2.646963729782083e-05,
+          "emisiones_kg": 6.904210728496353e-06,
+          "emisiones_traza_kg": 6.8691620447946755e-06,
+          "potencia_pico_w": 5.06702975,
+          "potencia_media_traza_w": 5.002954971525424,
+          "n_muestras": 177
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1G7BeRw5whZzaaBJFrF",
+      "tiempo_llm_s": 318.5,
+      "tokens": {
+        "input": 24,
+        "output": 65155,
+        "cache_write": 0,
+        "cache_read": 330535
+      },
+      "costo_usd": 0.6847,
+      "intentos": 1,
+      "lineas_agregadas": 275,
+      "lineas_eliminadas": 189,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "web_run2",
+      "modulo": "web",
+      "corrida": 2,
+      "carbono": {
+        "llm": {
+          "duracion_s": 335.8357749590068,
+          "energia_kwh": 0.0004675865604370404,
+          "energia_traza_kwh": 0.0004669761089313223,
+          "emisiones_kg": 0.00012134385588557692,
+          "emisiones_traza_kg": 0.00012118543700487651,
+          "potencia_pico_w": 7.710237824,
+          "potencia_media_traza_w": 5.006925993079691,
+          "n_muestras": 3112
+        },
+        "tests": {
+          "duracion_s": 19.04544966702815,
+          "energia_kwh": 2.650508783229137e-05,
+          "energia_traza_kwh": 2.6365286221664336e-05,
+          "emisiones_kg": 6.8783618484458305e-06,
+          "emisiones_traza_kg": 6.842081792670398e-06,
+          "potencia_pico_w": 5.104976000000001,
+          "potencia_media_traza_w": 5.003424280113636,
+          "n_muestras": 176
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1GY5CSZVkMarawe8Py1",
+      "tiempo_llm_s": 335.8,
+      "tokens": {
+        "input": 24,
+        "output": 67973,
+        "cache_write": 330535,
+        "cache_read": 0
+      },
+      "costo_usd": 1.5061,
+      "intentos": 1,
+      "lineas_agregadas": 361,
+      "lineas_eliminadas": 260,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "web_run3",
+      "modulo": "web",
+      "corrida": 3,
+      "carbono": {
+        "llm": {
+          "duracion_s": 323.7454352910281,
+          "energia_kwh": 0.00045132786820498583,
+          "energia_traza_kwh": 0.000450644107715284,
+          "emisiones_kg": 0.00011712454640574414,
+          "emisiones_traza_kg": 0.00011694710303730111,
+          "potencia_pico_w": 23.0,
+          "potencia_media_traza_w": 5.012189429101932,
+          "n_muestras": 3002
+        },
+        "tests": {
+          "duracion_s": 19.05633279099129,
+          "energia_kwh": 2.651172173174371e-05,
+          "energia_traza_kwh": 2.635691866457064e-05,
+          "emisiones_kg": 6.880083418326624e-06,
+          "emisiones_traza_kg": 6.839910319561473e-06,
+          "potencia_pico_w": 5.28125,
+          "potencia_media_traza_w": 5.005106850159091,
+          "n_muestras": 176
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch1GzEQYSMEb1dNVCMnkS",
+      "tiempo_llm_s": 323.7,
+      "tokens": {
+        "input": 24,
+        "output": 66304,
+        "cache_write": 330535,
+        "cache_read": 0
+      },
+      "costo_usd": 1.4894,
+      "intentos": 1,
+      "lineas_agregadas": 339,
+      "lineas_eliminadas": 253,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    }
+  ]
+}

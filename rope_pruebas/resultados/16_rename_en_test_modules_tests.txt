@@ -5,7 +5,7 @@ ERROR: doctests (unittest.loader._FailedTest.doctests)
 AttributeError: module 'tornado.httputil' has no attribute 'doctests'
 
 ----------------------------------------------------------------------
-Ran 1523 tests in 18.274s
+Ran 1523 tests in 18.795s
 
 FAILED (errors=1, skipped=111)
 Some tests were skipped because: API snapshot is generated on linux

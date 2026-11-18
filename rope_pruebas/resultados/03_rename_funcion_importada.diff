@@ -1,50 +1,5 @@
-Renaming <is_valid_ip> to <is_ip_address> - today 10:25:26 :
+Renaming <is_valid_ip> to <is_ip_address> - today 09:48:15 :
 
-
---- a/tornado/netutil.py
-+++ b/tornado/netutil.py
-@@ -309,7 +309,7 @@
-     return remove_handler
- 
- 
--def is_valid_ip(ip: str) -> bool:
-+def is_ip_address(ip: str) -> bool:
-     """Returns ``True`` if the given string is a well-formed IP address.
- 
-     Supports IPv4 and IPv6.
-
---- a/tornado/simple_httpclient.py
-+++ b/tornado/simple_httpclient.py
-@@ -31,7 +31,7 @@
-     OverrideResolver,
-     Resolver,
-     _client_ssl_defaults,
--    is_valid_ip,
-+    is_ip_address,
- )
- from tornado.tcpclient import TCPClient
- 
-@@ -307,7 +307,7 @@
- 
-             source_ip = None
-             if self.request.network_interface:
--                if is_valid_ip(self.request.network_interface):
-+                if is_ip_address(self.request.network_interface):
-                     source_ip = self.request.network_interface
-                 else:
-                     raise ValueError(
-
---- a/tornado/httpserver.py
-+++ b/tornado/httpserver.py
-@@ -347,7 +347,7 @@
-             if ip not in self.trusted_downstream:
-                 break
-         ip = headers.get("X-Real-Ip", ip)
--        if netutil.is_valid_ip(ip):
-+        if netutil.is_ip_address(ip):
-             self.remote_ip = ip
-         # AWS uses X-Forwarded-Proto
-         proto_header = headers.get(
 
 --- a/tornado/test/netutil_test.py
 +++ b/tornado/test/netutil_test.py
@@ -91,6 +46,18 @@ Renaming <is_valid_ip> to <is_ip_address> - today 10:25:26 :
  
  class TestPortAllocation(TestCase):
 
+--- a/tornado/httpserver.py
++++ b/tornado/httpserver.py
+@@ -347,7 +347,7 @@
+             if ip not in self.trusted_downstream:
+                 break
+         ip = headers.get("X-Real-Ip", ip)
+-        if netutil.is_valid_ip(ip):
++        if netutil.is_ip_address(ip):
+             self.remote_ip = ip
+         # AWS uses X-Forwarded-Proto
+         proto_header = headers.get(
+
 --- a/tornado/platform/caresresolver.py
 +++ b/tornado/platform/caresresolver.py
 @@ -8,7 +8,7 @@
@@ -111,4 +78,37 @@ Renaming <is_valid_ip> to <is_ip_address> - today 10:25:26 :
              addresses = [host]
          else:
              # gethostbyname doesn't take callback as a kwarg
+
+--- a/tornado/simple_httpclient.py
++++ b/tornado/simple_httpclient.py
+@@ -31,7 +31,7 @@
+     OverrideResolver,
+     Resolver,
+     _client_ssl_defaults,
+-    is_valid_ip,
++    is_ip_address,
+ )
+ from tornado.tcpclient import TCPClient
+ 
+@@ -307,7 +307,7 @@
+ 
+             source_ip = None
+             if self.request.network_interface:
+-                if is_valid_ip(self.request.network_interface):
++                if is_ip_address(self.request.network_interface):
+                     source_ip = self.request.network_interface
+                 else:
+                     raise ValueError(
+
+--- a/tornado/netutil.py
++++ b/tornado/netutil.py
+@@ -309,7 +309,7 @@
+     return remove_handler
+ 
+ 
+-def is_valid_ip(ip: str) -> bool:
++def is_ip_address(ip: str) -> bool:
+     """Returns ``True`` if the given string is a well-formed IP address.
+ 
+     Supports IPv4 and IPv6.
 

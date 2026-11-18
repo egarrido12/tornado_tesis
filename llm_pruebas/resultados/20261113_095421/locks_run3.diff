@@ -1,0 +1,126 @@
+--- a/tornado/locks.py
++++ b/tornado/locks.py
+@@ -15,7 +15,7 @@
+ import collections
+ import datetime
+ import types
+-from collections.abc import Awaitable
++from collections.abc import Awaitable, Callable
+ from typing import Any, Optional, Type
+ 
+ from tornado import gen, ioloop
+@@ -45,6 +45,29 @@
+             self._timeouts = 0
+             self._waiters = collections.deque(w for w in self._waiters if not w.done())
+ 
++    def _expire_waiter_after(
++        self,
++        waiter: Future[Any],
++        timeout: float | datetime.timedelta,
++        on_expire: Callable[[], None],
++    ) -> None:
++        """Arranges for ``on_expire`` to run if ``waiter`` is still pending
++        when ``timeout`` elapses.
++
++        The timeout is cancelled as soon as ``waiter`` completes. Whether or
++        not ``on_expire`` was needed, an expiry triggers a garbage collection
++        pass over the waiters.
++        """
++
++        def on_timeout() -> None:
++            if not waiter.done():
++                on_expire()
++            self._garbage_collect()
++
++        io_loop = ioloop.IOLoop.current()
++        timeout_handle = io_loop.add_timeout(timeout, on_timeout)
++        waiter.add_done_callback(lambda _: io_loop.remove_timeout(timeout_handle))
++
+ 
+ class Condition(_TimeoutGarbageCollector):
+     """A condition allows one or more coroutines to wait until notified.
+@@ -127,27 +150,23 @@
+         waiter: Future[bool] = Future()
+         self._waiters.append(waiter)
+         if timeout is not None:
+-
+-            def on_timeout() -> None:
+-                if not waiter.done():
+-                    future_set_result_unless_cancelled(waiter, False)
+-                self._garbage_collect()
+-
+-            io_loop = ioloop.IOLoop.current()
+-            timeout_handle = io_loop.add_timeout(timeout, on_timeout)
+-            waiter.add_done_callback(lambda _: io_loop.remove_timeout(timeout_handle))
++            self._expire_waiter_after(
++                waiter,
++                timeout,
++                lambda: future_set_result_unless_cancelled(waiter, False),
++            )
+         return waiter
+ 
+     def notify(self, n: int = 1) -> None:
+         """Wake ``n`` waiters."""
+-        waiters = []  # Waiters we plan to run right now.
++        waiters_to_wake = []  # Waiters we plan to run right now.
+         while n and self._waiters:
+             waiter = self._waiters.popleft()
+             if not waiter.done():  # Might have timed out.
+                 n -= 1
+-                waiters.append(waiter)
+-
+-        for waiter in waiters:
++                waiters_to_wake.append(waiter)
++
++        for waiter in waiters_to_wake:
+             future_set_result_unless_cancelled(waiter, True)
+ 
+     def notify_all(self) -> None:
+@@ -245,18 +264,18 @@
+             fut.set_result(None)
+             return fut
+         self._waiters.add(fut)
+-        fut.add_done_callback(lambda fut: self._waiters.remove(fut))
++        fut.add_done_callback(lambda done_fut: self._waiters.remove(done_fut))
+         if timeout is None:
+             return fut
+-        else:
+-            timeout_fut = gen.with_timeout(timeout, fut)
+-            # This is a slightly clumsy workaround for the fact that
+-            # gen.with_timeout doesn't cancel its futures. Cancelling
+-            # fut will remove it from the waiters list.
+-            timeout_fut.add_done_callback(
+-                lambda tf: fut.cancel() if not fut.done() else None
+-            )
+-            return timeout_fut
++
++        timeout_fut = gen.with_timeout(timeout, fut)
++        # This is a slightly clumsy workaround for the fact that
++        # gen.with_timeout doesn't cancel its futures. Cancelling
++        # fut will remove it from the waiters list.
++        timeout_fut.add_done_callback(
++            lambda tf: fut.cancel() if not fut.done() else None
++        )
++        return timeout_fut
+ 
+ 
+ class _ReleasingContextManager:
+@@ -434,16 +453,8 @@
+         else:
+             self._waiters.append(waiter)
+             if timeout is not None:
+-
+-                def on_timeout() -> None:
+-                    if not waiter.done():
+-                        waiter.set_exception(TimeoutError())
+-                    self._garbage_collect()
+-
+-                io_loop = ioloop.IOLoop.current()
+-                timeout_handle = io_loop.add_timeout(timeout, on_timeout)
+-                waiter.add_done_callback(
+-                    lambda _: io_loop.remove_timeout(timeout_handle)
++                self._expire_waiter_after(
++                    waiter, timeout, lambda: waiter.set_exception(TimeoutError())
+                 )
+         return waiter
+ 

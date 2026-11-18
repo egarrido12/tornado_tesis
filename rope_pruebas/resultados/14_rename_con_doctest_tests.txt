@@ -24,7 +24,7 @@ Exception raised:
 
 
 ----------------------------------------------------------------------
-Ran 1535 tests in 18.375s
+Ran 1535 tests in 18.665s
 
 FAILED (failures=1, skipped=111)
 Some tests were skipped because: API snapshot is generated on linux

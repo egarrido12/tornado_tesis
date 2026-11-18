@@ -469,8 +469,6 @@
 ### `url_concat` (20 ocurrencias)
 
 - `tornado/httputil.py:801`
-- `tornado/test/auth_test.py:18`
-- `tornado/test/auth_test.py:513`
 - `tornado/auth.py:83`
 - `tornado/auth.py:409`
 - `tornado/auth.py:431`
@@ -488,13 +486,11 @@
 - `tornado/test/httputil_test.py:83`
 - `tornado/test/httputil_test.py:87`
 - `tornado/test/httputil_test.py:91`
+- `tornado/test/auth_test.py:18`
+- `tornado/test/auth_test.py:513`
 
 ### `is_valid_ip` (20 ocurrencias)
 
-- `tornado/netutil.py:312`
-- `tornado/simple_httpclient.py:34`
-- `tornado/simple_httpclient.py:310`
-- `tornado/httpserver.py:350`
 - `tornado/test/netutil_test.py:15`
 - `tornado/test/netutil_test.py:181`
 - `tornado/test/netutil_test.py:182`
@@ -509,8 +505,12 @@
 - `tornado/test/netutil_test.py:191`
 - `tornado/test/netutil_test.py:192`
 - `tornado/test/netutil_test.py:193`
+- `tornado/httpserver.py:350`
 - `tornado/platform/caresresolver.py:11`
 - `tornado/platform/caresresolver.py:65`
+- `tornado/simple_httpclient.py:34`
+- `tornado/simple_httpclient.py:310`
+- `tornado/netutil.py:312`
 
 ### `Configurable` (26 ocurrencias)
 
@@ -519,6 +519,16 @@
 - `tornado/ioloop.py:168`
 - `tornado/ioloop.py:346`
 - `tornado/ioloop.py:350`
+- `tornado/httpclient.py:56`
+- `tornado/httpclient.py:139`
+- `tornado/httpclient.py:181`
+- `tornado/httpclient.py:185`
+- `tornado/test/util_test.py:13`
+- `tornado/test/util_test.py:165`
+- `tornado/httpserver.py:38`
+- `tornado/httpserver.py:41`
+- `tornado/httpserver.py:204`
+- `tornado/httpserver.py:208`
 - `tornado/util.py:304`
 - `tornado/util.py:339`
 - `tornado/util.py:363`
@@ -530,16 +540,6 @@
 - `tornado/util.py:430`
 - `tornado/netutil.py:32`
 - `tornado/netutil.py:339`
-- `tornado/httpserver.py:38`
-- `tornado/httpserver.py:41`
-- `tornado/httpserver.py:204`
-- `tornado/httpserver.py:208`
-- `tornado/httpclient.py:56`
-- `tornado/httpclient.py:139`
-- `tornado/httpclient.py:181`
-- `tornado/httpclient.py:185`
-- `tornado/test/util_test.py:13`
-- `tornado/test/util_test.py:165`
 
 ### `_try_inline_read` (6 ocurrencias)
 

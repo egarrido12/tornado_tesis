@@ -105,6 +105,16 @@ Se crea **un solo** `OfflineEmissionsTracker` para todo el experimento, porque s
 | `rope` | `funcion(proyecto)` (calcular los cambios) + `proyecto.do(cambios)` (escribirlos). **No** incluye copiar el proyecto ni abrirlo. | 5 por refactorización |
 | `tests` (refactorización) | una corrida de la suite sobre la copia refactorizada | 1 |
 
+#### Medición durante la ejecución (traza de 0,1 s)
+
+**Problema:** dentro de una *task*, CodeCarbon calcula la energía **una sola vez, al llamar a `stop_task`**, con la carga media de un monitor que muestrea cada 1 s. Se obtiene el total "después de la ejecución", pero no se ve qué pasó durante ella, y una operación de menos de 1 s casi no deja muestras.
+
+**Solución:** el módulo [`carbono_traza.py`](carbono_traza.py) (clase `Medidor`, compartida con `../llm_pruebas/`) envuelve el tracker y, mientras corre cada fase, lanza un hilo que **cada 0,1 s** lee la carga de CPU de todo el equipo y calcula la potencia instantánea con el mismo modelo que CodeCarbon usa en este Mac (`P_cpu = TDP × (0,1 + 0,9 × carga³)` y `P_ram = 3 W`). La energía de la fase es la integral de esas muestras. Cada muestra se guarda en `resultados/traza_carbono.csv` (fase, tiempo, carga, potencia, energía y emisiones acumuladas), y en `carbono.csv` y `resumen.md` quedan columnas nuevas: muestras, energía de la traza y **pico de potencia**.
+
+**Validación cruzada:** la traza integrada da **0,619 Wh** para todo el experimento y CodeCarbon **0,631 Wh** (diferencia ≈ 2 %).
+
+**Límite:** 15 de las 91 operaciones de Rope duran menos de 0,1 s (las extracciones 07, 08 y 10 y el rechazo 09), así que **no dejan ninguna muestra**: su curva no existe y su energía es prácticamente cero. Las demás tienen entre 1 y 8 muestras por operación.
+
 Configuración de CodeCarbon y por qué:
 
 | Parámetro | Valor | Motivo |
@@ -136,7 +146,8 @@ rope_pruebas/
 └── resultados/
     ├── resumen.md               ← tabla resumen + carbono (se genera sola)
     ├── resumen.json             ← los mismos datos en JSON (para gráficos o tablas de la tesis)
-    ├── carbono.csv              ← una fila por medición de CodeCarbon (112 filas)
+    ├── carbono.csv              ← una fila por medición de CodeCarbon (114 filas)
+    ├── traza_carbono.csv        ← potencia cada 0,1 s durante cada fase (~4 000 filas)
     ├── 00_linea_base_tests.txt  ← salida completa de la suite en la línea base
     ├── 01_analisis_estatico.md  ← resultados de find_errors / find_occurrences / find_definition
     ├── NN_<nombre>.diff         ← cambios exactos que hizo Rope
@@ -333,45 +344,47 @@ Datos completos en [`resultados/carbono.csv`](resultados/carbono.csv) (una fila 
 
 | Concepto | Duración (s) | Energía (Wh) | Emisiones (mg CO2eq) | % de la energía |
 |---|---|---|---|---|
-| 91 operaciones de Rope | 73,0 | 0,141 | 36,6 | 19 % |
-| Análisis estático | 1,9 | 0,004 | 1,1 | 1 % |
-| 21 corridas de la suite de tests | 374,0 | 0,589 | 152,7 | 80 % |
-| **Experimento completo** | **448,8** | **0,734** | **190,5** | 100 % |
+| 91 operaciones de Rope | 63,4 | 0,097 | 25,3 | 15 % |
+| Análisis estático | 2,3 | 0,004 | 0,9 | 1 % |
+| 21 corridas de la suite de tests | 377,3 | 0,530 | 137,4 | 84 % |
+| **Experimento completo** | **443,0** | **0,631** | **163,6** | 100 % |
 
-**Todo el experimento emitió ≈ 0,19 g de CO2eq** con la red eléctrica de Colombia (0,73 Wh).
+**Todo el experimento emitió ≈ 0,16 g de CO2eq** con la red eléctrica de Colombia (0,63 Wh).
+
+> Estas cifras son de la **corrida del 2026-11-13**, que repitió el experimento completo con la medición continua (los veredictos de las 19 refactorizaciones salieron idénticos a los de la corrida anterior). Las cifras de energía cambian ligeramente entre corridas (la anterior dio 0,73 Wh) por el ruido de fondo del equipo. Durante esta corrida había otro proyecto con actividad en el mismo Mac (`black_tesis`) y no se verificó en qué momentos exactos; como la medición es de todo el equipo (`machine`), no se puede descartar algo de ruido. Los picos de Rope (máx. 9,6 W) son bajos, así que no se observa una perturbación grande.
 
 ### 6.2 Costo por operación
 
 | Medición | Duración | Energía | Emisiones | Desv. estándar |
 |---|---|---|---|---|
-| Una operación de Rope (media de 91) | 0,80 s | 0,0016 Wh | **0,40 mg CO2eq** | 0,36 mg |
-| Una corrida de la suite (media de 3 en línea base) | 18,4 s | 0,0285 Wh | **7,40 mg CO2eq** | 0,53 mg |
-| Reposo (20 s) | 20,0 s | 0,0316 Wh | 8,21 mg CO2eq | — |
+| Una operación de Rope (media de 91) | 0,70 s | 0,0011 Wh | **0,28 mg CO2eq** | 0,23 mg |
+| Una corrida de la suite (media de 3 en línea base) | 18,4 s | 0,0265 Wh | **6,87 mg CO2eq** | 0,25 mg |
+| Reposo (20 s) | 20,0 s | 0,0279 Wh | 7,24 mg CO2eq | — |
 
 Por tipo de operación de Rope (media de 5 repeticiones, ver `resumen.md`):
 
 | Operación | Tiempo | Emisiones |
 |---|---|---|
-| Rename de función/clase/método (02–05, 13–16, 18) | 0,6 – 1,0 s | 0,25 – 0,6 mg |
-| Rename del método `get` (17) | 2,0 s | 0,86 mg (el más caro; probablemente porque `get` es un nombre muy común y Rope tiene que descartar muchas más candidatas en todo el proyecto) |
-| Rename de módulo (19) | 1,5 s | 0,64 mg |
-| Move (12) | 1,1 s | 0,48 mg |
-| Extract Method (07, 08, 10, 20) | 0,03 – 0,6 s | 0,01 – 0,24 mg |
-| Rechazo (09) | 0,007 s | 0,002 mg |
+| Rename de función/clase/método (02–06, 13–16, 18) | 0,5 – 1,2 s | 0,19 – 0,65 mg |
+| Rename del método `get` (17) | 1,6 s | 0,58 mg (el más lento; probablemente porque `get` es un nombre muy común y Rope tiene que descartar muchas más candidatas en todo el proyecto) |
+| Rename de módulo (19) | 1,4 s | 0,52 mg |
+| Move (12) | 0,9 s | 0,34 mg |
+| Extract Method (07, 08, 10, 20) | 0,03 – 0,6 s | 0,01 – 0,21 mg |
+| Rechazo (09) | 0,006 s | 0,002 mg |
 
 ### 6.3 Interpretación
 
-1. **Verificar cuesta mucho más que refactorizar.** Una corrida de la suite emite unas **18 veces más** que una operación de Rope (7,4 mg frente a 0,4 mg). El 80 % de la energía del experimento se fue en correr tests. Aplicar Rope sin verificar sería casi gratis, pero según la sección 5 eso no es seguro (11 de 19 casos rompen algo).
-2. **La huella absoluta es muy pequeña.** 0,4 mg de CO2eq por refactorización, y 0,19 g para las 19 refactorizaciones con sus 5 repeticiones y todas las verificaciones.
-3. **La energía es, en la práctica, duración × potencia base.** En este equipo, la suite de tests consume en promedio **5,63 W**, prácticamente lo mismo que el equipo **en reposo (5,69 W)**. La suite corre en un solo hilo y espera mucho en E/S (sockets locales), y con el modelo cúbico (`carga³`) un núcleo ocupado de 10 casi no sube la estimación. Rope, que sí usa la CPU de forma intensiva, promedia **6,73 W**, con picos de 18 W. Por eso el consumo es proporcional al tiempo y **reducir el tiempo de la suite es lo que más reduce la huella**.
-4. **El resultado depende del modelo.** La energía neta por encima del reposo es de ≈ 93 J para todas las operaciones de Rope y está dentro del ruido para los tests. Con estimaciones basadas en TDP no se puede separar el consumo de la tarea del consumo de fondo del Mac (VS Code, navegador, etc.), porque el modo `machine` mide todo el equipo.
+1. **Verificar cuesta mucho más que refactorizar.** Una corrida de la suite emite unas **25 veces más** que una operación de Rope (6,9 mg frente a 0,28 mg). El 84 % de la energía del experimento se fue en correr tests. Aplicar Rope sin verificar sería casi gratis, pero según la sección 5 eso no es seguro (11 de 19 casos rompen algo).
+2. **La huella absoluta es muy pequeña.** 0,28 mg de CO2eq por refactorización, y 0,16 g para las 19 refactorizaciones con sus 5 repeticiones y todas las verificaciones.
+3. **La energía es, en la práctica, duración × potencia base.** En este equipo, la suite de tests consume en promedio **5,05 W**, prácticamente lo mismo que el equipo **en reposo (5,02 W)**. La suite corre en un solo hilo y espera mucho en E/S (sockets locales), y con el modelo cúbico (`carga³`) un núcleo ocupado de 10 casi no sube la estimación. Rope promedia **5,53 W**, con un pico de 9,6 W que la traza de 0,1 s sí captura (con el muestreo de 1 s habría pasado desapercibido). Por eso el consumo es proporcional al tiempo y **reducir el tiempo de la suite es lo que más reduce la huella**.
+4. **El resultado depende del modelo.** La energía neta por encima del reposo es de ≈ 32 J para todas las operaciones de Rope y está dentro del ruido para los tests. Con estimaciones basadas en TDP no se puede separar el consumo de la tarea del consumo de fondo del Mac (VS Code, navegador, etc.), porque el modo `machine` mide todo el equipo.
 
 ### 6.4 Limitaciones de la medición
 
 - **Es una estimación, no una medición.** Sin `sudo` no hay acceso a `powermetrics` ni a los contadores RAPL. CodeCarbon infiere la potencia a partir del % de CPU y un TDP de tabla.
-- **Sensibilidad al TDP:** con el TDP genérico de 85 W que CodeCarbon usa por defecto en este equipo (sección 2.3), el experimento completo habría reportado **1,90 Wh y 494 mg CO2eq**, 2,6 veces más. Sin la corrección, las cifras estarían infladas.
+- **Sensibilidad al TDP:** con el TDP genérico de 85 W que CodeCarbon usa por defecto en este equipo (sección 2.3), el experimento completo habría reportado **1,48 Wh y 384 mg CO2eq**, 2,3 veces más. Sin la corrección, las cifras estarían infladas.
 - **La RAM se modela con potencia constante (3 W)**, independientemente del uso real. Es más de la mitad de la potencia estimada en reposo.
-- **Modo `machine`:** incluye cualquier otro proceso del equipo. La medición del reposo (5,69 W) da la referencia de ese ruido de fondo.
+- **Modo `machine`:** incluye cualquier otro proceso del equipo. La medición del reposo (5,02 W) da la referencia de ese ruido de fondo.
 - **Factor de emisión:** 259,5 g/kWh es el promedio anual de la red colombiana en 2023. Con otro país el resultado cambia proporcionalmente: `CODECARBON_PAIS=USA`, `FRA`, etc.
 - **No incluye** la energía de la pantalla, de la fabricación del equipo ni de la red.
 

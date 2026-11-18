@@ -16,7 +16,7 @@ FAIL: test_config_class (tornado.test.util_test.ConfigurableTest.test_config_cla
 Traceback (most recent call last):
   File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/05_rename_clase/tornado/test/util_test.py", line 245, in test_config_class
     self.assertIsInstance(obj, TestConfig2)
-AssertionError: <tornado.test.util_test.TestConfig1 object at 0x105f901a0> is not an instance of <class 'tornado.test.util_test.TestConfig2'>
+AssertionError: <tornado.test.util_test.TestConfig1 object at 0x103ccfce0> is not an instance of <class 'tornado.test.util_test.TestConfig2'>
 
 ======================================================================
 FAIL: test_config_inner_level (tornado.test.util_test.ConfigurableTest.test_config_inner_level)
@@ -24,7 +24,7 @@ FAIL: test_config_inner_level (tornado.test.util_test.ConfigurableTest.test_conf
 Traceback (most recent call last):
   File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/05_rename_clase/tornado/test/util_test.py", line 318, in test_config_inner_level
     self.assertIsInstance(obj, TestConfig3B)
-AssertionError: <tornado.test.util_test.TestConfig3A object at 0x1070c1eb0> is not an instance of <class 'tornado.test.util_test.TestConfig3B'>
+AssertionError: <tornado.test.util_test.TestConfig3A object at 0x103e6c560> is not an instance of <class 'tornado.test.util_test.TestConfig3B'>
 
 ======================================================================
 FAIL: test_config_multi_level (tornado.test.util_test.ConfigurableTest.test_config_multi_level)
@@ -32,7 +32,7 @@ FAIL: test_config_multi_level (tornado.test.util_test.ConfigurableTest.test_conf
 Traceback (most recent call last):
   File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/05_rename_clase/tornado/test/util_test.py", line 301, in test_config_multi_level
     self.assertIsInstance(obj, TestConfig3A)
-AssertionError: <tornado.test.util_test.TestConfig1 object at 0x105fb8a70> is not an instance of <class 'tornado.test.util_test.TestConfig3A'>
+AssertionError: <tornado.test.util_test.TestConfig1 object at 0x103e6cad0> is not an instance of <class 'tornado.test.util_test.TestConfig3A'>
 
 ======================================================================
 FAIL: test_config_str (tornado.test.util_test.ConfigurableTest.test_config_str)
@@ -40,10 +40,10 @@ FAIL: test_config_str (tornado.test.util_test.ConfigurableTest.test_config_str)
 Traceback (most recent call last):
   File "/Users/estebangarrido10/tornado_tesis/rope_pruebas/_trabajo/05_rename_clase/tornado/test/util_test.py", line 257, in test_config_str
     self.assertIsInstance(obj, TestConfig2)
-AssertionError: <tornado.test.util_test.TestConfig1 object at 0x105fb9310> is not an instance of <class 'tornado.test.util_test.TestConfig2'>
+AssertionError: <tornado.test.util_test.TestConfig1 object at 0x103e6c2c0> is not an instance of <class 'tornado.test.util_test.TestConfig2'>
 
 ----------------------------------------------------------------------
-Ran 1535 tests in 18.481s
+Ran 1535 tests in 18.510s
 
 FAILED (failures=4, errors=1, skipped=111)
 Some tests were skipped because: API snapshot is generated on linux

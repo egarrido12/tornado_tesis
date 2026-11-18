@@ -1,41 +1,5 @@
-Renaming <locks> to <sync> - today 10:31:08 :
+Renaming <locks> to <sync> - today 09:53:53 :
 
-
---- a/tornado/test/httpserver_test.py
-+++ b/tornado/test/httpserver_test.py
-@@ -34,7 +34,7 @@
-     ResponseStartLine,
- )
- from tornado.iostream import IOStream, StreamClosedError
--from tornado.locks import Event
-+from tornado.sync import Event
- from tornado.log import app_log, gen_log
- from tornado.simple_httpclient import SimpleAsyncHTTPClient
- from tornado.test.util import (
-
---- a/tornado/test/http1connection_test.py
-+++ b/tornado/test/http1connection_test.py
-@@ -5,7 +5,7 @@
- from tornado.http1connection import HTTP1Connection
- from tornado.httputil import HTTPMessageDelegate
- from tornado.iostream import IOStream
--from tornado.locks import Event
-+from tornado.sync import Event
- from tornado.log import app_log, gen_log
- from tornado.netutil import add_accept_handler
- from tornado.test.util import AsyncTestCase
-
---- a/tornado/test/iostream_test.py
-+++ b/tornado/test/iostream_test.py
-@@ -24,7 +24,7 @@
-     StreamClosedError,
-     _StreamBuffer,
- )
--from tornado.locks import Condition, Event
-+from tornado.sync import Condition, Event
- from tornado.log import gen_log
- from tornado.netutil import ssl_options_to_context, ssl_wrap_socket
- from tornado.platform.asyncio import AddThreadSelectorEventLoop
 
 --- a/tornado/test/locks_test.py
 +++ b/tornado/test/locks_test.py
@@ -394,6 +358,18 @@ Renaming <locks> to <sync> - today 10:31:08 :
  
  
 
+--- a/tornado/test/http1connection_test.py
++++ b/tornado/test/http1connection_test.py
+@@ -5,7 +5,7 @@
+ from tornado.http1connection import HTTP1Connection
+ from tornado.httputil import HTTPMessageDelegate
+ from tornado.iostream import IOStream
+-from tornado.locks import Event
++from tornado.sync import Event
+ from tornado.log import app_log, gen_log
+ from tornado.netutil import add_accept_handler
+ from tornado.test.util import AsyncTestCase
+
 --- a/tornado/test/simple_httpclient_test.py
 +++ b/tornado/test/simple_httpclient_test.py
 @@ -30,7 +30,7 @@
@@ -418,18 +394,6 @@ Renaming <locks> to <sync> - today 10:31:08 :
  from tornado.simple_httpclient import SimpleAsyncHTTPClient
  from tornado.template import DictLoader
 
---- a/tornado/test/testing_test.py
-+++ b/tornado/test/testing_test.py
-@@ -10,7 +10,7 @@
- 
- from tornado import gen
- from tornado.httpserver import HTTPServer
--from tornado.locks import Event
-+from tornado.sync import Event
- import tornado.testing
- from tornado.test.util import AsyncHTTPTestCase, AsyncTestCase, TestCase
- from tornado.testing import bind_unused_port, gen_test
-
 --- a/tornado/test/websocket_test.py
 +++ b/tornado/test/websocket_test.py
 @@ -12,7 +12,7 @@
@@ -441,6 +405,30 @@ Renaming <locks> to <sync> - today 10:31:08 :
  from tornado.log import app_log, gen_log
  from tornado.netutil import Resolver
  from tornado.simple_httpclient import SimpleAsyncHTTPClient
+
+--- a/tornado/test/iostream_test.py
++++ b/tornado/test/iostream_test.py
+@@ -24,7 +24,7 @@
+     StreamClosedError,
+     _StreamBuffer,
+ )
+-from tornado.locks import Condition, Event
++from tornado.sync import Condition, Event
+ from tornado.log import gen_log
+ from tornado.netutil import ssl_options_to_context, ssl_wrap_socket
+ from tornado.platform.asyncio import AddThreadSelectorEventLoop
+
+--- a/tornado/test/httpclient_test.py
++++ b/tornado/test/httpclient_test.py
+@@ -30,7 +30,7 @@
+ 
+ from tornado.escape import utf8, native_str, to_unicode, json_encode, json_decode
+ from tornado import gen, netutil
+-from tornado.locks import Event
++from tornado.sync import Event
+ from tornado.httpclient import (
+     HTTPClient,
+     HTTPError,
 
 --- a/tornado/queues.py
 +++ b/tornado/queues.py
@@ -454,17 +442,29 @@ Renaming <locks> to <sync> - today 10:31:08 :
  _T = TypeVar("_T")
  
 
---- a/tornado/test/httpclient_test.py
-+++ b/tornado/test/httpclient_test.py
-@@ -30,7 +30,7 @@
+--- a/tornado/test/testing_test.py
++++ b/tornado/test/testing_test.py
+@@ -10,7 +10,7 @@
  
- from tornado.escape import utf8, native_str, to_unicode, json_encode, json_decode
- from tornado import gen, netutil
+ from tornado import gen
+ from tornado.httpserver import HTTPServer
 -from tornado.locks import Event
 +from tornado.sync import Event
- from tornado.httpclient import (
-     HTTPClient,
-     HTTPError,
+ import tornado.testing
+ from tornado.test.util import AsyncHTTPTestCase, AsyncTestCase, TestCase
+ from tornado.testing import bind_unused_port, gen_test
+
+--- a/tornado/test/httpserver_test.py
++++ b/tornado/test/httpserver_test.py
+@@ -34,7 +34,7 @@
+     ResponseStartLine,
+ )
+ from tornado.iostream import IOStream, StreamClosedError
+-from tornado.locks import Event
++from tornado.sync import Event
+ from tornado.log import app_log, gen_log
+ from tornado.simple_httpclient import SimpleAsyncHTTPClient
+ from tornado.test.util import (
 
 rename from tornado/locks.py
 rename to tornado/sync.py

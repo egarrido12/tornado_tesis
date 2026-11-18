@@ -1,0 +1,187 @@
+--- a/tornado/util.py
++++ b/tornado/util.py
+@@ -77,6 +77,9 @@
+        stream that ends partway through a member.
+     """
+ 
++    # The two bytes that start every gzip member.
++    _GZIP_MAGIC = b"\x1f\x8b"
++
+     def __init__(self) -> None:
+         # The decompressor for the member currently being read. It is None
+         # before the first member and between members, which are the only
+@@ -98,6 +101,14 @@
+         # This works on cpython and pypy, but not jython.
+         return zlib.decompressobj(16 + zlib.MAX_WBITS)
+ 
++    @classmethod
++    def _check_member_start(cls, value: bytes) -> None:
++        # zlib would reject anything else too, but with a less helpful
++        # message. value may be a single byte, in which case zlib checks
++        # the second one when it arrives.
++        if not cls._GZIP_MAGIC.startswith(value[:2]):
++            raise zlib.error("expected a gzip member, got %r" % value[:2])
++
+     def decompress(self, value: bytes, max_length: int = 0) -> bytes:
+         """Decompress a chunk, returning newly-available data.
+ 
+@@ -121,14 +132,15 @@
+            decompress to an arbitrarily large output. In Tornado 7.0,
+            ``max_length`` will be required.
+         """
+-        if not max_length:
++        unlimited = not max_length
++        if unlimited:
+             warnings.warn(
+                 "GzipDecompressor.decompress without max_length is deprecated",
+                 DeprecationWarning,
+                 stacklevel=2,
+             )
+         result = self._decompress(value, max_length)
+-        if not max_length:
++        if unlimited:
+             # Without a limit, callers expect all the output at once, so we
+             # can't leave the start of the next member in unconsumed_tail.
+             while self._unconsumed_tail:
+@@ -144,12 +156,8 @@
+             self._unconsumed_tail = b""
+             return b""
+         if self._decompressobj is None:
+-            # This is the start of a member. zlib would reject anything
+-            # else too, but with a less helpful message. value may be a
+-            # single byte, in which case zlib checks the second one when it
+-            # arrives.
+-            if not b"\x1f\x8b".startswith(value[:2]):
+-                raise zlib.error("expected a gzip member, got %r" % value[:2])
++            # This is the start of a member.
++            self._check_member_start(value)
+             self._decompressobj = self._new_decompressobj()
+         result = self._decompressobj.decompress(value, max_length)
+         if self._decompressobj.eof:
+@@ -221,15 +229,15 @@
+         ...
+     ImportError: No module named missing_module
+     """
+-    if name.count(".") == 0:
++    if "." not in name:
+         return __import__(name)
+ 
+-    parts = name.split(".")
+-    obj = __import__(".".join(parts[:-1]), fromlist=[parts[-1]])
++    module_name, _, attribute = name.rpartition(".")
++    module = __import__(module_name, fromlist=[attribute])
+     try:
+-        return getattr(obj, parts[-1])
++        return getattr(module, attribute)
+     except AttributeError:
+-        raise ImportError("No module named %s" % parts[-1])
++        raise ImportError("No module named %s" % attribute)
+ 
+ 
+ def exec_in(
+@@ -270,10 +278,9 @@
+ 
+     if hasattr(e, "errno"):
+         return typing.cast(int | None, e.errno)
+-    elif e.args:
++    if e.args:
+         return typing.cast(int | None, e.args[0])
+-    else:
+-        return None
++    return None
+ 
+ 
+ _alphanum = frozenset("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+@@ -465,6 +472,9 @@
+                 return typing.cast(list[str], code.co_varnames[: code.co_argcount])
+             raise
+ 
++    def _is_passed_positionally(self, args: Sequence[Any]) -> bool:
++        return self.arg_pos is not None and len(args) > self.arg_pos
++
+     def get_old_value(
+         self, args: Sequence[Any], kwargs: dict[str, Any], default: Any = None
+     ) -> Any:
+@@ -472,7 +482,8 @@
+ 
+         Returns ``default`` if the argument is not present.
+         """
+-        if self.arg_pos is not None and len(args) > self.arg_pos:
++        if self._is_passed_positionally(args):
++            assert self.arg_pos is not None
+             return args[self.arg_pos]
+         else:
+             return kwargs.get(self.name, default)
+@@ -489,8 +500,9 @@
+         If the named argument was not found, ``new_value`` will be added
+         to ``kwargs`` and None will be returned as ``old_value``.
+         """
+-        if self.arg_pos is not None and len(args) > self.arg_pos:
++        if self._is_passed_positionally(args):
+             # The arg to replace is passed positionally
++            assert self.arg_pos is not None
+             old_value = args[self.arg_pos]
+             args = list(args)  # *args is normally a tuple
+             args[self.arg_pos] = new_value
+@@ -506,12 +518,16 @@
+     return td.total_seconds()
+ 
+ 
++def _check_websocket_mask(mask: bytes) -> None:
++    if len(mask) != 4:
++        raise ValueError("mask must be 4 bytes")
++
++
+ def _websocket_mask_int(mask: bytes, data: bytes) -> bytes:
+     # Treat the data and the repeated mask as (very large) integers so the
+     # XOR happens in C instead of looping over each byte in Python. This is
+     # much faster on CPython, but slower than the simple loop on PyPy.
+-    if len(mask) != 4:
+-        raise ValueError("mask must be 4 bytes")
++    _check_websocket_mask(mask)
+     n = len(data)
+     q, r = divmod(n, 4)
+     full_mask = int.from_bytes(mask * q + mask[:r], "little")
+@@ -520,8 +536,7 @@
+ 
+ def _websocket_mask_loop(mask: bytes, data: bytes) -> bytes:
+     # A simple byte-at-a-time loop, which PyPy's JIT handles well.
+-    if len(mask) != 4:
+-        raise ValueError("mask must be 4 bytes")
++    _check_websocket_mask(mask)
+     mask_arr = array.array("B", mask)
+     unmasked_arr = array.array("B", data)
+     for i in range(len(data)):
+@@ -540,17 +555,25 @@
+     _websocket_mask_python = _websocket_mask_int
+ 
+ 
+-if os.environ.get("TORNADO_NO_EXTENSION") or os.environ.get("TORNADO_EXTENSION") == "0":
+-    # These environment variables exist to make it easier to do performance
+-    # comparisons; they are not guaranteed to remain supported in the future.
+-    _websocket_mask = _websocket_mask_python
+-else:
++def _load_websocket_mask() -> Callable[[bytes, bytes], bytes]:
++    """Selects the websocket masking implementation (C extension if possible)."""
++    if (
++        os.environ.get("TORNADO_NO_EXTENSION")
++        or os.environ.get("TORNADO_EXTENSION") == "0"
++    ):
++        # These environment variables exist to make it easier to do performance
++        # comparisons; they are not guaranteed to remain supported in the future.
++        return _websocket_mask_python
+     try:
+-        from tornado.speedups import websocket_mask as _websocket_mask
++        from tornado.speedups import websocket_mask
+     except ImportError:
+         if os.environ.get("TORNADO_EXTENSION") == "1":
+             raise
+-        _websocket_mask = _websocket_mask_python
++        return _websocket_mask_python
++    return websocket_mask
++
++
++_websocket_mask = _load_websocket_mask()
+ 
+ 
+ def doctests() -> unittest.TestSuite:

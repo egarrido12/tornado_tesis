@@ -1,4 +1,4 @@
-Renaming <Configurable> to <ConfigurableBase> - today 10:26:14 :
+Renaming <Configurable> to <ConfigurableBase> - today 09:49:04 :
 
 
 --- a/tornado/ioloop.py
@@ -44,6 +44,94 @@ Renaming <Configurable> to <ConfigurableBase> - today 10:26:14 :
          from tornado.platform.asyncio import AsyncIOLoop
  
          return AsyncIOLoop
+
+--- a/tornado/httpclient.py
++++ b/tornado/httpclient.py
+@@ -53,7 +53,7 @@
+ )
+ from tornado.escape import native_str, utf8
+ from tornado.ioloop import IOLoop
+-from tornado.util import Configurable
++from tornado.util import ConfigurableBase
+ 
+ 
+ class HTTPClient:
+@@ -136,7 +136,7 @@
+         )
+ 
+ 
+-class AsyncHTTPClient(Configurable):
++class AsyncHTTPClient(ConfigurableBase):
+     """An non-blocking HTTP client.
+ 
+     Example usage::
+@@ -178,11 +178,11 @@
+     _instance_cache: dict[IOLoop, "AsyncHTTPClient"] | None
+ 
+     @classmethod
+-    def configurable_base(cls) -> type[Configurable]:
++    def configurable_base(cls) -> type[ConfigurableBase]:
+         return AsyncHTTPClient
+ 
+     @classmethod
+-    def configurable_default(cls) -> type[Configurable]:
++    def configurable_default(cls) -> type[ConfigurableBase]:
+         from tornado.simple_httpclient import SimpleAsyncHTTPClient
+ 
+         return SimpleAsyncHTTPClient
+
+--- a/tornado/test/util_test.py
++++ b/tornado/test/util_test.py
+@@ -10,7 +10,7 @@
+ from tornado.escape import utf8
+ from tornado.util import (
+     ArgReplacer,
+-    Configurable,
++    ConfigurableBase,
+     GzipDecompressor,
+     exec_in,
+     import_object,
+@@ -162,7 +162,7 @@
+             self.assertIs(e, exc_info[1])
+ 
+ 
+-class TestConfigurable(Configurable):
++class TestConfigurable(ConfigurableBase):
+     @classmethod
+     def configurable_base(cls):
+         return TestConfigurable
+
+--- a/tornado/httpserver.py
++++ b/tornado/httpserver.py
+@@ -35,10 +35,10 @@
+ from tornado.escape import native_str
+ from tornado.http1connection import HTTP1ConnectionParameters, HTTP1ServerConnection
+ from tornado.tcpserver import TCPServer
+-from tornado.util import Configurable
+-
+-
+-class HTTPServer(TCPServer, Configurable, httputil.HTTPServerConnectionDelegate):
++from tornado.util import ConfigurableBase
++
++
++class HTTPServer(TCPServer, ConfigurableBase, httputil.HTTPServerConnectionDelegate):
+     r"""A non-blocking, single-threaded HTTP server.
+ 
+     A server is defined by a subclass of `.HTTPServerConnectionDelegate`,
+@@ -201,11 +201,11 @@
+         self.trusted_downstream = trusted_downstream
+ 
+     @classmethod
+-    def configurable_base(cls) -> type[Configurable]:
++    def configurable_base(cls) -> type[ConfigurableBase]:
+         return HTTPServer
+ 
+     @classmethod
+-    def configurable_default(cls) -> type[Configurable]:
++    def configurable_default(cls) -> type[ConfigurableBase]:
+         return HTTPServer
+ 
+     async def close_all_connections(self) -> None:
 
 --- a/tornado/util.py
 +++ b/tornado/util.py
@@ -146,92 +234,4 @@ Renaming <Configurable> to <ConfigurableBase> - today 10:26:14 :
      """Configurable asynchronous DNS resolver interface.
  
      By default, a blocking implementation is used (which simply calls
-
---- a/tornado/httpserver.py
-+++ b/tornado/httpserver.py
-@@ -35,10 +35,10 @@
- from tornado.escape import native_str
- from tornado.http1connection import HTTP1ConnectionParameters, HTTP1ServerConnection
- from tornado.tcpserver import TCPServer
--from tornado.util import Configurable
--
--
--class HTTPServer(TCPServer, Configurable, httputil.HTTPServerConnectionDelegate):
-+from tornado.util import ConfigurableBase
-+
-+
-+class HTTPServer(TCPServer, ConfigurableBase, httputil.HTTPServerConnectionDelegate):
-     r"""A non-blocking, single-threaded HTTP server.
- 
-     A server is defined by a subclass of `.HTTPServerConnectionDelegate`,
-@@ -201,11 +201,11 @@
-         self.trusted_downstream = trusted_downstream
- 
-     @classmethod
--    def configurable_base(cls) -> type[Configurable]:
-+    def configurable_base(cls) -> type[ConfigurableBase]:
-         return HTTPServer
- 
-     @classmethod
--    def configurable_default(cls) -> type[Configurable]:
-+    def configurable_default(cls) -> type[ConfigurableBase]:
-         return HTTPServer
- 
-     async def close_all_connections(self) -> None:
-
---- a/tornado/httpclient.py
-+++ b/tornado/httpclient.py
-@@ -53,7 +53,7 @@
- )
- from tornado.escape import native_str, utf8
- from tornado.ioloop import IOLoop
--from tornado.util import Configurable
-+from tornado.util import ConfigurableBase
- 
- 
- class HTTPClient:
-@@ -136,7 +136,7 @@
-         )
- 
- 
--class AsyncHTTPClient(Configurable):
-+class AsyncHTTPClient(ConfigurableBase):
-     """An non-blocking HTTP client.
- 
-     Example usage::
-@@ -178,11 +178,11 @@
-     _instance_cache: dict[IOLoop, "AsyncHTTPClient"] | None
- 
-     @classmethod
--    def configurable_base(cls) -> type[Configurable]:
-+    def configurable_base(cls) -> type[ConfigurableBase]:
-         return AsyncHTTPClient
- 
-     @classmethod
--    def configurable_default(cls) -> type[Configurable]:
-+    def configurable_default(cls) -> type[ConfigurableBase]:
-         from tornado.simple_httpclient import SimpleAsyncHTTPClient
- 
-         return SimpleAsyncHTTPClient
-
---- a/tornado/test/util_test.py
-+++ b/tornado/test/util_test.py
-@@ -10,7 +10,7 @@
- from tornado.escape import utf8
- from tornado.util import (
-     ArgReplacer,
--    Configurable,
-+    ConfigurableBase,
-     GzipDecompressor,
-     exec_in,
-     import_object,
-@@ -162,7 +162,7 @@
-             self.assertIs(e, exc_info[1])
- 
- 
--class TestConfigurable(Configurable):
-+class TestConfigurable(ConfigurableBase):
-     @classmethod
-     def configurable_base(cls):
-         return TestConfigurable
 

@@ -1,0 +1,147 @@
+--- a/tornado/escape.py
++++ b/tornado/escape.py
+@@ -197,10 +197,7 @@
+         errors="strict",
+         max_num_fields=max_num_fields,
+     )
+-    encoded = {}
+-    for k, v in result.items():
+-        encoded[k] = [i.encode("latin1") for i in v]
+-    return encoded
++    return {key: [value.encode("latin1") for value in values] for key, values in result.items()}
+ 
+ 
+ _UTF8_TYPES = (bytes, type(None))
+@@ -283,7 +280,7 @@
+     if isinstance(obj, dict):
+         return {recursive_unicode(k): recursive_unicode(v) for (k, v) in obj.items()}
+     elif isinstance(obj, list):
+-        return list(recursive_unicode(i) for i in obj)
++        return [recursive_unicode(i) for i in obj]
+     elif isinstance(obj, tuple):
+         return tuple(recursive_unicode(i) for i in obj)
+     elif isinstance(obj, bytes):
+@@ -305,6 +302,50 @@
+     )
+ )
+ 
++# Approximate maximum length of the displayed text of a link when
++# ``shorten=True`` is passed to `linkify`.
++_LINKIFY_MAX_URL_LENGTH = 30
++
++
++def _shorten_url_for_display(url: str, proto_len: int) -> str:
++    """Returns a shortened version of ``url`` suitable for link text.
++
++    ``proto_len`` is the length of the protocol prefix (including ``:`` and
++    slashes), which is always preserved. If shortening would not make the
++    text any shorter, the original ``url`` is returned unchanged.
++    """
++    max_len = _LINKIFY_MAX_URL_LENGTH
++    shortened = url
++
++    parts = url[proto_len:].split("/")
++    if len(parts) > 1:
++        # Grab the whole host part plus the first bit of the path
++        # The path is usually not that interesting once shortened
++        # (no more slug, etc), so it really just provides a little
++        # extra indication of shortening.
++        shortened = (
++            url[:proto_len]
++            + parts[0]
++            + "/"
++            + parts[1][:8].split("?")[0].split(".")[0]
++        )
++
++    if len(shortened) > max_len * 1.5:  # still too long
++        shortened = shortened[:max_len]
++
++    if shortened == url:
++        return url
++
++    amp = shortened.rfind("&")
++    # avoid splitting html char entities
++    if amp > max_len - 5:
++        shortened = shortened[:amp]
++    shortened += "..."
++
++    if len(shortened) >= len(url):
++        return url
++    return shortened
++
+ 
+ def linkify(
+     text: str | bytes,
+@@ -345,16 +386,16 @@
+     if extra_params and not callable(extra_params):
+         extra_params = " " + extra_params.strip()
+ 
+-    def make_link(m: typing.Match[str]) -> str:
+-        url = m.group(1)
+-        proto = m.group(2)
++    def make_link(match: typing.Match[str]) -> str:
++        url = match.group(1)
++        proto = match.group(2)
+         if require_protocol and not proto:
+             return url  # not protocol, no linkify
+ 
+         if proto and proto not in permitted_protocols:
+             return url  # bad protocol, no linkify
+ 
+-        href = m.group(1)
++        href = match.group(1)
+         if not proto:
+             href = "http://" + href  # no proto specified, use http
+ 
+@@ -364,43 +405,18 @@
+             params = extra_params
+ 
+         # clip long urls. max_len is just an approximation
+-        max_len = 30
+-        if shorten and len(url) > max_len:
+-            before_clip = url
++        if shorten and len(url) > _LINKIFY_MAX_URL_LENGTH:
+             if proto:
+-                proto_len = len(proto) + 1 + len(m.group(3) or "")  # +1 for :
++                proto_len = len(proto) + 1 + len(match.group(3) or "")  # +1 for :
+             else:
+                 proto_len = 0
+ 
+-            parts = url[proto_len:].split("/")
+-            if len(parts) > 1:
+-                # Grab the whole host part plus the first bit of the path
+-                # The path is usually not that interesting once shortened
+-                # (no more slug, etc), so it really just provides a little
+-                # extra indication of shortening.
+-                url = (
+-                    url[:proto_len]
+-                    + parts[0]
+-                    + "/"
+-                    + parts[1][:8].split("?")[0].split(".")[0]
+-                )
+-
+-            if len(url) > max_len * 1.5:  # still too long
+-                url = url[:max_len]
+-
+-            if url != before_clip:
+-                amp = url.rfind("&")
+-                # avoid splitting html char entities
+-                if amp > max_len - 5:
+-                    url = url[:amp]
+-                url += "..."
+-
+-                if len(url) >= len(before_clip):
+-                    url = before_clip
+-                else:
+-                    # full url is visible on mouse-over (for those who don't
+-                    # have a status bar, such as Safari by default)
+-                    params += ' title="%s"' % href
++            display_url = _shorten_url_for_display(url, proto_len)
++            if display_url != url:
++                # full url is visible on mouse-over (for those who don't
++                # have a status bar, such as Safari by default)
++                params += ' title="%s"' % href
++                url = display_url
+ 
+         return f'<a href="{href}"{params}>{url}</a>'
+ 

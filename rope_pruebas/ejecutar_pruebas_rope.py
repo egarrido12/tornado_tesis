@@ -43,13 +43,14 @@ from pathlib import Path
 
 import codecarbon
 import rope
-from codecarbon import OfflineEmissionsTracker
 from rope.base.project import Project
 from rope.contrib import findit, finderrors
 from rope.refactor.extract import ExtractMethod
 from rope.refactor.inline import create_inline
 from rope.refactor.move import create_move
 from rope.refactor.rename import Rename
+
+from carbono_traza import Medidor
 
 AQUI = Path(__file__).resolve().parent
 REPO = AQUI.parent
@@ -71,7 +72,8 @@ SEGUNDOS_REPOSO = 20
 
 IGNORAR = shutil.ignore_patterns(
     '.git', '.github', '.venv', '*.egg-info', '__pycache__', '.ropeproject',
-    '.mypy_cache', '.tox', 'build', 'rope_pruebas', 'docs', 'demos', 'maint',
+    '.mypy_cache', '.tox', 'build', 'rope_pruebas', 'llm_pruebas', 'docs', 'demos',
+    'maint',
 )
 
 
@@ -190,44 +192,19 @@ MEDICIONES = []
 
 
 def crear_tracker():
-    """Un solo tracker para todo el experimento; cada fase es una "task".
+    """Un solo medidor para todo el experimento; cada fase es una "task".
 
-    - Offline: no envía datos a internet; el factor de emisión sale de la
-      tabla de CodeCarbon para el país PAIS.
-    - measure_power_secs=1: muestrea la carga de CPU cada segundo.
-    - tracking_mode='machine': mide la carga de TODO el equipo. Es necesario
-      porque los tests corren en un subproceso (en modo 'process' solo se
-      contaría el proceso de este script).
-    - force_cpu_power + force_mode_cpu_load: ver TDP_CPU_W. Sin sudo no hay
-      acceso a `powermetrics`, así que en macOS la única opción es estimar
-      P_cpu = TDP * (0.1 + 0.9 * carga^3).
+    Envuelve un OfflineEmissionsTracker de CodeCarbon (offline, país PAIS,
+    modo 'machine', CPU estimada por carga con TDP_CPU_W; ver carbono_traza.py)
+    y además muestrea la potencia cada 0,1 s DURANTE cada fase, para tener la
+    curva de consumo y no solo el total al terminar.
     """
-    logging.getLogger('codecarbon').setLevel(logging.ERROR)
-    return OfflineEmissionsTracker(
-        country_iso_code=PAIS, project_name='tornado_rope',
-        measure_power_secs=1, tracking_mode='machine',
-        force_cpu_power=TDP_CPU_W, force_mode_cpu_load=True,
-        save_to_file=False, log_level='error',
-    )
+    return Medidor(PAIS, TDP_CPU_W, MEDICIONES, 'tornado_rope')
 
 
 def medir(tracker, fase, experimento, funcion, repeticion=1):
     """Ejecuta funcion() dentro de una task de CodeCarbon y anota el consumo."""
-    tracker.start_task('%s:%s:%d' % (experimento, fase, repeticion))
-    try:
-        return funcion()
-    finally:
-        d = tracker.stop_task()
-        MEDICIONES.append({
-            'experimento': experimento, 'fase': fase, 'repeticion': repeticion,
-            'duracion_s': d.duration,
-            'energia_kwh': d.energy_consumed,
-            'energia_cpu_kwh': d.cpu_energy,
-            'energia_ram_kwh': d.ram_energy,
-            'emisiones_kg': d.emissions,
-            'potencia_cpu_w': d.cpu_power,
-            'potencia_ram_w': d.ram_power,
-        })
+    return tracker.medir(fase, experimento, funcion, repeticion)
 
 
 def metadatos_tracker(tracker):
@@ -631,8 +608,9 @@ def escribir_resumen(base, analisis, filas, meta, carbono):
             f['tiempo_rope_s'], tests, f['veredicto']))
 
     lineas += ['', '## Huella de carbono (CodeCarbon)', '',
-               '| Experimento | Fase | Duración (s) | Energía (Wh) | Emisiones (mg CO2eq) |',
-               '|---|---|---|---|---|']
+               '| Experimento | Fase | Duración (s) | Energía (Wh) | Emisiones (mg CO2eq) '
+               '| Muestras (0,1 s) | Energía de la traza (Wh) | Pico (W) |',
+               '|---|---|---|---|---|---|---|---|']
     agrupado = {}
     for m in MEDICIONES:
         clave = (m['experimento'], m['fase'])
@@ -643,8 +621,11 @@ def escribir_resumen(base, analisis, filas, meta, carbono):
         en = statistics.mean(m['energia_kwh'] for m in ms)
         em = statistics.mean(m['emisiones_kg'] for m in ms)
         sufijo = ' (media de %d)' % n if n > 1 else ''
-        lineas.append('| %s | %s%s | %.3f | %.4f | %.3f |'
-                      % (exp, fase, sufijo, dur, wh(en), mg(em)))
+        ns = statistics.mean(m['n_muestras'] for m in ms)
+        et = statistics.mean(m['energia_traza_kwh'] for m in ms)
+        pico = max(m['potencia_pico_w'] for m in ms)
+        lineas.append('| %s | %s%s | %.3f | %.4f | %.3f | %.0f | %.4f | %.1f |'
+                      % (exp, fase, sufijo, dur, wh(en), mg(em), ns, wh(et), pico))
     c = carbono
     lineas += [
         '', '### Totales', '',
@@ -681,6 +662,13 @@ def escribir_resumen(base, analisis, filas, meta, carbono):
            wh(c['linea_base_tests']['energia_kwh']['media']),
            mg(c['linea_base_tests']['emisiones_kg']['media']),
            mg(c['linea_base_tests']['emisiones_kg']['desv'])),
+        '- Medición continua: cada fase se muestreó cada 0,1 s (`traza_carbono.csv`, '
+        '%d muestras en total). Energía integrada de la traza en todo el experimento: '
+        '%.4f Wh frente a %.4f Wh de CodeCarbon (que solo calcula el total al terminar '
+        'cada fase).'
+        % (len(MEDICIONES) and sum(m['n_muestras'] for m in MEDICIONES),
+           wh(sum(m['energia_traza_kwh'] for m in MEDICIONES if m['fase'] != 'reposo')),
+           wh(c['total_experimento']['energia_kwh'])),
         '',
     ]
     (RESULTADOS / 'resumen.md').write_text('\n'.join(lineas))
@@ -707,6 +695,7 @@ def main():
     base = linea_base(tracker)
     analisis = medir(tracker, 'analisis', '01_analisis', analisis_estatico)
     filas = [aplicar(*r, base=base, tracker=tracker) for r in REFACTORIZACIONES]
+    tracker.guardar_traza(RESULTADOS / 'traza_carbono.csv')
     carbono = agregados_carbono()
     escribir_resumen(base, analisis, filas, meta, carbono)
     print('\nResultados en %s' % RESULTADOS)

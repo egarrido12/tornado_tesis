@@ -75,7 +75,7 @@ Traceback (most recent call last):
 AttributeError: <class 'tornado.iostream.BaseIOStream'> does not have the attribute '_try_inline_read'
 
 ----------------------------------------------------------------------
-Ran 1535 tests in 18.636s
+Ran 1535 tests in 18.543s
 
 FAILED (errors=3, skipped=111)
 Some tests were skipped because: API snapshot is generated on linux

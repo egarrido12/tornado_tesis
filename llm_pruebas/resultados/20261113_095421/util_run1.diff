@@ -1,0 +1,162 @@
+--- a/tornado/util.py
++++ b/tornado/util.py
+@@ -62,6 +62,10 @@
+         self[name] = value
+ 
+ 
++# The two-byte magic number that starts every gzip member (RFC 1952, 2.3.1).
++_GZIP_MAGIC = b"\x1f\x8b"
++
++
+ class GzipDecompressor:
+     """Streaming gzip decompressor.
+ 
+@@ -121,14 +125,15 @@
+            decompress to an arbitrarily large output. In Tornado 7.0,
+            ``max_length`` will be required.
+         """
+-        if not max_length:
++        unlimited = not max_length
++        if unlimited:
+             warnings.warn(
+                 "GzipDecompressor.decompress without max_length is deprecated",
+                 DeprecationWarning,
+                 stacklevel=2,
+             )
+         result = self._decompress(value, max_length)
+-        if not max_length:
++        if unlimited:
+             # Without a limit, callers expect all the output at once, so we
+             # can't leave the start of the next member in unconsumed_tail.
+             while self._unconsumed_tail:
+@@ -148,7 +153,7 @@
+             # else too, but with a less helpful message. value may be a
+             # single byte, in which case zlib checks the second one when it
+             # arrives.
+-            if not b"\x1f\x8b".startswith(value[:2]):
++            if not _GZIP_MAGIC.startswith(value[:2]):
+                 raise zlib.error("expected a gzip member, got %r" % value[:2])
+             self._decompressobj = self._new_decompressobj()
+         result = self._decompressobj.decompress(value, max_length)
+@@ -224,12 +229,12 @@
+     if name.count(".") == 0:
+         return __import__(name)
+ 
+-    parts = name.split(".")
+-    obj = __import__(".".join(parts[:-1]), fromlist=[parts[-1]])
++    *module_parts, attribute_name = name.split(".")
++    module = __import__(".".join(module_parts), fromlist=[attribute_name])
+     try:
+-        return getattr(obj, parts[-1])
++        return getattr(module, attribute_name)
+     except AttributeError:
+-        raise ImportError("No module named %s" % parts[-1])
++        raise ImportError("No module named %s" % attribute_name)
+ 
+ 
+ def exec_in(
+@@ -267,7 +272,6 @@
+     abstracts all that behavior to give you a safe way to get the
+     errno.
+     """
+-
+     if hasattr(e, "errno"):
+         return typing.cast(int | None, e.errno)
+     elif e.args:
+@@ -465,6 +469,9 @@
+                 return typing.cast(list[str], code.co_varnames[: code.co_argcount])
+             raise
+ 
++    def _is_passed_positionally(self, args: Sequence[Any]) -> bool:
++        return self.arg_pos is not None and len(args) > self.arg_pos
++
+     def get_old_value(
+         self, args: Sequence[Any], kwargs: dict[str, Any], default: Any = None
+     ) -> Any:
+@@ -472,7 +479,8 @@
+ 
+         Returns ``default`` if the argument is not present.
+         """
+-        if self.arg_pos is not None and len(args) > self.arg_pos:
++        if self._is_passed_positionally(args):
++            assert self.arg_pos is not None
+             return args[self.arg_pos]
+         else:
+             return kwargs.get(self.name, default)
+@@ -489,8 +497,9 @@
+         If the named argument was not found, ``new_value`` will be added
+         to ``kwargs`` and None will be returned as ``old_value``.
+         """
+-        if self.arg_pos is not None and len(args) > self.arg_pos:
++        if self._is_passed_positionally(args):
+             # The arg to replace is passed positionally
++            assert self.arg_pos is not None
+             old_value = args[self.arg_pos]
+             args = list(args)  # *args is normally a tuple
+             args[self.arg_pos] = new_value
+@@ -506,12 +515,16 @@
+     return td.total_seconds()
+ 
+ 
++def _check_websocket_mask_length(mask: bytes) -> None:
++    if len(mask) != 4:
++        raise ValueError("mask must be 4 bytes")
++
++
+ def _websocket_mask_int(mask: bytes, data: bytes) -> bytes:
+     # Treat the data and the repeated mask as (very large) integers so the
+     # XOR happens in C instead of looping over each byte in Python. This is
+     # much faster on CPython, but slower than the simple loop on PyPy.
+-    if len(mask) != 4:
+-        raise ValueError("mask must be 4 bytes")
++    _check_websocket_mask_length(mask)
+     n = len(data)
+     q, r = divmod(n, 4)
+     full_mask = int.from_bytes(mask * q + mask[:r], "little")
+@@ -520,8 +533,7 @@
+ 
+ def _websocket_mask_loop(mask: bytes, data: bytes) -> bytes:
+     # A simple byte-at-a-time loop, which PyPy's JIT handles well.
+-    if len(mask) != 4:
+-        raise ValueError("mask must be 4 bytes")
++    _check_websocket_mask_length(mask)
+     mask_arr = array.array("B", mask)
+     unmasked_arr = array.array("B", data)
+     for i in range(len(data)):
+@@ -540,17 +552,29 @@
+     _websocket_mask_python = _websocket_mask_int
+ 
+ 
+-if os.environ.get("TORNADO_NO_EXTENSION") or os.environ.get("TORNADO_EXTENSION") == "0":
+-    # These environment variables exist to make it easier to do performance
+-    # comparisons; they are not guaranteed to remain supported in the future.
+-    _websocket_mask = _websocket_mask_python
+-else:
++def _load_websocket_mask() -> Callable[[bytes, bytes], bytes]:
++    """Chooses the websocket masking implementation.
++
++    Uses the C extension when available, unless the environment asks
++    otherwise.
++    """
++    if (
++        os.environ.get("TORNADO_NO_EXTENSION")
++        or os.environ.get("TORNADO_EXTENSION") == "0"
++    ):
++        # These environment variables exist to make it easier to do performance
++        # comparisons; they are not guaranteed to remain supported in the future.
++        return _websocket_mask_python
+     try:
+-        from tornado.speedups import websocket_mask as _websocket_mask
++        from tornado.speedups import websocket_mask
+     except ImportError:
+         if os.environ.get("TORNADO_EXTENSION") == "1":
+             raise
+-        _websocket_mask = _websocket_mask_python
++        return _websocket_mask_python
++    return websocket_mask
++
++
++_websocket_mask = _load_websocket_mask()
+ 
+ 
+ def doctests() -> unittest.TestSuite:

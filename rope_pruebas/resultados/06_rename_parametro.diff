@@ -1,5 +1,17 @@
-Renaming <plus> to <use_plus> - today 10:26:36 :
+Renaming <plus> to <use_plus> - today 09:49:26 :
 
+
+--- a/tornado/test/escape_test.py
++++ b/tornado/test/escape_test.py
+@@ -295,7 +295,7 @@
+         plus_escaped = "%2B+%23%25"
+         escaped = "%2B%20%23%25"
+         self.assertEqual(url_escape(unescaped), plus_escaped)
+-        self.assertEqual(url_escape(unescaped, plus=False), escaped)
++        self.assertEqual(url_escape(unescaped, use_plus=False), escaped)
+         self.assertEqual(url_unescape(plus_escaped), unescaped)
+         self.assertEqual(url_unescape(escaped, plus=False), unescaped)
+         self.assertEqual(url_unescape(plus_escaped, encoding=None), utf8(unescaped))
 
 --- a/tornado/escape.py
 +++ b/tornado/escape.py
@@ -21,18 +33,6 @@ Renaming <plus> to <use_plus> - today 10:26:36 :
      return quote(value)
  
  
-
---- a/tornado/test/escape_test.py
-+++ b/tornado/test/escape_test.py
-@@ -295,7 +295,7 @@
-         plus_escaped = "%2B+%23%25"
-         escaped = "%2B%20%23%25"
-         self.assertEqual(url_escape(unescaped), plus_escaped)
--        self.assertEqual(url_escape(unescaped, plus=False), escaped)
-+        self.assertEqual(url_escape(unescaped, use_plus=False), escaped)
-         self.assertEqual(url_unescape(plus_escaped), unescaped)
-         self.assertEqual(url_unescape(escaped, plus=False), unescaped)
-         self.assertEqual(url_unescape(plus_escaped, encoding=None), utf8(unescaped))
 
 --- a/tornado/test/property_test.py
 +++ b/tornado/test/property_test.py

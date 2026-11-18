@@ -1,0 +1,219 @@
+--- a/tornado/tcpclient.py
++++ b/tornado/tcpclient.py
+@@ -22,7 +22,7 @@
+ import socket
+ import ssl
+ from collections.abc import Callable, Iterator
+-from typing import Any, Tuple
++from typing import Any
+ 
+ from tornado import gen
+ from tornado.concurrent import Future, future_add_done_callback
+@@ -45,6 +45,43 @@
+             return f"[{host}]:{port}"
+         return f"{host}:{port}"
+     return str(addr)
++
++
++def _to_absolute_deadline(
++    timeout: float | datetime.timedelta | None,
++) -> float | None:
++    """Converts a relative or absolute ``timeout`` to an absolute deadline.
++
++    Numbers are interpreted as relative to the current time (see
++    `TCPClient.connect`); ``None`` means no timeout.
++    """
++    if timeout is None:
++        return None
++    if isinstance(timeout, numbers.Real):
++        return IOLoop.current().time() + timeout
++    if isinstance(timeout, datetime.timedelta):
++        return IOLoop.current().time() + timeout.total_seconds()
++    raise TypeError("Unsupported timeout %r" % timeout)
++
++
++def _source_bind_address(
++    af: socket.AddressFamily,
++    source_ip: str | None,
++    source_port: int | None,
++) -> tuple[str | None, int]:
++    """Returns the ``(ip, port)`` to bind to before connecting.
++
++    A port of 0 and an ip of ``None`` mean "no explicit binding".
++    """
++    port = source_port if isinstance(source_port, int) else 0
++    if port and not source_ip:
++        # User required a specific port, but did not specify
++        # a certain source IP, will bind to the default loopback.
++        # Trying to use the same address family as the requested af socket:
++        # - 127.0.0.1 for IPv4
++        # - ::1 for IPv6
++        return ("::1" if af == socket.AF_INET6 else "127.0.0.1"), port
++    return source_ip, port
+ 
+ 
+ class _Connector:
+@@ -115,7 +152,7 @@
+         self,
+         timeout: float = _INITIAL_CONNECT_TIMEOUT,
+         connect_timeout: float | datetime.timedelta | None = None,
+-    ) -> "Future[Tuple[socket.AddressFamily, Any, IOStream]]":
++    ) -> "Future[tuple[socket.AddressFamily, Any, IOStream]]":
+         # Set the timeouts first: try_connect may fail synchronously, and
+         # on_connect_done will then skip ahead to the secondary addresses.
+         self.set_timeout(timeout)
+@@ -194,7 +231,7 @@
+             self.close_streams()
+ 
+     def on_future_done(
+-        self, future: "Future[Tuple[socket.AddressFamily, Any, IOStream]]"
++        self, future: "Future[tuple[socket.AddressFamily, Any, IOStream]]"
+     ) -> None:
+         if future.cancelled():
+             # The caller gave up (e.g. asyncio.wait_for). Close any
+@@ -224,18 +261,17 @@
+ 
+     def on_connect_timeout(self) -> None:
+         if not self.future.done():
+-            if self.pending_addrs:
+-                message = "Timeout while connecting to %s" % ", ".join(
+-                    sorted(_format_addr(addr) for addr in self.pending_addrs)
+-                )
+-            else:
+-                message = "Timeout while connecting"
+-            self.future.set_exception(TimeoutError(message))
++            self.future.set_exception(TimeoutError(self._connect_timeout_message()))
+         self.close_streams()
+ 
++    def _connect_timeout_message(self) -> str:
++        if not self.pending_addrs:
++            return "Timeout while connecting"
++        addrs = sorted(_format_addr(addr) for addr in self.pending_addrs)
++        return "Timeout while connecting to %s" % ", ".join(addrs)
++
+     def clear_timeouts(self) -> None:
+-        if self.timeout is not None:
+-            self.io_loop.remove_timeout(self.timeout)
++        self.clear_timeout()
+         if self.connect_timeout is not None:
+             self.io_loop.remove_timeout(self.connect_timeout)
+ 
+@@ -308,21 +344,8 @@
+            Timeout errors now have messages describing which phase of
+            the connection process timed out.
+         """
+-        if timeout is not None:
+-            if isinstance(timeout, numbers.Real):
+-                timeout = IOLoop.current().time() + timeout
+-            elif isinstance(timeout, datetime.timedelta):
+-                timeout = IOLoop.current().time() + timeout.total_seconds()
+-            else:
+-                raise TypeError("Unsupported timeout %r" % timeout)
+-        if timeout is not None:
+-            addrinfo = await gen.with_timeout(
+-                timeout,
+-                self.resolver.resolve(host, port, af),
+-                message=f"Timeout while resolving {host}",
+-            )
+-        else:
+-            addrinfo = await self.resolver.resolve(host, port, af)
++        deadline = _to_absolute_deadline(timeout)
++        addrinfo = await self._resolve(host, port, af, deadline)
+         connector = _Connector(
+             addrinfo,
+             functools.partial(
+@@ -332,31 +355,55 @@
+                 source_port=source_port,
+             ),
+         )
+-        af, addr, stream = await connector.start(connect_timeout=timeout)
++        af, addr, stream = await connector.start(connect_timeout=deadline)
+         # TODO: For better performance we could cache the (af, addr)
+         # information here and reuse it on subsequent connections to
+         # the same host. (http://tools.ietf.org/html/rfc6555#section-4.2)
+         if ssl_options is not None:
+-            tls_future = stream.start_tls(
+-                False, ssl_options=ssl_options, server_hostname=host
++            stream = await self._start_tls(stream, ssl_options, host, addr, deadline)
++        return stream
++
++    async def _resolve(
++        self,
++        host: str,
++        port: int,
++        af: socket.AddressFamily,
++        deadline: float | None,
++    ) -> list[tuple[Any, ...]]:
++        if deadline is None:
++            return await self.resolver.resolve(host, port, af)
++        return await gen.with_timeout(
++            deadline,
++            self.resolver.resolve(host, port, af),
++            message=f"Timeout while resolving {host}",
++        )
++
++    async def _start_tls(
++        self,
++        stream: IOStream,
++        ssl_options: dict[str, Any] | ssl.SSLContext,
++        host: str,
++        addr: Any,
++        deadline: float | None,
++    ) -> IOStream:
++        tls_future = stream.start_tls(
++            False, ssl_options=ssl_options, server_hostname=host
++        )
++        try:
++            if deadline is None:
++                return await tls_future
++            return await gen.with_timeout(
++                deadline,
++                tls_future,
++                message=lambda: "Timeout during TLS handshake with "
++                + _format_addr(addr),
+             )
+-            try:
+-                if timeout is not None:
+-                    stream = await gen.with_timeout(
+-                        timeout,
+-                        tls_future,
+-                        message=lambda: "Timeout during TLS handshake with "
+-                        + _format_addr(addr),
+-                    )
+-                else:
+-                    stream = await tls_future
+-            finally:
+-                # If we're exiting early (timeout or cancellation), cancel
+-                # the handshake so the new SSLIOStream (which now owns the
+-                # socket) is closed. with_timeout does not do this for us.
+-                # This is a no-op if the handshake has already completed.
+-                tls_future.cancel()
+-        return stream
++        finally:
++            # If we're exiting early (timeout or cancellation), cancel
++            # the handshake so the new SSLIOStream (which now owns the
++            # socket) is closed. with_timeout does not do this for us.
++            # This is a no-op if the handshake has already completed.
++            tls_future.cancel()
+ 
+     def _create_stream(
+         self,
+@@ -368,15 +415,9 @@
+     ) -> tuple[IOStream, "Future[IOStream]"]:
+         # Always connect in plaintext; we'll convert to ssl if necessary
+         # after one connection has completed.
+-        source_port_bind = source_port if isinstance(source_port, int) else 0
+-        source_ip_bind = source_ip
+-        if source_port_bind and not source_ip:
+-            # User required a specific port, but did not specify
+-            # a certain source IP, will bind to the default loopback.
+-            source_ip_bind = "::1" if af == socket.AF_INET6 else "127.0.0.1"
+-            # Trying to use the same address family as the requested af socket:
+-            # - 127.0.0.1 for IPv4
+-            # - ::1 for IPv6
++        source_ip_bind, source_port_bind = _source_bind_address(
++            af, source_ip, source_port
++        )
+         socket_obj = socket.socket(af)
+         try:
+             if source_port_bind or source_ip_bind:

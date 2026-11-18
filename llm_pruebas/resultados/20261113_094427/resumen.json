@@ -1,0 +1,121 @@
+{
+  "python": "3.12.15",
+  "anthropic": "2.8.0",
+  "modelo": "claude-sonnet-5-5",
+  "effort": "high",
+  "prompt": "Eres un ingeniero de software experto en Python. Tu tarea es refactorizar un módulo del proyecto Tornado para mejorar su legibilidad y mantenibilidad, sin cambiar su comportamiento.\n\nReglas:\n- El comportamiento observable debe ser idéntico al original.\n- No cambies los nombres ni las firmas de las funciones, clases y métodos públicos (los que no empiezan con \"_\"), porque otros módulos y los tests los usan.\n- No agregues funcionalidades nuevas ni dependencias.\n- Modifica solo el archivo indicado; el resto del paquete se muestra como contexto de solo lectura.\n- Mantén la compatibilidad con las versiones de Python que el proyecto ya soporta.\n\nFormato de respuesta:\n1. El archivo completo refactorizado, en un único bloque ```python.\n2. Después, una sección \"## Refactorizaciones aplicadas\" con una lista: tipo de refactorización (según el catálogo de Fowler, por ejemplo Extract Method, Rename Variable, Inline Function...), elementos afectados y motivo.\n",
+  "linea_base": {
+    "returncode": 0,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 111,
+    "expected_failures": 0,
+    "ran": 1535,
+    "passed": 1424
+  },
+  "determinismo": {
+    "escape": {
+      "corridas": 1,
+      "diffs_distintos": 1
+    }
+  },
+  "costo_total_usd": 0.9098,
+  "reposo": {
+    "experimento": "00_reposo",
+    "fase": "reposo",
+    "repeticion": 1,
+    "duracion_s": 20.005876458017156,
+    "energia_kwh": 2.7826565111480798e-05,
+    "energia_cpu_kwh": 1.1155453514819876e-05,
+    "energia_ram_kwh": 1.667111159666092e-05,
+    "emisiones_kg": 7.2212997386454945e-06,
+    "potencia_cpu_w": 2.007424685232835,
+    "potencia_ram_w": 3.0,
+    "n_muestras": 192,
+    "energia_traza_kwh": 2.7810412322349213e-05,
+    "emisiones_traza_kg": 7.217107912185168e-06,
+    "potencia_pico_w": 5.500726286,
+    "potencia_media_traza_w": 5.00769898015625
+  },
+  "codecarbon": {
+    "codecarbon": "3.3.2",
+    "pais": "COL",
+    "modo_cpu": "cpu_load",
+    "cpu_modelo": "Apple M4",
+    "cpu_tdp_w": 20.0
+  },
+  "carbono_totales": {
+    "llm": {
+      "n": 1,
+      "duracion_s": 47.25845708302222,
+      "energia_kwh": 6.58675862851261e-05,
+      "energia_traza_kwh": 6.573668807627675e-05,
+      "emisiones_traza_kg": 1.705939365936266e-05,
+      "pico_w": 6.401380694
+    },
+    "tests": {
+      "n": 1,
+      "duracion_s": 18.985142500023358,
+      "energia_kwh": 2.6638294052885866e-05,
+      "energia_traza_kwh": 2.64759736859955e-05,
+      "emisiones_traza_kg": 6.870806407226381e-06,
+      "pico_w": 5.557264592
+    },
+    "reposo_potencia_w": 5.007310457582401
+  },
+  "corridas": [
+    {
+      "id": "escape_run1",
+      "modulo": "escape",
+      "corrida": 1,
+      "carbono": {
+        "llm": {
+          "duracion_s": 47.25845708302222,
+          "energia_kwh": 6.58675862851261e-05,
+          "energia_traza_kwh": 6.573668807627675e-05,
+          "emisiones_kg": 1.7093363184439364e-05,
+          "emisiones_traza_kg": 1.705939365936266e-05,
+          "potencia_pico_w": 6.401380694,
+          "potencia_media_traza_w": 5.012848543088106,
+          "n_muestras": 454
+        },
+        "tests": {
+          "duracion_s": 18.985142500023358,
+          "energia_kwh": 2.6638294052885866e-05,
+          "energia_traza_kwh": 2.64759736859955e-05,
+          "emisiones_kg": 6.912930327958467e-06,
+          "emisiones_traza_kg": 6.870806407226381e-06,
+          "potencia_pico_w": 5.557264592,
+          "potencia_media_traza_w": 5.0223053083606555,
+          "n_muestras": 183
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011Ch17AMzKJFg5g2BMcyADE",
+      "tiempo_llm_s": 47.3,
+      "tokens": {
+        "input": 25,
+        "output": 8343,
+        "cache_write": 330535,
+        "cache_read": 0
+      },
+      "costo_usd": 0.9098,
+      "intentos": 1,
+      "lineas_agregadas": 62,
+      "lineas_eliminadas": 46,
+      "sin_cambios": false,
+      "cambios_api_publica": [],
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    }
+  ]
+}

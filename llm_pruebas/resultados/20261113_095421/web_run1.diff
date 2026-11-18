@@ -1,0 +1,608 @@
+--- a/tornado/web.py
++++ b/tornado/web.py
+@@ -161,6 +161,10 @@
+ 
+ _ARG_DEFAULT = _ArgDefaultMarker()
+ 
++# Characters that may not appear in cookie attributes: control characters,
++# space, semicolons and DEL.
++_COOKIE_ATTRIBUTE_FORBIDDEN_CHARS_RE = re.compile(r"[\x00-\x20\x3b\x7f]")
++
+ 
+ class RequestHandler:
+     """Base class for HTTP request handlers.
+@@ -682,32 +686,7 @@
+             # since the cookie library escapes these characters correctly now. It will be removed
+             # in the next feature release.
+             raise ValueError(f"Invalid cookie {name!r}: {value!r}")
+-        for attr_name, attr_value in [
+-            ("name", name),
+-            ("domain", domain),
+-            ("path", path),
+-            ("samesite", samesite),
+-        ]:
+-            # Cookie attributes may not contain control characters or semicolons (except when
+-            # escaped in the value). A check for control characters was added to the http.cookies
+-            # library in a Feb 2026 security release; as of March it still does not check for
+-            # semicolons.
+-            #
+-            # When a semicolon check is added to the standard library (and the release has had time
+-            # for adoption), this check may be removed, but be mindful of the fact that this may
+-            # change the timing of the exception (to the generation of the Set-Cookie header in
+-            # flush()). We may want to add a call to self._new_cookie.output() at the end of this
+-            # method to ensure that exceptions are raised when they will be most useful.
+-            if attr_value is not None and re.search(r"[\x00-\x20\x3b\x7f]", attr_value):
+-                raise http.cookies.CookieError(
+-                    f"Invalid cookie attribute {attr_name}={attr_value!r} for cookie {name!r}"
+-                )
+-        for k, v in kwargs.items():
+-            # Also check for disallowed characters in deprecated kwargs.
+-            if re.search(r"[\x00-\x20\x3b\x7f]", str(v)):
+-                raise http.cookies.CookieError(
+-                    f"Invalid cookie attribute {k}={v!r} for cookie {name!r}"
+-                )
++        self._validate_cookie_attributes(name, domain, path, samesite, kwargs)
+         if not hasattr(self, "_new_cookie"):
+             self._new_cookie: http.cookies.SimpleCookie = http.cookies.SimpleCookie()
+         if name in self._new_cookie:
+@@ -750,6 +729,48 @@
+                 DeprecationWarning,
+             )
+ 
++    @staticmethod
++    def _validate_cookie_attributes(
++        name: str,
++        domain: str | None,
++        path: str,
++        samesite: str | None,
++        extra_attributes: dict[str, Any],
++    ) -> None:
++        """Rejects cookie attributes containing forbidden characters.
++
++        Raises `http.cookies.CookieError` if any attribute (including the
++        deprecated extra keyword arguments to `set_cookie`) is unsafe.
++        """
++        for attr_name, attr_value in [
++            ("name", name),
++            ("domain", domain),
++            ("path", path),
++            ("samesite", samesite),
++        ]:
++            # Cookie attributes may not contain control characters or semicolons (except when
++            # escaped in the value). A check for control characters was added to the http.cookies
++            # library in a Feb 2026 security release; as of March it still does not check for
++            # semicolons.
++            #
++            # When a semicolon check is added to the standard library (and the release has had time
++            # for adoption), this check may be removed, but be mindful of the fact that this may
++            # change the timing of the exception (to the generation of the Set-Cookie header in
++            # flush()). We may want to add a call to self._new_cookie.output() at the end of this
++            # method to ensure that exceptions are raised when they will be most useful.
++            if attr_value is not None and _COOKIE_ATTRIBUTE_FORBIDDEN_CHARS_RE.search(
++                attr_value
++            ):
++                raise http.cookies.CookieError(
++                    f"Invalid cookie attribute {attr_name}={attr_value!r} for cookie {name!r}"
++                )
++        for k, v in extra_attributes.items():
++            # Also check for disallowed characters in deprecated kwargs.
++            if _COOKIE_ATTRIBUTE_FORBIDDEN_CHARS_RE.search(str(v)):
++                raise http.cookies.CookieError(
++                    f"Invalid cookie attribute {k}={v!r} for cookie {name!r}"
++                )
++
+     def clear_cookie(self, name: str, **kwargs: Any) -> None:
+         """Deletes the cookie with the given name.
+ 
+@@ -1015,78 +1036,92 @@
+         html = self.render_string(template_name, **kwargs)
+ 
+         # Insert the additional JS and CSS added by the modules on the page
+-        js_embed = []
+-        js_files = []
+-        css_embed = []
+-        css_files = []
+-        html_heads = []
+-        html_bodies = []
++        (
++            js_embed,
++            js_files,
++            css_embed,
++            css_files,
++            html_heads,
++            html_bodies,
++        ) = self._collect_module_resources()
++
++        if js_files:
++            # Maintain order of JavaScript files given by modules
++            js = self.render_linked_js(js_files)
++            html = _insert_before(html, b"</body>", utf8(js), last=True)
++        if js_embed:
++            js_bytes = self.render_embed_js(js_embed)
++            html = _insert_before(html, b"</body>", js_bytes, last=True)
++        if css_files:
++            css = self.render_linked_css(css_files)
++            html = _insert_before(html, b"</head>", utf8(css))
++        if css_embed:
++            css_bytes = self.render_embed_css(css_embed)
++            html = _insert_before(html, b"</head>", css_bytes)
++        if html_heads:
++            html = _insert_before(html, b"</head>", b"".join(html_heads))
++        if html_bodies:
++            html = _insert_before(html, b"</body>", b"".join(html_bodies))
++        return self.finish(html)
++
++    def _collect_module_resources(
++        self,
++    ) -> tuple[
++        list[bytes], list[str], list[bytes], list[str], list[bytes], list[bytes]
++    ]:
++        """Gathers the JS/CSS/HTML contributions of all active UI modules.
++
++        Returns ``(js_embed, js_files, css_embed, css_files, html_heads,
++        html_bodies)``.
++        """
++        js_embed: list[bytes] = []
++        js_files: list[str] = []
++        css_embed: list[bytes] = []
++        css_files: list[str] = []
++        html_heads: list[bytes] = []
++        html_bodies: list[bytes] = []
+         for module in getattr(self, "_active_modules", {}).values():
+             embed_part = module.embedded_javascript()
+             if embed_part:
+                 js_embed.append(utf8(embed_part))
+             file_part = module.javascript_files()
+             if file_part:
+-                if isinstance(file_part, (unicode_type, bytes)):
+-                    js_files.append(_unicode(file_part))
+-                else:
+-                    js_files.extend(file_part)
++                _add_resource_files(js_files, file_part)
+             embed_part = module.embedded_css()
+             if embed_part:
+                 css_embed.append(utf8(embed_part))
+             file_part = module.css_files()
+             if file_part:
+-                if isinstance(file_part, (unicode_type, bytes)):
+-                    css_files.append(_unicode(file_part))
+-                else:
+-                    css_files.extend(file_part)
++                _add_resource_files(css_files, file_part)
+             head_part = module.html_head()
+             if head_part:
+                 html_heads.append(utf8(head_part))
+             body_part = module.html_body()
+             if body_part:
+                 html_bodies.append(utf8(body_part))
+-
+-        if js_files:
+-            # Maintain order of JavaScript files given by modules
+-            js = self.render_linked_js(js_files)
+-            sloc = html.rindex(b"</body>")
+-            html = html[:sloc] + utf8(js) + b"\n" + html[sloc:]
+-        if js_embed:
+-            js_bytes = self.render_embed_js(js_embed)
+-            sloc = html.rindex(b"</body>")
+-            html = html[:sloc] + js_bytes + b"\n" + html[sloc:]
+-        if css_files:
+-            css = self.render_linked_css(css_files)
+-            hloc = html.index(b"</head>")
+-            html = html[:hloc] + utf8(css) + b"\n" + html[hloc:]
+-        if css_embed:
+-            css_bytes = self.render_embed_css(css_embed)
+-            hloc = html.index(b"</head>")
+-            html = html[:hloc] + css_bytes + b"\n" + html[hloc:]
+-        if html_heads:
+-            hloc = html.index(b"</head>")
+-            html = html[:hloc] + b"".join(html_heads) + b"\n" + html[hloc:]
+-        if html_bodies:
+-            hloc = html.index(b"</body>")
+-            html = html[:hloc] + b"".join(html_bodies) + b"\n" + html[hloc:]
+-        return self.finish(html)
+-
+-    def render_linked_js(self, js_files: Iterable[str]) -> str:
+-        """Default method used to render the final js links for the
+-        rendered webpage.
+-
+-        Override this method in a sub-classed controller to change the output.
+-        """
++        return js_embed, js_files, css_embed, css_files, html_heads, html_bodies
++
++    def _unique_static_paths(self, files: Iterable[str]) -> list[str]:
++        """Resolves relative paths with `static_url` and removes duplicates,
++        preserving order."""
+         paths = []
+         unique_paths: set[str] = set()
+ 
+-        for path in js_files:
++        for path in files:
+             if not is_absolute(path):
+                 path = self.static_url(path)
+             if path not in unique_paths:
+                 paths.append(path)
+                 unique_paths.add(path)
++        return paths
++
++    def render_linked_js(self, js_files: Iterable[str]) -> str:
++        """Default method used to render the final js links for the
++        rendered webpage.
++
++        Override this method in a sub-classed controller to change the output.
++        """
++        paths = self._unique_static_paths(js_files)
+ 
+         return "".join(
+             '<script src="'
+@@ -1113,15 +1148,7 @@
+ 
+         Override this method in a sub-classed controller to change the output.
+         """
+-        paths = []
+-        unique_paths: set[str] = set()
+-
+-        for path in css_files:
+-            if not is_absolute(path):
+-                path = self.static_url(path)
+-            if path not in unique_paths:
+-                paths.append(path)
+-                unique_paths.add(path)
++        paths = self._unique_static_paths(css_files)
+ 
+         return "".join(
+             '<link href="' + escape.xhtml_escape(p) + '" '
+@@ -1448,26 +1475,32 @@
+         See http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
+         """
+         if "Accept-Language" in self.request.headers:
+-            languages = self.request.headers["Accept-Language"].split(",")
+-            locales = []
+-            for language in languages:
+-                parts = language.strip().split(";")
+-                if len(parts) > 1 and parts[1].strip().startswith("q="):
+-                    try:
+-                        score = float(parts[1].strip()[2:])
+-                        if score < 0:
+-                            raise ValueError()
+-                    except (ValueError, TypeError):
+-                        score = 0.0
+-                else:
+-                    score = 1.0
+-                if score > 0:
+-                    locales.append((parts[0], score))
+-            if locales:
+-                locales.sort(key=lambda pair: pair[1], reverse=True)
+-                codes = [loc[0] for loc in locales]
++            codes = self._parse_accept_language(self.request.headers["Accept-Language"])
++            if codes:
+                 return locale.get(*codes)
+         return locale.get(default)
++
++    @staticmethod
++    def _parse_accept_language(header: str) -> list[str]:
++        """Returns the language codes of an ``Accept-Language`` header,
++        ordered from highest to lowest quality (languages with a zero or
++        invalid quality are dropped)."""
++        locales = []
++        for language in header.split(","):
++            parts = language.strip().split(";")
++            if len(parts) > 1 and parts[1].strip().startswith("q="):
++                try:
++                    score = float(parts[1].strip()[2:])
++                    if score < 0:
++                        raise ValueError()
++                except (ValueError, TypeError):
++                    score = 0.0
++            else:
++                score = 1.0
++            if score > 0:
++                locales.append((parts[0], score))
++        locales.sort(key=lambda pair: pair[1], reverse=True)
++        return [loc[0] for loc in locales]
+ 
+     @property
+     def current_user(self) -> Any:
+@@ -2374,26 +2407,10 @@
+         self._load_ui_modules(settings.get("ui_modules", {}))
+         self._load_ui_methods(settings.get("ui_methods", {}))
+         if self.settings.get("static_path"):
+-            path = self.settings["static_path"]
+-            handlers = list(handlers or [])
+-            static_url_prefix = settings.get("static_url_prefix", "/static/")
+-            static_handler_class = settings.get(
+-                "static_handler_class", StaticFileHandler
+-            )
+-            static_handler_args = settings.get("static_handler_args", {})
+-            static_handler_args["path"] = path
+-            for pattern in [
+-                re.escape(static_url_prefix) + r"(.*)",
+-                r"/(favicon\.ico)",
+-                r"/(robots\.txt)",
+-            ]:
+-                handlers.insert(0, (pattern, static_handler_class, static_handler_args))
++            handlers = self._with_static_handlers(handlers)
+ 
+         if self.settings.get("debug"):
+-            self.settings.setdefault("autoreload", True)
+-            self.settings.setdefault("compiled_template_cache", False)
+-            self.settings.setdefault("static_hash_cache", False)
+-            self.settings.setdefault("serve_traceback", True)
++            self._apply_debug_settings()
+ 
+         self.wildcard_router = _ApplicationRouter(self, handlers)
+         self.default_router = _ApplicationRouter(
+@@ -2405,6 +2422,34 @@
+             from tornado import autoreload
+ 
+             autoreload.start()
++
++    def _with_static_handlers(self, handlers: _RuleList | None) -> list[Any]:
++        """Returns ``handlers`` with the rules for static files prepended.
++
++        Used when the ``static_path`` setting is present.
++        """
++        path = self.settings["static_path"]
++        rules: list[Any] = list(handlers or [])
++        static_url_prefix = self.settings.get("static_url_prefix", "/static/")
++        static_handler_class = self.settings.get(
++            "static_handler_class", StaticFileHandler
++        )
++        static_handler_args = self.settings.get("static_handler_args", {})
++        static_handler_args["path"] = path
++        for pattern in [
++            re.escape(static_url_prefix) + r"(.*)",
++            r"/(favicon\.ico)",
++            r"/(robots\.txt)",
++        ]:
++            rules.insert(0, (pattern, static_handler_class, static_handler_args))
++        return rules
++
++    def _apply_debug_settings(self) -> None:
++        """Enables the settings that ``debug=True`` implies (unless set)."""
++        self.settings.setdefault("autoreload", True)
++        self.settings.setdefault("compiled_template_cache", False)
++        self.settings.setdefault("static_hash_cache", False)
++        self.settings.setdefault("serve_traceback", True)
+ 
+     def listen(
+         self,
+@@ -3025,59 +3070,13 @@
+             self.set_status(304)
+             return
+ 
+-        request_range = None
+-        range_header = self.request.headers.get("Range")
+-        if range_header:
+-            # As per RFC 2616 14.16, if an invalid Range header is specified,
+-            # the request will be treated as if the header didn't exist.
+-            request_range = httputil._parse_request_range(range_header)
+-
+         size = self.get_content_size()
+-        if request_range:
+-            start, end = request_range
+-            if start is not None and start < 0:
+-                start += size
+-                if start < 0:
+-                    start = 0
+-            if (
+-                start is not None
+-                and (start >= size or (end is not None and start >= end))
+-            ) or end == 0:
+-                # As per RFC 2616 14.35.1, a range is not satisfiable only: if
+-                # the first requested byte is equal to or greater than the
+-                # content, or when a suffix with length 0 is specified.
+-                # https://tools.ietf.org/html/rfc7233#section-2.1
+-                # A byte-range-spec is invalid if the last-byte-pos value is present
+-                # and less than the first-byte-pos.
+-                self.set_status(416)  # Range Not Satisfiable
+-                self.set_header("Content-Type", "text/plain")
+-                self.set_header("Content-Range", f"bytes */{size}")
+-                return
+-            if end is not None and end > size:
+-                # Clients sometimes blindly use a large range to limit their
+-                # download size; cap the endpoint at the actual file size.
+-                end = size
+-            # Note: only return HTTP 206 if less than the entire range has been
+-            # requested. Not only is this semantically correct, but Chrome
+-            # refuses to play audio if it gets an HTTP 206 in response to
+-            # ``Range: bytes=0-``.
+-            if size != (end or size) - (start or 0):
+-                self.set_status(206)  # Partial Content
+-                self.set_header(
+-                    "Content-Range", httputil._get_content_range(start, end, size)
+-                )
+-        else:
+-            start = end = None
+-
+-        if start is not None and end is not None:
+-            content_length = end - start
+-        elif end is not None:
+-            content_length = end
+-        elif start is not None:
+-            content_length = size - start
+-        else:
+-            content_length = size
+-        self.set_header("Content-Length", content_length)
++        byte_range = self._resolve_byte_range(size)
++        if byte_range is None:
++            # The requested range cannot be satisfied (416 has been set).
++            return
++        start, end = byte_range
++        self.set_header("Content-Length", self._range_content_length(start, end, size))
+ 
+         if include_body:
+             content = self.get_content(self.absolute_path, start, end)
+@@ -3091,6 +3090,69 @@
+                     return
+         else:
+             assert self.request.method == "HEAD"
++
++    def _resolve_byte_range(self, size: int) -> tuple[int | None, int | None] | None:
++        """Interprets the ``Range`` request header for a resource of ``size`` bytes.
++
++        Returns the ``(start, end)`` slice to serve (both ``None`` if no
++        usable range was requested), setting the partial-content (206)
++        status and headers when appropriate. If the range cannot be
++        satisfied, sets the 416 response and returns ``None``.
++        """
++        request_range = None
++        range_header = self.request.headers.get("Range")
++        if range_header:
++            # As per RFC 2616 14.16, if an invalid Range header is specified,
++            # the request will be treated as if the header didn't exist.
++            request_range = httputil._parse_request_range(range_header)
++
++        if not request_range:
++            return None, None
++
++        start, end = request_range
++        if start is not None and start < 0:
++            start += size
++            if start < 0:
++                start = 0
++        if (
++            start is not None and (start >= size or (end is not None and start >= end))
++        ) or end == 0:
++            # As per RFC 2616 14.35.1, a range is not satisfiable only: if
++            # the first requested byte is equal to or greater than the
++            # content, or when a suffix with length 0 is specified.
++            # https://tools.ietf.org/html/rfc7233#section-2.1
++            # A byte-range-spec is invalid if the last-byte-pos value is present
++            # and less than the first-byte-pos.
++            self.set_status(416)  # Range Not Satisfiable
++            self.set_header("Content-Type", "text/plain")
++            self.set_header("Content-Range", f"bytes */{size}")
++            return None
++        if end is not None and end > size:
++            # Clients sometimes blindly use a large range to limit their
++            # download size; cap the endpoint at the actual file size.
++            end = size
++        # Note: only return HTTP 206 if less than the entire range has been
++        # requested. Not only is this semantically correct, but Chrome
++        # refuses to play audio if it gets an HTTP 206 in response to
++        # ``Range: bytes=0-``.
++        if size != (end or size) - (start or 0):
++            self.set_status(206)  # Partial Content
++            self.set_header(
++                "Content-Range", httputil._get_content_range(start, end, size)
++            )
++        return start, end
++
++    @staticmethod
++    def _range_content_length(start: int | None, end: int | None, size: int) -> int:
++        """Number of bytes that will be sent for the given range."""
++        if start is not None and end is not None:
++            return end - start
++        elif end is not None:
++            return end
++        elif start is not None:
++            return size - start
++        else:
++            return size
+ 
+     def compute_etag(self) -> str | None:
+         """Sets the ``Etag`` header based on static url version.
+@@ -3919,29 +3981,28 @@
+     def _get_resources(self, key: str) -> Iterable[str]:
+         return (r[key] for r in self._resource_list if key in r)
+ 
+-    def embedded_javascript(self) -> str:
+-        return "\n".join(self._get_resources("embedded_javascript"))
+-
+-    def javascript_files(self) -> Iterable[str]:
++    def _get_resource_files(self, key: str) -> list[str]:
++        """Flattens the resources under ``key``, each of which may be a
++        single file name or an iterable of them."""
+         result = []
+-        for f in self._get_resources("javascript_files"):
++        for f in self._get_resources(key):
+             if isinstance(f, (unicode_type, bytes)):
+                 result.append(f)
+             else:
+                 result.extend(f)
+         return result
+ 
++    def embedded_javascript(self) -> str:
++        return "\n".join(self._get_resources("embedded_javascript"))
++
++    def javascript_files(self) -> Iterable[str]:
++        return self._get_resource_files("javascript_files")
++
+     def embedded_css(self) -> str:
+         return "\n".join(self._get_resources("embedded_css"))
+ 
+     def css_files(self) -> Iterable[str]:
+-        result = []
+-        for f in self._get_resources("css_files"):
+-            if isinstance(f, (unicode_type, bytes)):
+-                result.append(f)
+-            else:
+-                result.extend(f)
+-        return result
++        return self._get_resource_files("css_files")
+ 
+     def html_head(self) -> str:
+         return "".join(self._get_resources("html_head"))
+@@ -3967,6 +4028,11 @@
+             return self[key]
+         except KeyError as e:
+             raise AttributeError(str(e))
++
++
++def _format_field_v2(s: str | bytes) -> bytes:
++    """Encodes a field of a version 2 signed value as ``length:value``."""
++    return utf8("%d:" % len(s)) + utf8(s)
+ 
+ 
+ def create_signed_value(
+@@ -4004,16 +4070,13 @@
+         # - name (not encoded; assumed to be ~alphanumeric)
+         # - value (base64-encoded)
+         # - signature (hex-encoded; no length prefix)
+-        def format_field(s: str | bytes) -> bytes:
+-            return utf8("%d:" % len(s)) + utf8(s)
+-
+         to_sign = b"|".join(
+             [
+                 b"2",
+-                format_field(str(key_version or 0)),
+-                format_field(timestamp),
+-                format_field(name),
+-                format_field(value),
++                _format_field_v2(str(key_version or 0)),
++                _format_field_v2(timestamp),
++                _format_field_v2(name),
++                _format_field_v2(value),
+                 b"",
+             ]
+         )
+@@ -4221,6 +4284,29 @@
+     return any(path.startswith(x) for x in ["/", "http:", "https:"])
+ 
+ 
++def _add_resource_files(target: list[str], file_part: Any) -> None:
++    """Adds the files provided by a UI module to ``target``.
++
++    ``file_part`` is either a single file name or an iterable of names.
++    """
++    if isinstance(file_part, (unicode_type, bytes)):
++        target.append(_unicode(file_part))
++    else:
++        target.extend(file_part)
++
++
++def _insert_before(
++    html: bytes, marker: bytes, insertion: bytes, *, last: bool = False
++) -> bytes:
++    """Inserts ``insertion`` (followed by a newline) before ``marker`` in ``html``.
++
++    The first occurrence of ``marker`` is used, or the last one if ``last``
++    is true. Raises `ValueError` if the marker is not present.
++    """
++    loc = html.rindex(marker) if last else html.index(marker)
++    return html[:loc] + insertion + b"\n" + html[loc:]
++
++
+ def _normalize_url_like_browser(url: str) -> str:
+     """Approximates how a browser cleans up a URL before parsing it.
+ 

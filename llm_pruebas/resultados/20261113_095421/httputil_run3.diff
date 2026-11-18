@@ -1,0 +1,459 @@
+--- a/tornado/httputil.py
++++ b/tornado/httputil.py
+@@ -30,21 +30,20 @@
+ import http.cookies
+ import re
+ import time
++import typing
+ import unicodedata
++import warnings
++from collections.abc import Awaitable, Generator, Iterable, Iterator, Mapping
+ from functools import lru_cache
+ from http.client import responses as responses  # noqa: F401
+ from ssl import SSLError
+-from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
+-import warnings
+-
+-from tornado.escape import native_str, parse_qs_bytes, to_unicode, utf8
+-from tornado.util import ObjectDict, unicode_type
+-
+-import typing
+-from collections.abc import Awaitable, Generator, Iterable, Iterator, Mapping
+ from typing import (
+     AnyStr,
+ )
++from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
++
++from tornado.escape import native_str, parse_qs_bytes, to_unicode, utf8
++from tornado.util import ObjectDict, unicode_type
+ 
+ if typing.TYPE_CHECKING:
+     # These are relatively heavy imports and aren't needed in this file
+@@ -124,6 +123,21 @@
+     'Content-Type'
+     """
+     return "-".join([w.capitalize() for w in name.split("-")])
++
++
++def _check_header_value(value: str, chars_are_bytes: bool) -> None:
++    """Raises `HTTPInputError` if ``value`` is not a valid header value.
++
++    See `HTTPHeaders.parse` for the meaning of ``chars_are_bytes``.
++    """
++    if chars_are_bytes:
++        if not _ABNF.field_value.fullmatch(to_unicode(value)):
++            # TODO: the fact we still support bytes here (contrary to type annotations)
++            # and still test for it should probably be changed.
++            raise HTTPInputError("Invalid header value %r" % value)
++    else:
++        if _FORBIDDEN_HEADER_CHARS_RE.search(value):
++            raise HTTPInputError("Invalid header value %r" % value)
+ 
+ 
+ class HTTPHeaders(collections.abc.MutableMapping[str, str]):
+@@ -194,14 +208,7 @@
+         """Adds a new value for the given key."""
+         if not _ABNF.field_name.fullmatch(name):
+             raise HTTPInputError("Invalid header name %r" % name)
+-        if _chars_are_bytes:
+-            if not _ABNF.field_value.fullmatch(to_unicode(value)):
+-                # TODO: the fact we still support bytes here (contrary to type annotations)
+-                # and still test for it should probably be changed.
+-                raise HTTPInputError("Invalid header value %r" % value)
+-        else:
+-            if _FORBIDDEN_HEADER_CHARS_RE.search(value):
+-                raise HTTPInputError("Invalid header value %r" % value)
++        _check_header_value(value, _chars_are_bytes)
+         norm_name = _normalize_header(name)
+         if norm_name in self:
+             self._combined_cache.pop(norm_name, None)
+@@ -353,10 +360,7 @@
+     __copy__ = copy
+ 
+     def __str__(self) -> str:
+-        lines = []
+-        for name, value in self.get_all():
+-            lines.append(f"{name}: {value}\n")
+-        return "".join(lines)
++        return "".join(f"{name}: {value}\n" for name, value in self.get_all())
+ 
+     __unicode__ = __str__
+ 
+@@ -485,6 +489,8 @@
+         start_line: RequestStartLine | None = None,
+         server_connection: object | None = None,
+     ) -> None:
++        # The deprecation warnings are deliberately emitted inline (not from a
++        # helper) so that ``stacklevel=2`` keeps pointing at the caller.
+         if method is not None or uri is not None:
+             warnings.warn(
+                 "The method, uri, and version arguments to HTTPServerRequest are deprecated and "
+@@ -520,17 +526,36 @@
+         self.remote_ip = getattr(context, "remote_ip", None)
+         self.protocol = getattr(context, "protocol", "http")
+ 
++        self.host, self.host_name = self._parse_host()
++        self.files = files or {}
++        self.connection = connection
++        self.server_connection = server_connection
++        self._start_time = time.time()
++        self._finish_time: float | None = None
++
++        if self.uri is not None:
++            self.path, sep, self.query = self.uri.partition("?")
++        self.arguments = self._parse_query_arguments()
++        self.query_arguments = copy.deepcopy(self.arguments)
++        self.body_arguments: dict[str, list[bytes]] = {}
++
++    def _parse_host(self) -> tuple[str, str]:
++        """Validates the ``Host`` header, returning ``(host, host_name)``.
++
++        Raises `HTTPInputError` if the header is missing (for HTTP/1.1 and
++        later), malformed, or contains multiple hosts.
++        """
+         try:
+-            self.host = self.headers["Host"]
++            host = self.headers["Host"]
+         except KeyError:
+             if self.version == "HTTP/1.0":
+                 # HTTP/1.0 does not require the Host header.
+-                self.host = "127.0.0.1"
++                host = "127.0.0.1"
+             else:
+                 raise HTTPInputError("Missing Host header")
+-        if not _ABNF.host.fullmatch(self.host):
+-            raise HTTPInputError("Invalid Host header: %r" % self.host)
+-        if "," in self.host:
++        if not _ABNF.host.fullmatch(host):
++            raise HTTPInputError("Invalid Host header: %r" % host)
++        if "," in host:
+             # https://www.rfc-editor.org/rfc/rfc9112.html#name-request-target
+             # Server MUST respond with 400 Bad Request if multiple
+             # Host headers are present.
+@@ -547,22 +572,17 @@
+             # characters, but commas are the most problematic since they could
+             # be used to exploit differences between proxies when multiple headers
+             # are supplied).
+-            raise HTTPInputError("Multiple host headers not allowed: %r" % self.host)
++            raise HTTPInputError("Multiple host headers not allowed: %r" % host)
+         try:
+-            self.host_name = split_host_and_port(self.host.lower())[0]
++            host_name = split_host_and_port(host.lower())[0]
+         except ValueError:
+             # The port has more digits than int() allows.
+-            raise HTTPInputError("Invalid Host header: %r" % self.host)
+-        self.files = files or {}
+-        self.connection = connection
+-        self.server_connection = server_connection
+-        self._start_time = time.time()
+-        self._finish_time: float | None = None
+-
+-        if self.uri is not None:
+-            self.path, sep, self.query = self.uri.partition("?")
++            raise HTTPInputError("Invalid Host header: %r" % host)
++        return host, host_name
++
++    def _parse_query_arguments(self) -> dict[str, list[bytes]]:
+         try:
+-            self.arguments = parse_qs_bytes(
++            return parse_qs_bytes(
+                 self.query,
+                 keep_blank_values=True,
+                 # The query string is bounded by max_header_size, but parsing
+@@ -574,29 +594,31 @@
+             )
+         except Exception as e:
+             raise HTTPInputError("Invalid query string: %s" % e) from e
+-        self.query_arguments = copy.deepcopy(self.arguments)
+-        self.body_arguments: dict[str, list[bytes]] = {}
+ 
+     @property
+     def cookies(self) -> dict[str, http.cookies.Morsel[typing.Any]]:
+         """A dictionary of ``http.cookies.Morsel`` objects."""
+         if not hasattr(self, "_cookies"):
+-            self._cookies: http.cookies.SimpleCookie = http.cookies.SimpleCookie()
+-            if "Cookie" in self.headers:
+-                try:
+-                    parsed = parse_cookie(self.headers["Cookie"])
+-                except Exception:
+-                    pass
+-                else:
+-                    for k, v in parsed.items():
+-                        try:
+-                            self._cookies[k] = v
+-                        except Exception:
+-                            # SimpleCookie imposes some restrictions on keys;
+-                            # parse_cookie does not. Discard any cookies
+-                            # with disallowed keys.
+-                            pass
++            self._cookies: http.cookies.SimpleCookie = self._load_cookies()
+         return self._cookies
++
++    def _load_cookies(self) -> http.cookies.SimpleCookie:
++        cookies: http.cookies.SimpleCookie = http.cookies.SimpleCookie()
++        if "Cookie" not in self.headers:
++            return cookies
++        try:
++            parsed = parse_cookie(self.headers["Cookie"])
++        except Exception:
++            return cookies
++        for k, v in parsed.items():
++            try:
++                cookies[k] = v
++            except Exception:
++                # SimpleCookie imposes some restrictions on keys;
++                # parse_cookie does not. Discard any cookies
++                # with disallowed keys.
++                pass
++        return cookies
+ 
+     def full_url(self) -> str:
+         """Reconstructs the full URL for this request."""
+@@ -819,28 +841,18 @@
+         return url
+     parsed_url = urlparse(url)
+     if isinstance(args, dict):
+-        parsed_query = parse_qsl(parsed_url.query, keep_blank_values=True)
+-        parsed_query.extend(args.items())
+-    elif isinstance(args, list) or isinstance(args, tuple):
+-        parsed_query = parse_qsl(parsed_url.query, keep_blank_values=True)
+-        parsed_query.extend(args)
++        new_pairs = args.items()
++    elif isinstance(args, (list, tuple)):
++        new_pairs = args
+     else:
+-        err = "'args' parameter should be dict, list or tuple. Not {0}".format(
+-            type(args)
++        raise TypeError(
++            "'args' parameter should be dict, list or tuple. Not {0}".format(
++                type(args)
++            )
+         )
+-        raise TypeError(err)
+-    final_query = urlencode(parsed_query)
+-    url = urlunparse(
+-        (
+-            parsed_url[0],
+-            parsed_url[1],
+-            parsed_url[2],
+-            parsed_url[3],
+-            final_query,
+-            parsed_url[5],
+-        )
+-    )
+-    return url
++    query_pairs = parse_qsl(parsed_url.query, keep_blank_values=True)
++    query_pairs.extend(new_pairs)
++    return urlunparse(parsed_url._replace(query=urlencode(query_pairs)))
+ 
+ 
+ class HTTPFile(ObjectDict):
+@@ -993,10 +1005,12 @@
+     multipart: ParseMultipartConfig = dataclasses.field(
+         default_factory=ParseMultipartConfig
+     )
++    """Configuration for ``multipart/form-data`` request bodies."""
++
+     urlencoded: ParseUrlEncodedConfig = dataclasses.field(
+         default_factory=ParseUrlEncodedConfig
+     )
+-    """Configuration for ``multipart/form-data`` request bodies."""
++    """Configuration for ``application/x-www-form-urlencoded`` request bodies."""
+ 
+ 
+ _DEFAULT_PARSE_BODY_CONFIG = ParseBodyConfig()
+@@ -1028,6 +1042,58 @@
+     _DEFAULT_PARSE_BODY_CONFIG = config
+ 
+ 
++def _reject_content_encoding(headers: HTTPHeaders | None) -> None:
++    """Raises `HTTPInputError` if the body has a ``Content-Encoding``."""
++    if headers and "Content-Encoding" in headers:
++        raise HTTPInputError(
++            "Unsupported Content-Encoding: %s" % headers["Content-Encoding"]
++        )
++
++
++def _parse_urlencoded_body(
++    body: bytes,
++    arguments: dict[str, list[bytes]],
++    config: ParseUrlEncodedConfig,
++) -> None:
++    try:
++        # real charset decoding will happen in RequestHandler.decode_argument()
++        uri_arguments = parse_qs_bytes(
++            body,
++            keep_blank_values=True,
++            max_num_fields=config.max_arguments,
++        )
++    except Exception as e:
++        raise HTTPInputError("Invalid x-www-form-urlencoded body: %s" % e) from e
++    for name, values in uri_arguments.items():
++        if values:
++            arguments.setdefault(name, []).extend(values)
++
++
++def _parse_multipart_body(
++    content_type: str,
++    body: bytes,
++    arguments: dict[str, list[bytes]],
++    files: dict[str, list[HTTPFile]],
++    config: ParseMultipartConfig,
++) -> None:
++    try:
++        fields = content_type.split(";")
++        if fields[0].strip() != "multipart/form-data":
++            # This catches "Content-Type: multipart/form-dataxyz"
++            raise HTTPInputError("Invalid content type")
++        for field in fields:
++            k, sep, v = field.strip().partition("=")
++            if k == "boundary" and v:
++                parse_multipart_form_data(
++                    utf8(v), body, arguments, files, config=config
++                )
++                break
++        else:
++            raise HTTPInputError("multipart boundary not found")
++    except Exception as e:
++        raise HTTPInputError("Invalid multipart/form-data: %s" % e) from e
++
++
+ def parse_body_arguments(
+     content_type: str,
+     body: bytes,
+@@ -1048,43 +1114,57 @@
+     if config is None:
+         config = _DEFAULT_PARSE_BODY_CONFIG
+     if content_type.startswith("application/x-www-form-urlencoded"):
+-        if headers and "Content-Encoding" in headers:
+-            raise HTTPInputError(
+-                "Unsupported Content-Encoding: %s" % headers["Content-Encoding"]
+-            )
+-        try:
+-            # real charset decoding will happen in RequestHandler.decode_argument()
+-            uri_arguments = parse_qs_bytes(
+-                body,
+-                keep_blank_values=True,
+-                max_num_fields=config.urlencoded.max_arguments,
+-            )
+-        except Exception as e:
+-            raise HTTPInputError("Invalid x-www-form-urlencoded body: %s" % e) from e
+-        for name, values in uri_arguments.items():
+-            if values:
+-                arguments.setdefault(name, []).extend(values)
++        _reject_content_encoding(headers)
++        _parse_urlencoded_body(body, arguments, config.urlencoded)
+     elif content_type.startswith("multipart/form-data"):
+-        if headers and "Content-Encoding" in headers:
+-            raise HTTPInputError(
+-                "Unsupported Content-Encoding: %s" % headers["Content-Encoding"]
+-            )
+-        try:
+-            fields = content_type.split(";")
+-            if fields[0].strip() != "multipart/form-data":
+-                # This catches "Content-Type: multipart/form-dataxyz"
+-                raise HTTPInputError("Invalid content type")
+-            for field in fields:
+-                k, sep, v = field.strip().partition("=")
+-                if k == "boundary" and v:
+-                    parse_multipart_form_data(
+-                        utf8(v), body, arguments, files, config=config.multipart
+-                    )
+-                    break
+-            else:
+-                raise HTTPInputError("multipart boundary not found")
+-        except Exception as e:
+-            raise HTTPInputError("Invalid multipart/form-data: %s" % e) from e
++        _reject_content_encoding(headers)
++        _parse_multipart_body(content_type, body, arguments, files, config.multipart)
++
++
++def _split_multipart_body(
++    boundary: bytes, data: bytes, config: ParseMultipartConfig
++) -> list[bytes]:
++    """Splits a multipart body into its (still encoded) parts."""
++    final_boundary_index = data.rfind(b"--" + boundary + b"--")
++    if final_boundary_index == -1:
++        raise HTTPInputError("Invalid multipart/form-data: no final boundary found")
++    parts = data[:final_boundary_index].split(
++        b"--" + boundary + b"\r\n", config.max_parts + 1
++    )
++    if len(parts) > config.max_parts:
++        raise HTTPInputError("multipart/form-data has too many parts")
++    return parts
++
++
++def _add_multipart_part(
++    part: bytes,
++    config: ParseMultipartConfig,
++    arguments: dict[str, list[bytes]],
++    files: dict[str, list[HTTPFile]],
++) -> None:
++    """Parses a single multipart part and records it in ``arguments`` or ``files``."""
++    eoh = part.find(b"\r\n\r\n")
++    if eoh == -1:
++        raise HTTPInputError("multipart/form-data missing headers")
++    if eoh > config.max_part_header_size:
++        raise HTTPInputError("multipart/form-data part header too large")
++    headers = HTTPHeaders.parse(part[:eoh].decode("utf-8"), _chars_are_bytes=False)
++    disp_header = headers.get("Content-Disposition", "")
++    disposition, disp_params = _parse_header(disp_header)
++    if disposition != "form-data" or not part.endswith(b"\r\n"):
++        raise HTTPInputError("Invalid multipart/form-data")
++    value = part[eoh + 4 : -2]
++    name = disp_params.get("name")
++    if not name:
++        raise HTTPInputError("multipart/form-data missing name")
++    filename = disp_params.get("filename")
++    if filename:
++        ctype = headers.get("Content-Type", "application/unknown")
++        files.setdefault(name, []).append(
++            HTTPFile(filename=filename, body=value, content_type=ctype)
++        )
++    else:
++        arguments.setdefault(name, []).append(value)
+ 
+ 
+ def parse_multipart_form_data(
+@@ -1117,39 +1197,10 @@
+     # in the wild.
+     if boundary.startswith(b'"') and boundary.endswith(b'"'):
+         boundary = boundary[1:-1]
+-    final_boundary_index = data.rfind(b"--" + boundary + b"--")
+-    if final_boundary_index == -1:
+-        raise HTTPInputError("Invalid multipart/form-data: no final boundary found")
+-    parts = data[:final_boundary_index].split(
+-        b"--" + boundary + b"\r\n", config.max_parts + 1
+-    )
+-    if len(parts) > config.max_parts:
+-        raise HTTPInputError("multipart/form-data has too many parts")
+-    for part in parts:
++    for part in _split_multipart_body(boundary, data, config):
+         if not part:
+             continue
+-        eoh = part.find(b"\r\n\r\n")
+-        if eoh == -1:
+-            raise HTTPInputError("multipart/form-data missing headers")
+-        if eoh > config.max_part_header_size:
+-            raise HTTPInputError("multipart/form-data part header too large")
+-        headers = HTTPHeaders.parse(part[:eoh].decode("utf-8"), _chars_are_bytes=False)
+-        disp_header = headers.get("Content-Disposition", "")
+-        disposition, disp_params = _parse_header(disp_header)
+-        if disposition != "form-data" or not part.endswith(b"\r\n"):
+-            raise HTTPInputError("Invalid multipart/form-data")
+-        value = part[eoh + 4 : -2]
+-        name = disp_params.get("name")
+-        if not name:
+-            raise HTTPInputError("multipart/form-data missing name")
+-        filename = disp_params.get("filename")
+-        if filename:
+-            ctype = headers.get("Content-Type", "application/unknown")
+-            files.setdefault(name, []).append(
+-                HTTPFile(filename=filename, body=value, content_type=ctype)
+-            )
+-        else:
+-            arguments.setdefault(name, []).append(value)
++        _add_multipart_part(part, config, arguments, files)
+ 
+ 
+ def format_timestamp(

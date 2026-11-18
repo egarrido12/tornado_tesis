@@ -1,0 +1,697 @@
+--- a/tornado/iostream.py
++++ b/tornado/iostream.py
+@@ -73,6 +73,41 @@
+     _ERRNO_CONNRESET += (errno.EPROTOTYPE,)  # type: ignore
+ 
+ _WINDOWS = sys.platform.startswith("win")
++
++# On windows, socket.send blows up if given a write buffer that's too
++# large, instead of just returning the number of bytes it was able to
++# process. Therefore we must not call socket.send with more than this
++# many bytes at a time.
++_WINDOWS_MAX_SEND_SIZE = 128 * 1024
++
++# SSL sockets only support up to 2GB per call, so reads and writes are
++# clipped to 1GB. This is transparent to callers, since the fd-level
++# methods are already expected to (possibly) transfer less than the
++# provided buffer.
++_SSL_MAX_IO_SIZE = 1 << 30
++
++# Reads of at most this many bytes are consumed by copying a slice
++# instead of creating (and releasing) a memoryview.
++_SMALL_CONSUME_THRESHOLD = 2048
++
++_CloseExcInfo = (
++    None
++    | bool
++    | BaseException
++    | tuple[
++        type[BaseException] | None,
++        BaseException | None,
++        TracebackType | None,
++    ]
++)
++
++
++def _clip_to_ssl_limit(buf: Any) -> Any:
++    """Returns ``buf``, or a view of its first `_SSL_MAX_IO_SIZE` bytes
++    if it is too large for a single SSL socket call."""
++    if len(buf) >= _SSL_MAX_IO_SIZE:
++        return memoryview(buf)[:_SSL_MAX_IO_SIZE]
++    return buf
+ 
+ 
+ class StreamClosedError(IOError):
+@@ -365,18 +400,7 @@
+         future = self._start_read()
+         self._read_regex = re.compile(regex)
+         self._read_max_bytes = max_bytes
+-        try:
+-            self._try_inline_read()
+-        except UnsatisfiableReadError as e:
+-            # Handle this the same way as in _handle_events.
+-            gen_log.info("Unsatisfiable read, closing connection: %s" % e)
+-            self.close(exc_info=e)
+-            return future
+-        except:
+-            # Ensure that the future doesn't log an error because its
+-            # failure was never examined.
+-            future.add_done_callback(lambda f: f.exception())
+-            raise
++        self._try_inline_read_closing_if_unsatisfiable(future)
+         return future
+ 
+     def read_until(
+@@ -402,16 +426,7 @@
+         future = self._start_read()
+         self._read_delimiter = delimiter
+         self._read_max_bytes = max_bytes
+-        try:
+-            self._try_inline_read()
+-        except UnsatisfiableReadError as e:
+-            # Handle this the same way as in _handle_events.
+-            gen_log.info("Unsatisfiable read, closing connection: %s" % e)
+-            self.close(exc_info=e)
+-            return future
+-        except:
+-            future.add_done_callback(lambda f: f.exception())
+-            raise
++        self._try_inline_read_closing_if_unsatisfiable(future)
+         return future
+ 
+     def read_bytes(self, num_bytes: int, partial: bool = False) -> Awaitable[bytes]:
+@@ -435,11 +450,7 @@
+         assert isinstance(num_bytes, numbers.Integral)
+         self._read_bytes = num_bytes
+         self._read_partial = partial
+-        try:
+-            self._try_inline_read()
+-        except:
+-            future.add_done_callback(lambda f: f.exception())
+-            raise
++        self._try_inline_read_discarding_errors(future)
+         return future
+ 
+     def read_into(self, buf: bytearray, partial: bool = False) -> Awaitable[int]:
+@@ -482,11 +493,7 @@
+         self._read_bytes = n
+         self._read_partial = partial
+ 
+-        try:
+-            self._try_inline_read()
+-        except:
+-            future.add_done_callback(lambda f: f.exception())
+-            raise
++        self._try_inline_read_discarding_errors(future)
+         return future
+ 
+     def read_until_close(self) -> Awaitable[bytes]:
+@@ -512,12 +519,36 @@
+             self._finish_read(self._read_buffer_size)
+             return future
+         self._read_until_close = True
++        self._try_inline_read_discarding_errors(future)
++        return future
++
++    def _try_inline_read_discarding_errors(self, future: Future[Any]) -> None:
++        """Runs `_try_inline_read`; if it raises, marks the exception on
++        ``future`` as retrieved (so it does not log an error because its
++        failure was never examined) and re-raises it.
++        """
+         try:
+             self._try_inline_read()
+         except:
+             future.add_done_callback(lambda f: f.exception())
+             raise
+-        return future
++
++    def _try_inline_read_closing_if_unsatisfiable(self, future: Future[Any]) -> None:
++        """Like `_try_inline_read_discarding_errors`, but an
++        `UnsatisfiableReadError` closes the stream (leaving the error to be
++        delivered through ``future``) instead of being raised.
++        """
++        try:
++            self._try_inline_read()
++        except UnsatisfiableReadError as e:
++            # Handle this the same way as in _handle_events.
++            gen_log.info("Unsatisfiable read, closing connection: %s" % e)
++            self.close(exc_info=e)
++        except:
++            # Ensure that the future doesn't log an error because its
++            # failure was never examined.
++            future.add_done_callback(lambda f: f.exception())
++            raise
+ 
+     def write(self, data: bytes | memoryview) -> "Future[None]":
+         """Asynchronously write the given data to this stream.
+@@ -578,16 +609,7 @@
+ 
+     def close(
+         self,
+-        exc_info: (
+-            None
+-            | bool
+-            | BaseException
+-            | tuple[
+-                type[BaseException] | None,
+-                BaseException | None,
+-                TracebackType | None,
+-            ]
+-        ) = False,
++        exc_info: _CloseExcInfo = False,
+     ) -> None:
+         """Close this stream.
+ 
+@@ -596,38 +618,8 @@
+         use that instead of `sys.exc_info`).
+         """
+         if not self.closed():
+-            if exc_info:
+-                if isinstance(exc_info, tuple):
+-                    self.error = exc_info[1]
+-                elif isinstance(exc_info, BaseException):
+-                    self.error = exc_info
+-                else:
+-                    exc_info = sys.exc_info()
+-                    if any(exc_info):
+-                        self.error = exc_info[1]
+-            if self._read_until_close:
+-                self._read_until_close = False
+-                if self.error is None or self._is_connreset(self.error):
+-                    # A connection reset is treated as a normal close
+-                    # throughout this class (on some platforms, notably
+-                    # windows, a peer that closes cleanly may still be
+-                    # reported as a reset), so deliver the buffered data as
+-                    # the result of the read.
+-                    self._finish_read(self._read_buffer_size)
+-                # Otherwise the stream is closing because of a real error, so
+-                # leave the read future pending for _signal_closed() to fail
+-                # with StreamClosedError(real_error=self.error). Resolving it
+-                # with the buffered data would report a truncated result as if
+-                # it were complete.
+-            elif self._read_future is not None:
+-                # resolve reads that are pending and ready to complete
+-                try:
+-                    pos = self._find_read_pos()
+-                except UnsatisfiableReadError:
+-                    pass
+-                else:
+-                    if pos is not None:
+-                        self._read_from_buffer(pos)
++            self._record_close_error(exc_info)
++            self._complete_pending_read_on_close()
+             if self._state is not None:
+                 self.io_loop.remove_handler(self.fileno())
+                 self._state = None
+@@ -635,7 +627,64 @@
+             self._closed = True
+         self._signal_closed()
+ 
++    def _record_close_error(self, exc_info: _CloseExcInfo) -> None:
++        """Stores the exception that caused the stream to close, if any."""
++        if not exc_info:
++            return
++        if isinstance(exc_info, tuple):
++            self.error = exc_info[1]
++        elif isinstance(exc_info, BaseException):
++            self.error = exc_info
++        else:
++            current_exc_info = sys.exc_info()
++            if any(current_exc_info):
++                self.error = current_exc_info[1]
++
++    def _complete_pending_read_on_close(self) -> None:
++        """Resolves a pending read that can be satisfied by buffered data."""
++        if self._read_until_close:
++            self._read_until_close = False
++            if self.error is None or self._is_connreset(self.error):
++                # A connection reset is treated as a normal close
++                # throughout this class (on some platforms, notably
++                # windows, a peer that closes cleanly may still be
++                # reported as a reset), so deliver the buffered data as
++                # the result of the read.
++                self._finish_read(self._read_buffer_size)
++            # Otherwise the stream is closing because of a real error, so
++            # leave the read future pending for _signal_closed() to fail
++            # with StreamClosedError(real_error=self.error). Resolving it
++            # with the buffered data would report a truncated result as if
++            # it were complete.
++        elif self._read_future is not None:
++            # resolve reads that are pending and ready to complete
++            try:
++                pos = self._find_read_pos()
++            except UnsatisfiableReadError:
++                pass
++            else:
++                if pos is not None:
++                    self._read_from_buffer(pos)
++
++    @staticmethod
++    def _observe_exception(future: Future[Any]) -> None:
++        """References the future's exception to silence warnings.
++
++        Annoyingly, this raises if the future was cancelled, but just
++        returns any other error.
++        """
++        try:
++            future.exception()
++        except asyncio.CancelledError:
++            pass
++
+     def _signal_closed(self) -> None:
++        self._fail_pending_futures()
++        self._fail_ssl_connect_future()
++        self._schedule_close_callback()
++        self._release_write_buffer()
++
++    def _fail_pending_futures(self) -> None:
+         futures: list[Future[Any]] = []
+         if self._read_future is not None:
+             futures.append(self._read_future)
+@@ -648,30 +697,28 @@
+         for future in futures:
+             if not future.done():
+                 future.set_exception(StreamClosedError(real_error=self.error))
+-            # Reference the exception to silence warnings. Annoyingly,
+-            # this raises if the future was cancelled, but just
+-            # returns any other error.
+-            try:
+-                future.exception()
+-            except asyncio.CancelledError:
+-                pass
+-        if self._ssl_connect_future is not None:
+-            # _ssl_connect_future expects to see the real exception (typically
+-            # an ssl.SSLError), not just StreamClosedError.
+-            if not self._ssl_connect_future.done():
+-                if self.error is not None:
+-                    self._ssl_connect_future.set_exception(self.error)
+-                else:
+-                    self._ssl_connect_future.set_exception(StreamClosedError())
+-            try:
+-                self._ssl_connect_future.exception()
+-            except asyncio.CancelledError:
+-                pass
+-            self._ssl_connect_future = None
++            self._observe_exception(future)
++
++    def _fail_ssl_connect_future(self) -> None:
++        if self._ssl_connect_future is None:
++            return
++        # _ssl_connect_future expects to see the real exception (typically
++        # an ssl.SSLError), not just StreamClosedError.
++        if not self._ssl_connect_future.done():
++            if self.error is not None:
++                self._ssl_connect_future.set_exception(self.error)
++            else:
++                self._ssl_connect_future.set_exception(StreamClosedError())
++        self._observe_exception(self._ssl_connect_future)
++        self._ssl_connect_future = None
++
++    def _schedule_close_callback(self) -> None:
+         if self._close_callback is not None:
+             cb = self._close_callback
+             self._close_callback = None
+             self.io_loop.add_callback(cb)
++
++    def _release_write_buffer(self) -> None:
+         # Clear the buffers so they can be cleared immediately even
+         # if the IOStream object is kept alive by a reference cycle.
+         # TODO: Clear the read buffer too; it currently breaks some tests.
+@@ -740,17 +787,7 @@
+                 # callbacks have had a chance to run.
+                 self.io_loop.add_callback(self.close)
+                 return
+-            state = self.io_loop.ERROR
+-            if self.reading():
+-                state |= self.io_loop.READ
+-            if self.writing():
+-                state |= self.io_loop.WRITE
+-            if state == self.io_loop.ERROR and self._read_buffer_size == 0:
+-                # If the connection is idle, listen for reads too so
+-                # we can tell if the connection is closed.  If there is
+-                # data in the read buffer we won't run the close callback
+-                # yet anyway, so we don't need to listen in this case.
+-                state |= self.io_loop.READ
++            state = self._compute_listen_state()
+             if state != self._state:
+                 assert (
+                     self._state is not None
+@@ -765,19 +802,40 @@
+             self.close(exc_info=e)
+             raise
+ 
+-    def _read_to_buffer_loop(self) -> int | None:
+-        # This method is called from _handle_read and _try_inline_read.
++    def _compute_listen_state(self) -> int:
++        """Returns the IOLoop events we should currently listen for."""
++        state = self.io_loop.ERROR
++        if self.reading():
++            state |= self.io_loop.READ
++        if self.writing():
++            state |= self.io_loop.WRITE
++        if state == self.io_loop.ERROR and self._read_buffer_size == 0:
++            # If the connection is idle, listen for reads too so
++            # we can tell if the connection is closed.  If there is
++            # data in the read buffer we won't run the close callback
++            # yet anyway, so we don't need to listen in this case.
++            state |= self.io_loop.READ
++        return state
++
++    def _read_target_bytes(self) -> int | None:
++        """Returns the amount of buffered data at which the pending read
++        is certain to be satisfiable, or None if there is no such amount.
++        """
+         if self._read_bytes is not None:
+-            target_bytes: int | None = self._read_bytes
++            return self._read_bytes
+         elif self._read_max_bytes is not None:
+-            target_bytes = self._read_max_bytes
++            return self._read_max_bytes
+         elif self.reading():
+             # For read_until without max_bytes, or
+             # read_until_close, read as much as we can before
+             # scanning for the delimiter.
+-            target_bytes = None
++            return None
+         else:
+-            target_bytes = 0
++            return 0
++
++    def _read_to_buffer_loop(self) -> int | None:
++        # This method is called from _handle_read and _try_inline_read.
++        target_bytes = self._read_target_bytes()
+         next_find_pos = 0
+         while not self.closed():
+             # Read from the socket until we get EWOULDBLOCK or equivalent.
+@@ -889,31 +947,29 @@
+         """
+         buf: bytearray | None = None
+         try:
+-            while True:
+-                try:
+-                    if self._user_read_buffer:
+-                        # Release the views explicitly so the caller can
+-                        # resize their buffer after the read completes
+-                        # (PyPy does not free them until garbage collection).
+-                        with (
+-                            memoryview(self._read_buffer) as m,
+-                            m[self._read_buffer_size :] as view,
+-                        ):
+-                            bytes_read = self.read_from_fd(view)
+-                    else:
+-                        buf = bytearray(self.read_chunk_size)
+-                        bytes_read = self.read_from_fd(buf)
+-                except OSError as e:
+-                    # ssl.SSLError is a subclass of socket.error
+-                    if self._is_connreset(e):
+-                        # Treat ECONNRESET as a connection close rather than
+-                        # an error to minimize log spam  (the exception will
+-                        # be available on self.error for apps that care).
+-                        self.close(exc_info=e)
+-                        return None
+-                    self.close(exc_info=e)
+-                    raise
+-                break
++            try:
++                if self._user_read_buffer:
++                    # Release the views explicitly so the caller can
++                    # resize their buffer after the read completes
++                    # (PyPy does not free them until garbage collection).
++                    with (
++                        memoryview(self._read_buffer) as m,
++                        m[self._read_buffer_size :] as view,
++                    ):
++                        bytes_read = self.read_from_fd(view)
++                else:
++                    buf = bytearray(self.read_chunk_size)
++                    bytes_read = self.read_from_fd(buf)
++            except OSError as e:
++                # ssl.SSLError is a subclass of socket.error
++                is_connreset = self._is_connreset(e)
++                self.close(exc_info=e)
++                if is_connreset:
++                    # Treat ECONNRESET as a connection close rather than
++                    # an error to minimize log spam  (the exception will
++                    # be available on self.error for apps that care).
++                    return None
++                raise
+             if bytes_read is None:
+                 return 0
+             elif bytes_read == 0:
+@@ -994,6 +1050,16 @@
+             )
+ 
+     def _handle_write(self) -> None:
++        if not self._drain_write_buffer():
++            # The stream was closed by a write error.
++            return
++        self._resolve_completed_write_futures()
++
++    def _drain_write_buffer(self) -> bool:
++        """Writes as much buffered data as the fd will accept.
++
++        Returns False if a write error closed the stream.
++        """
+         while True:
+             size = len(self._write_buffer)
+             if not size:
+@@ -1001,12 +1067,8 @@
+             assert size > 0
+             try:
+                 if _WINDOWS:
+-                    # On windows, socket.send blows up if given a
+-                    # write buffer that's too large, instead of just
+-                    # returning the number of bytes it was able to
+-                    # process.  Therefore we must not call socket.send
+-                    # with more than 128KB at a time.
+-                    size = 128 * 1024
++                    # See _WINDOWS_MAX_SEND_SIZE.
++                    size = _WINDOWS_MAX_SEND_SIZE
+ 
+                 with self._write_buffer.peek(size) as data:
+                     num_bytes = self.write_to_fd(data)
+@@ -1023,8 +1085,10 @@
+                     # minimize log spam
+                     gen_log.warning("Write error on %s: %s", self.fileno(), e)
+                 self.close(exc_info=e)
+-                return
+-
++                return False
++        return True
++
++    def _resolve_completed_write_futures(self) -> None:
+         while self._write_futures:
+             index, future = self._write_futures[0]
+             if index > self._total_write_done_index:
+@@ -1042,7 +1106,7 @@
+             # Taking the whole buffer is the most common case, and bytes()
+             # copies it without a memoryview.
+             b = bytes(buf)
+-        elif loc <= 2048:
++        elif loc <= _SMALL_CONSUME_THRESHOLD:
+             # Copying a small slice twice is cheaper than creating and
+             # releasing memoryviews.
+             b = bytes(buf[:loc])
+@@ -1248,57 +1312,12 @@
+             # returned immediately when attempting to connect to
+             # localhost, so handle them the same way as an error
+             # reported later in _handle_connect.
+-            if future is None:
+-                gen_log.warning("Connect error on fd %s: %s", self.socket.fileno(), e)
+             self.close(exc_info=e)
+             return future
+         self._add_io_state(self.io_loop.WRITE)
+         return future
+ 
+-    def start_tls(
+-        self,
+-        server_side: bool,
+-        ssl_options: dict[str, Any] | ssl.SSLContext | None = None,
+-        server_hostname: str | None = None,
+-    ) -> "Future[SSLIOStream]":
+-        """Convert this `IOStream` to an `SSLIOStream`.
+-
+-        This enables protocols that begin in clear-text mode and
+-        switch to SSL after some initial negotiation (such as the
+-        ``STARTTLS`` extension to SMTP and IMAP).
+-
+-        This method cannot be used if there are outstanding reads
+-        or writes on the stream, or if there is any data in the
+-        IOStream's buffer (data in the operating system's socket
+-        buffer is allowed).  This means it must generally be used
+-        immediately after reading or writing the last clear-text
+-        data.  It can also be used immediately after connecting,
+-        before any reads or writes.
+-
+-        The ``ssl_options`` argument may be either an `ssl.SSLContext`
+-        object or a dictionary of keyword arguments for the
+-        `ssl.SSLContext.wrap_socket` function.  The ``server_hostname`` argument
+-        will be used for certificate validation unless disabled
+-        in the ``ssl_options``.
+-
+-        This method returns a `.Future` whose result is the new
+-        `SSLIOStream`.  After this method has been called,
+-        any other operation on the original stream is undefined.
+-
+-        If a close callback is defined on this stream, it will be
+-        transferred to the new stream.
+-
+-        .. versionadded:: 4.0
+-
+-        .. versionchanged:: 4.2
+-           SSL certificates are validated by default; pass
+-           ``ssl_options=dict(cert_reqs=ssl.CERT_NONE)`` or a
+-           suitably-configured `ssl.SSLContext` to disable.
+-
+-        .. versionchanged:: 6.6
+-           Cancelling the returned `.Future` before the handshake completes
+-           now closes the new stream and its socket.
+-        """
++    def _check_idle_for_start_tls(self) -> None:
+         if (
+             self._read_future
+             or self._write_futures
+@@ -1308,6 +1327,52 @@
+             or self._write_buffer
+         ):
+             raise ValueError("IOStream is not idle; cannot convert to SSL")
++
++    def start_tls(
++        self,
++        server_side: bool,
++        ssl_options: dict[str, Any] | ssl.SSLContext | None = None,
++        server_hostname: str | None = None,
++    ) -> "Future[SSLIOStream]":
++        """Convert this `IOStream` to an `SSLIOStream`.
++
++        This enables protocols that begin in clear-text mode and
++        switch to SSL after some initial negotiation (such as the
++        ``STARTTLS`` extension to SMTP and IMAP).
++
++        This method cannot be used if there are outstanding reads
++        or writes on the stream, or if there is any data in the
++        IOStream's buffer (data in the operating system's socket
++        buffer is allowed).  This means it must generally be used
++        immediately after reading or writing the last clear-text
++        data.  It can also be used immediately after connecting,
++        before any reads or writes.
++
++        The ``ssl_options`` argument may be either an `ssl.SSLContext`
++        object or a dictionary of keyword arguments for the
++        `ssl.SSLContext.wrap_socket` function.  The ``server_hostname`` argument
++        will be used for certificate validation unless disabled
++        in the ``ssl_options``.
++
++        This method returns a `.Future` whose result is the new
++        `SSLIOStream`.  After this method has been called,
++        any other operation on the original stream is undefined.
++
++        If a close callback is defined on this stream, it will be
++        transferred to the new stream.
++
++        .. versionadded:: 4.0
++
++        .. versionchanged:: 4.2
++           SSL certificates are validated by default; pass
++           ``ssl_options=dict(cert_reqs=ssl.CERT_NONE)`` or a
++           suitably-configured `ssl.SSLContext` to disable.
++
++        .. versionchanged:: 6.6
++           Cancelling the returned `.Future` before the handshake completes
++           now closes the new stream and its socket.
++        """
++        self._check_idle_for_start_tls()
+         if ssl_options is None:
+             if server_side:
+                 ssl_options = _server_ssl_defaults()
+@@ -1371,20 +1436,21 @@
+         self._connecting = False
+ 
+     def set_nodelay(self, value: bool) -> None:
+-        if self.socket is not None and self.socket.family in (
++        if self.socket is None or self.socket.family not in (
+             socket.AF_INET,
+             socket.AF_INET6,
+         ):
+-            try:
+-                self.socket.setsockopt(
+-                    socket.IPPROTO_TCP, socket.TCP_NODELAY, 1 if value else 0
+-                )
+-            except OSError as e:
+-                # Sometimes setsockopt will fail if the socket is closed
+-                # at the wrong time.  This can happen with HTTPServer
+-                # resetting the value to ``False`` between requests.
+-                if e.errno != errno.EINVAL and not self._is_connreset(e):
+-                    raise
++            return
++        try:
++            self.socket.setsockopt(
++                socket.IPPROTO_TCP, socket.TCP_NODELAY, 1 if value else 0
++            )
++        except OSError as e:
++            # Sometimes setsockopt will fail if the socket is closed
++            # at the wrong time.  This can happen with HTTPServer
++            # resetting the value to ``False`` between requests.
++            if e.errno != errno.EINVAL and not self._is_connreset(e):
++                raise
+ 
+ 
+ class SSLIOStream(IOStream):
+@@ -1431,6 +1497,12 @@
+ 
+     def writing(self) -> bool:
+         return self._handshake_writing or super().writing()
++
++    def _peer_name_for_log(self) -> Any:
++        try:
++            return self.socket.getpeername()
++        except Exception:
++            return "(not connected)"
+ 
+     def _do_ssl_handshake(self) -> None:
+         # Based on code from test_ssl.py in the python stdlib
+@@ -1448,12 +1520,11 @@
+             elif err.args[0] in (ssl.SSL_ERROR_EOF, ssl.SSL_ERROR_ZERO_RETURN):
+                 return self.close(exc_info=err)
+             elif err.args[0] in (ssl.SSL_ERROR_SSL, ssl.SSL_ERROR_SYSCALL):
+-                try:
+-                    peer = self.socket.getpeername()
+-                except Exception:
+-                    peer = "(not connected)"
+                 gen_log.warning(
+-                    "SSL Error on %s %s: %s", self.socket.fileno(), peer, err
++                    "SSL Error on %s %s: %s",
++                    self.socket.fileno(),
++                    self._peer_name_for_log(),
++                    err,
+                 )
+                 return self.close(exc_info=err)
+             raise
+@@ -1581,11 +1652,8 @@
+         return future
+ 
+     def write_to_fd(self, data: memoryview) -> int:
+-        # clip buffer size at 1GB since SSL sockets only support upto 2GB
+-        # this change in behaviour is transparent, since the function is
+-        # already expected to (possibly) write less than the provided buffer
+-        if len(data) >> 30:
+-            data = memoryview(data)[: 1 << 30]
++        # See _SSL_MAX_IO_SIZE for why the buffer is clipped.
++        data = _clip_to_ssl_limit(data)
+         try:
+             return self.socket.send(data)
+         except ssl.SSLError as e:
+@@ -1610,11 +1678,8 @@
+                 # to read (attempting to read may or may not raise an exception
+                 # depending on the SSL version)
+                 return None
+-            # clip buffer size at 1GB since SSL sockets only support upto 2GB
+-            # this change in behaviour is transparent, since the function is
+-            # already expected to (possibly) read less than the provided buffer
+-            if len(buf) >> 30:
+-                buf = memoryview(buf)[: 1 << 30]
++            # See _SSL_MAX_IO_SIZE for why the buffer is clipped.
++            buf = _clip_to_ssl_limit(buf)
+             try:
+                 return self.socket.recv_into(buf, len(buf))
+             except ssl.SSLError as e:

@@ -11,7 +11,7 @@ Traceback (most recent call last):
 AssertionError: b'<html><title>405: Method Not Allowed</tit[42 chars]tml>' != b'hello'
 
 ----------------------------------------------------------------------
-Ran 1535 tests in 18.011s
+Ran 1535 tests in 18.700s
 
 FAILED (failures=1, skipped=111)
 Some tests were skipped because: API snapshot is generated on linux
