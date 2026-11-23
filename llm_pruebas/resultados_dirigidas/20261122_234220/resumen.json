@@ -1,0 +1,2741 @@
+{
+  "proyecto": "tornado",
+  "python": "3.12.15",
+  "anthropic": "2.8.0",
+  "modelo": "claude-sonnet-5-5",
+  "effort": "high",
+  "prompt": "Eres un ingeniero de software experto en Python y en refactoring.\n\nRecibirás el código fuente de un proyecto y UNA orden de refactoring concreta. Debes aplicar exactamente esa orden y nada más.\n\nReglas:\n- El comportamiento observable del proyecto no debe cambiar: la suite de pruebas del proyecto debe seguir pasando igual que antes.\n- Haz solo lo que pide la orden. No corrijas otros problemas, no cambies el estilo y no reformatees código que no tocas.\n- Si la orden obliga a cambiar otros archivos (llamadores, importaciones, pruebas, etc.), inclúyelos en tu respuesta.\n- Solo puedes editar archivos que aparezcan en el contexto que recibes.\n\nFormato de la respuesta (estricto; un programa la aplicará tal cual):\n\n1. Cada cambio es un bloque `<edit>` con la ruta del archivo, el texto exacto que hay que buscar y el texto con el que se reemplaza:\n\n<edit file=\"ruta/relativa/archivo.py\">\n<search>\ntexto exacto que existe hoy en el archivo (debe aparecer UNA sola vez en él; incluye las líneas de contexto necesarias)\n</search>\n<replace>\ntexto nuevo\n</replace>\n</edit>\n\n2. Puedes escribir tantos bloques `<edit>` como necesites. El texto de `<search>` debe copiarse carácter por carácter, con su indentación. Para borrar código deja `<replace>` vacío. Los bloques se aplican en orden, sobre el texto ya modificado por los anteriores.\n\n3. Para renombrar un archivo usa `<rename_file from=\"ruta/vieja.py\" to=\"ruta/nueva.py\"/>`. Los renombrados se aplican al final, de modo que las rutas de los bloques `<edit>` son las de antes del renombrado.\n\n4. Al terminar, escribe en un bloque `<riesgos>` una o dos líneas con los riesgos o las referencias que no pudiste verificar. Si no hay ninguno, escribe `ninguno`.\n\nPuedes escribir antes una explicación breve de tu plan; solo se aplican los bloques descritos arriba.\n",
+  "prompt_sha256": "f93b3aaeb105f4b642975556690ddef7679ae083a005f9f2b3d5dd91fefdc579",
+  "linea_base": {
+    "returncode": 0,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 111,
+    "expected_failures": 0,
+    "ran": 1535,
+    "passed": 1424,
+    "fallidos": []
+  },
+  "costo_total_usd": 2.5417,
+  "corridas": [
+    {
+      "id": "13_rename_parcheada_run1",
+      "caso": "13_rename_parcheada",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 1,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/iostream_test.py",
+            "coincidencias": 1,
+            "caracteres": 63978
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 17.47107595799025,
+          "energia_kwh": 2.4479666524170208e-05,
+          "energia_traza_kwh": 2.423422295585724e-05,
+          "emisiones_kg": 6.3527427393539356e-06,
+          "emisiones_traza_kg": 6.289047433497469e-06,
+          "potencia_pico_w": 5.189062262,
+          "potencia_media_traza_w": 5.013270721963856,
+          "n_muestras": 166
+        },
+        "tests": {
+          "duracion_s": 18.903624875005335,
+          "energia_kwh": 2.6677667220934233e-05,
+          "energia_traza_kwh": 2.642535330965994e-05,
+          "emisiones_kg": 6.923148098171865e-06,
+          "emisiones_traza_kg": 6.857669862743162e-06,
+          "potencia_pico_w": 5.28125,
+          "potencia_media_traza_w": 5.0373873685966855,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFJqXzWGjsCcddUARsh",
+      "tiempo_llm_s": 17.5,
+      "tokens": {
+        "input": 4,
+        "output": 1846,
+        "cache_write": 23406,
+        "cache_read": 330913,
+        "cache_write_1h": 0,
+        "cache_write_5m": 23406
+      },
+      "costo_usd": 0.1101,
+      "intentos_red": 1,
+      "riesgos_declarados": "Solo revisé los archivos que me mostraron; si otro módulo o prueba no incluido referencia `_try_inline_read` (por ejemplo, otro test con `mock.patch`), quedaría sin actualizar.",
+      "aviso_riesgo": true,
+      "bloques_edit": 7,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/iostream.py",
+        "tornado/test/iostream_test.py"
+      ],
+      "lineas_agregadas": 7,
+      "lineas_eliminadas": 7,
+      "residuos": {
+        "codigo": 1,
+        "archivos_codigo": {
+          "tornado/iostream.py": 1
+        },
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "13_rename_parcheada_run2",
+      "caso": "13_rename_parcheada",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 2,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/iostream_test.py",
+            "coincidencias": 1,
+            "caracteres": 63978
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 13.650230667029973,
+          "energia_kwh": 1.9086223798633556e-05,
+          "energia_traza_kwh": 1.899332362264543e-05,
+          "emisiones_kg": 4.953085024207193e-06,
+          "emisiones_traza_kg": 4.928976406636338e-06,
+          "potencia_pico_w": 5.448147584,
+          "potencia_media_traza_w": 5.02700458723077,
+          "n_muestras": 130
+        },
+        "tests": {
+          "duracion_s": 18.77087379101431,
+          "energia_kwh": 2.6486338142466816e-05,
+          "energia_traza_kwh": 2.644919767505945e-05,
+          "emisiones_kg": 6.873496097689706e-06,
+          "emisiones_traza_kg": 6.863857737852353e-06,
+          "potencia_pico_w": 5.979918902,
+          "potencia_media_traza_w": 5.07315583,
+          "n_muestras": 180
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFMXUtDQPdGhCGhkkVi",
+      "tiempo_llm_s": 13.6,
+      "tokens": {
+        "input": 4,
+        "output": 1840,
+        "cache_write": 0,
+        "cache_read": 354319,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0538,
+      "intentos_red": 1,
+      "riesgos_declarados": "Solo pude verificar las referencias en los archivos que se me mostraron. Si otros módulos de prueba o plataformas (por ejemplo `tornado/platform/*`) usan `_try_inline_read`, no los he actualizado.",
+      "aviso_riesgo": true,
+      "bloques_edit": 7,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/iostream.py",
+        "tornado/test/iostream_test.py"
+      ],
+      "lineas_agregadas": 7,
+      "lineas_eliminadas": 7,
+      "residuos": {
+        "codigo": 1,
+        "archivos_codigo": {
+          "tornado/iostream.py": 1
+        },
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "13_rename_parcheada_run3",
+      "caso": "13_rename_parcheada",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 3,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/iostream_test.py",
+            "coincidencias": 1,
+            "caracteres": 63978
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 14.281959041021764,
+          "energia_kwh": 1.9945600618810613e-05,
+          "energia_traza_kwh": 1.9839120456545117e-05,
+          "emisiones_kg": 5.176102762188162e-06,
+          "emisiones_traza_kg": 5.148469988798481e-06,
+          "potencia_pico_w": 5.189062262,
+          "potencia_media_traza_w": 5.020134054455883,
+          "n_muestras": 136
+        },
+        "tests": {
+          "duracion_s": 18.92998020799132,
+          "energia_kwh": 2.707377098940702e-05,
+          "energia_traza_kwh": 2.673930000223349e-05,
+          "emisiones_kg": 7.025941383232009e-06,
+          "emisiones_traza_kg": 6.93914248287962e-06,
+          "potencia_pico_w": 6.833256134000001,
+          "potencia_media_traza_w": 5.106021642475138,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFPvFuNg4D2DAMPPa81",
+      "tiempo_llm_s": 14.3,
+      "tokens": {
+        "input": 4,
+        "output": 1700,
+        "cache_write": 0,
+        "cache_read": 354319,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0524,
+      "intentos_red": 1,
+      "riesgos_declarados": "ninguno",
+      "aviso_riesgo": false,
+      "bloques_edit": 7,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/iostream.py",
+        "tornado/test/iostream_test.py"
+      ],
+      "lineas_agregadas": 7,
+      "lineas_eliminadas": 7,
+      "residuos": {
+        "codigo": 1,
+        "archivos_codigo": {
+          "tornado/iostream.py": 1
+        },
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "14_rename_con_doctest_run1",
+      "caso": "14_rename_con_doctest",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 1,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 7.917288708966225,
+          "energia_kwh": 1.159213313579348e-05,
+          "energia_traza_kwh": 1.1271857079243654e-05,
+          "emisiones_kg": 3.0082860622028992e-06,
+          "emisiones_traza_kg": 2.9251709024915972e-06,
+          "potencia_pico_w": 6.204621488,
+          "potencia_media_traza_w": 5.129863725342106,
+          "n_muestras": 76
+        },
+        "tests": {
+          "duracion_s": 18.86290500004543,
+          "energia_kwh": 2.7317510141935757e-05,
+          "energia_traza_kwh": 2.681522624941266e-05,
+          "emisiones_kg": 7.089194374443894e-06,
+          "emisiones_traza_kg": 6.958846179211333e-06,
+          "potencia_pico_w": 6.543790178,
+          "potencia_media_traza_w": 5.132800154265194,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFSNZjqpqvcomvk2DRs",
+      "tiempo_llm_s": 7.9,
+      "tokens": {
+        "input": 4,
+        "output": 1043,
+        "cache_write": 74,
+        "cache_read": 330913,
+        "cache_write_1h": 0,
+        "cache_write_5m": 74
+      },
+      "costo_usd": 0.0437,
+      "intentos_red": 1,
+      "riesgos_declarados": "Solo pude revisar los archivos del contexto; los tests en `tornado/test/` no se me mostraron. Si alguno importa `_normalize_header` de `httputil`, habrá que actualizarlo. Quedaría fuera de este cambio.",
+      "aviso_riesgo": true,
+      "bloques_edit": 7,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 8,
+      "lineas_eliminadas": 8,
+      "residuos": {
+        "codigo": 0,
+        "archivos_codigo": {},
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "14_rename_con_doctest_run2",
+      "caso": "14_rename_con_doctest",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 2,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 7.810113416984677,
+          "energia_kwh": 1.0872023923873421e-05,
+          "energia_traza_kwh": 1.0741303557554699e-05,
+          "emisiones_kg": 2.8214098005083186e-06,
+          "emisiones_traza_kg": 2.78748642752458e-06,
+          "potencia_pico_w": 5.150577686,
+          "potencia_media_traza_w": 5.013529504675676,
+          "n_muestras": 74
+        },
+        "tests": {
+          "duracion_s": 18.785360041016247,
+          "energia_kwh": 2.6276825402981766e-05,
+          "energia_traza_kwh": 2.6178777283533404e-05,
+          "emisiones_kg": 6.819125237153205e-06,
+          "emisiones_traza_kg": 6.793680671627041e-06,
+          "potencia_pico_w": 5.166698,
+          "potencia_media_traza_w": 5.0172405104,
+          "n_muestras": 180
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFUMCCJS3PGgxgpCJd1",
+      "tiempo_llm_s": 7.8,
+      "tokens": {
+        "input": 4,
+        "output": 1034,
+        "cache_write": 0,
+        "cache_read": 330987,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0434,
+      "intentos_red": 1,
+      "riesgos_declarados": "Solo pude revisar los archivos del contexto; no incluye `tornado/test/`, así que no pude comprobar si alguna prueba o código externo importa `_normalize_header` directamente. Si lo hace, habría que actualizarlo.",
+      "aviso_riesgo": true,
+      "bloques_edit": 7,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 8,
+      "lineas_eliminadas": 8,
+      "residuos": {
+        "codigo": 0,
+        "archivos_codigo": {},
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "14_rename_con_doctest_run3",
+      "caso": "14_rename_con_doctest",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 3,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 8.747088041971438,
+          "energia_kwh": 1.217724181337503e-05,
+          "energia_traza_kwh": 1.205939559873801e-05,
+          "emisiones_kg": 3.1601282002307693e-06,
+          "emisiones_traza_kg": 3.1295458112241017e-06,
+          "potencia_pico_w": 5.476344656,
+          "potencia_media_traza_w": 5.01259360392771,
+          "n_muestras": 83
+        },
+        "tests": {
+          "duracion_s": 18.860155542031862,
+          "energia_kwh": 2.668546756901506e-05,
+          "energia_traza_kwh": 2.625588965000615e-05,
+          "emisiones_kg": 6.925172374302663e-06,
+          "emisiones_traza_kg": 6.813692178962741e-06,
+          "potencia_pico_w": 5.5953708980000005,
+          "potencia_media_traza_w": 5.0350962594999995,
+          "n_muestras": 180
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFWKbkqgKFuARHWxtFR",
+      "tiempo_llm_s": 8.7,
+      "tokens": {
+        "input": 4,
+        "output": 1140,
+        "cache_write": 0,
+        "cache_read": 330987,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0445,
+      "intentos_red": 1,
+      "riesgos_declarados": "Solo se me proporcionaron archivos de `tornado/`; no vi el directorio `tornado/test` ni otros archivos como `docs`. Si alguno importa o usa `_normalize_header` (por ejemplo `tornado/test/httputil_test.py`), habría que actualizarlo también.",
+      "aviso_riesgo": true,
+      "bloques_edit": 7,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 8,
+      "lineas_eliminadas": 8,
+      "residuos": {
+        "codigo": 0,
+        "archivos_codigo": {},
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "15_rename_con_doctest_docs_run1",
+      "caso": "15_rename_con_doctest_docs",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 1,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 12.486986375006381,
+          "energia_kwh": 1.7496914423076738e-05,
+          "energia_traza_kwh": 1.7393122461685216e-05,
+          "emisiones_kg": 4.540641758847067e-06,
+          "emisiones_traza_kg": 4.513706603154392e-06,
+          "potencia_pico_w": 5.612220032,
+          "potencia_media_traza_w": 5.027726942857143,
+          "n_muestras": 119
+        },
+        "tests": {
+          "duracion_s": 18.95270620798692,
+          "energia_kwh": 2.6721721958405118e-05,
+          "energia_traza_kwh": 2.6657193094885136e-05,
+          "emisiones_kg": 6.9345807871476755e-06,
+          "emisiones_traza_kg": 6.917834837246741e-06,
+          "potencia_pico_w": 6.461289266,
+          "potencia_media_traza_w": 5.078376033392265,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFYMzS5LCKtLsfwcmqn",
+      "tiempo_llm_s": 12.5,
+      "tokens": {
+        "input": 4,
+        "output": 1598,
+        "cache_write": 94,
+        "cache_read": 330913,
+        "cache_write_1h": 0,
+        "cache_write_5m": 94
+      },
+      "costo_usd": 0.0493,
+      "intentos_red": 1,
+      "riesgos_declarados": "No pude ver los archivos de pruebas (por ejemplo `tornado/test/*`) ni la documentación. Si alguno importa o menciona `_normalize_header`, quedará sin actualizar.",
+      "aviso_riesgo": true,
+      "bloques_edit": 7,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 8,
+      "lineas_eliminadas": 8,
+      "residuos": {
+        "codigo": 0,
+        "archivos_codigo": {},
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "15_rename_con_doctest_docs_run2",
+      "caso": "15_rename_con_doctest_docs",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 2,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 12.031463374965824,
+          "energia_kwh": 1.6830400114357512e-05,
+          "energia_traza_kwh": 1.6636712789715148e-05,
+          "emisiones_kg": 4.367673964077032e-06,
+          "emisiones_traza_kg": 4.317409972771768e-06,
+          "potencia_pico_w": 5.152813952,
+          "potencia_media_traza_w": 5.015853279894737,
+          "n_muestras": 114
+        },
+        "tests": {
+          "duracion_s": 18.86434420797741,
+          "energia_kwh": 2.66641320053605e-05,
+          "energia_traza_kwh": 2.637039910231282e-05,
+          "emisiones_kg": 6.9196355608431095e-06,
+          "emisiones_traza_kg": 6.843408641440304e-06,
+          "potencia_pico_w": 6.3431322980000004,
+          "potencia_media_traza_w": 5.0495703126,
+          "n_muestras": 180
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFagaw4i2jZfnYtWAY3",
+      "tiempo_llm_s": 12.0,
+      "tokens": {
+        "input": 4,
+        "output": 1546,
+        "cache_write": 0,
+        "cache_read": 331007,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0486,
+      "intentos_red": 1,
+      "riesgos_declarados": "No se proporcionaron los archivos de pruebas (p. ej. tornado/test/*) ni la documentación, por lo que no pude verificar si alguno importa `_normalize_header`. Conviene buscarlo con grep en todo el repositorio.",
+      "aviso_riesgo": true,
+      "bloques_edit": 7,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 8,
+      "lineas_eliminadas": 8,
+      "residuos": {
+        "codigo": 0,
+        "archivos_codigo": {},
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "15_rename_con_doctest_docs_run3",
+      "caso": "15_rename_con_doctest_docs",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 3,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 12.53312866698252,
+          "energia_kwh": 1.7500230174544184e-05,
+          "energia_traza_kwh": 1.7385036270503003e-05,
+          "emisiones_kg": 4.541502232826138e-06,
+          "emisiones_traza_kg": 4.511608147594506e-06,
+          "potencia_pico_w": 5.342614934,
+          "potencia_media_traza_w": 5.0208470146218485,
+          "n_muestras": 119
+        },
+        "tests": {
+          "duracion_s": 18.923078750027344,
+          "energia_kwh": 2.6721151140717784e-05,
+          "energia_traza_kwh": 2.6581586143596985e-05,
+          "emisiones_kg": 6.934432653678819e-06,
+          "emisiones_traza_kg": 6.8982140017110026e-06,
+          "potencia_pico_w": 6.051399296,
+          "potencia_media_traza_w": 5.069966362187845,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFcxvzvUPkcdUGL1d5X",
+      "tiempo_llm_s": 12.5,
+      "tokens": {
+        "input": 4,
+        "output": 1552,
+        "cache_write": 0,
+        "cache_read": 331007,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0486,
+      "intentos_red": 1,
+      "riesgos_declarados": "No pude ver los archivos de tests ni otros módulos fuera del contexto (p. ej. `tornado/test/*`, docs); si alguno referencia `_normalize_header` habría que actualizarlo.",
+      "aviso_riesgo": true,
+      "bloques_edit": 7,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 8,
+      "lineas_eliminadas": 8,
+      "residuos": {
+        "codigo": 0,
+        "archivos_codigo": {},
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "16_rename_en_test_modules_run1",
+      "caso": "16_rename_en_test_modules",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 1,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/api.txt",
+            "coincidencias": 3,
+            "caracteres": 76853
+          },
+          {
+            "archivo": "tornado/test/runtests.py",
+            "coincidencias": 3,
+            "caracteres": 7299
+          },
+          {
+            "archivo": "tox.ini",
+            "coincidencias": 1,
+            "caracteres": 7628
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 9.007753708981909,
+          "energia_kwh": 1.2597620725221157e-05,
+          "energia_traza_kwh": 1.2940168571713932e-05,
+          "emisiones_kg": 3.269221152022868e-06,
+          "emisiones_traza_kg": 3.358116086214054e-06,
+          "potencia_pico_w": 23.0,
+          "potencia_media_traza_w": 5.228631621764706,
+          "n_muestras": 85
+        },
+        "tests": {
+          "duracion_s": 18.782976375019643,
+          "energia_kwh": 2.6579896084249165e-05,
+          "energia_traza_kwh": 2.63361322894743e-05,
+          "emisiones_kg": 6.897775412719587e-06,
+          "emisiones_traza_kg": 6.834516026573768e-06,
+          "potencia_pico_w": 5.94921875,
+          "potencia_media_traza_w": 5.0561066426,
+          "n_muestras": 180
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFfHcCkzJFbFgqkELAT",
+      "tiempo_llm_s": 9.0,
+      "tokens": {
+        "input": 4,
+        "output": 857,
+        "cache_write": 40596,
+        "cache_read": 330913,
+        "cache_write_1h": 0,
+        "cache_write_5m": 40596
+      },
+      "costo_usd": 0.1432,
+      "intentos_red": 1,
+      "riesgos_declarados": "No pude buscar en archivos que no se me mostraron, como docs o tests no incluidos. Si algún otro archivo referencia `tornado.httputil.doctests`, no queda actualizado.",
+      "aviso_riesgo": true,
+      "bloques_edit": 3,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py",
+        "tornado/test/runtests.py",
+        "tornado/test/api.txt"
+      ],
+      "lineas_agregadas": 3,
+      "lineas_eliminadas": 3,
+      "residuos": {
+        "codigo": 2,
+        "archivos_codigo": {
+          "tornado/iostream.py": 1,
+          "tornado/util.py": 1
+        },
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "16_rename_en_test_modules_run2",
+      "caso": "16_rename_en_test_modules",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 2,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/api.txt",
+            "coincidencias": 3,
+            "caracteres": 76853
+          },
+          {
+            "archivo": "tornado/test/runtests.py",
+            "coincidencias": 3,
+            "caracteres": 7299
+          },
+          {
+            "archivo": "tox.ini",
+            "coincidencias": 1,
+            "caracteres": 7628
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 8.623234541038983,
+          "energia_kwh": 1.2028860997856264e-05,
+          "energia_traza_kwh": 1.2011072279383526e-05,
+          "emisiones_kg": 3.121621746414674e-06,
+          "emisiones_traza_kg": 3.1170053782950955e-06,
+          "potencia_pico_w": 5.541444158,
+          "potencia_media_traza_w": 5.03502167497561,
+          "n_muestras": 82
+        },
+        "tests": {
+          "duracion_s": 18.92454766703304,
+          "energia_kwh": 2.676064056326055e-05,
+          "energia_traza_kwh": 2.6671683522711653e-05,
+          "emisiones_kg": 6.944680593212315e-06,
+          "emisiones_traza_kg": 6.92159526266243e-06,
+          "potencia_pico_w": 7.1306738780000005,
+          "potencia_media_traza_w": 5.082256111403315,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFhLyR7uGk5LK4AM21r",
+      "tiempo_llm_s": 8.6,
+      "tokens": {
+        "input": 4,
+        "output": 808,
+        "cache_write": 0,
+        "cache_read": 371509,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0452,
+      "intentos_red": 1,
+      "riesgos_declarados": "No pude revisar archivos que no están en el contexto (docs, otros tests, `.rst`). Si alguno menciona `tornado.httputil.doctests`, hay que actualizarlo.",
+      "aviso_riesgo": true,
+      "bloques_edit": 3,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py",
+        "tornado/test/runtests.py",
+        "tornado/test/api.txt"
+      ],
+      "lineas_agregadas": 3,
+      "lineas_eliminadas": 3,
+      "residuos": {
+        "codigo": 2,
+        "archivos_codigo": {
+          "tornado/iostream.py": 1,
+          "tornado/util.py": 1
+        },
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "16_rename_en_test_modules_run3",
+      "caso": "16_rename_en_test_modules",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 3,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/api.txt",
+            "coincidencias": 3,
+            "caracteres": 76853
+          },
+          {
+            "archivo": "tornado/test/runtests.py",
+            "coincidencias": 3,
+            "caracteres": 7299
+          },
+          {
+            "archivo": "tox.ini",
+            "coincidencias": 1,
+            "caracteres": 7628
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 9.12260620802408,
+          "energia_kwh": 1.2811627496966493e-05,
+          "energia_traza_kwh": 1.2697937696612937e-05,
+          "emisiones_kg": 3.3247582633652616e-06,
+          "emisiones_traza_kg": 3.29525450958571e-06,
+          "potencia_pico_w": 5.3867291360000005,
+          "potencia_media_traza_w": 5.024649526482759,
+          "n_muestras": 87
+        },
+        "tests": {
+          "duracion_s": 18.94026679196395,
+          "energia_kwh": 2.672500369262402e-05,
+          "energia_traza_kwh": 2.6513956506326128e-05,
+          "emisiones_kg": 6.9354324332765655e-06,
+          "emisiones_traza_kg": 6.880663366913213e-06,
+          "potencia_pico_w": 6.043290854,
+          "potencia_media_traza_w": 5.055737016508287,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFjNwXvcMp8GUv9LutA",
+      "tiempo_llm_s": 9.1,
+      "tokens": {
+        "input": 4,
+        "output": 884,
+        "cache_write": 0,
+        "cache_read": 371509,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.046,
+      "intentos_red": 1,
+      "riesgos_declarados": "No pude revisar archivos fuera del contexto (documentación `docs/*.rst`, `conf.py`, otros tests) que pudieran referirse a `tornado.httputil.doctests`; conviene buscarlo con grep. Si esa función estuviera listada en la lista de ignorados de `docs/conf.py`, habría que actualizarla también.",
+      "aviso_riesgo": true,
+      "bloques_edit": 3,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py",
+        "tornado/test/runtests.py",
+        "tornado/test/api.txt"
+      ],
+      "lineas_agregadas": 3,
+      "lineas_eliminadas": 3,
+      "residuos": {
+        "codigo": 2,
+        "archivos_codigo": {
+          "tornado/iostream.py": 1,
+          "tornado/util.py": 1
+        },
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "17_rename_verbo_http_run1",
+      "caso": "17_rename_verbo_http",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 1,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/web_test.py",
+            "coincidencias": 4,
+            "caracteres": 184172
+          },
+          {
+            "archivo": "tornado/test/httpserver_test.py",
+            "coincidencias": 2,
+            "caracteres": 59272
+          },
+          {
+            "archivo": "tornado/test/iostream_test.py",
+            "coincidencias": 2,
+            "caracteres": 63978
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 9.684148208994884,
+          "energia_kwh": 1.360536539692168e-05,
+          "energia_traza_kwh": 1.349891679657512e-05,
+          "emisiones_kg": 3.530741979520537e-06,
+          "emisiones_traza_kg": 3.5031173967960013e-06,
+          "potencia_pico_w": 5.629384094000001,
+          "potencia_media_traza_w": 5.04096715126087,
+          "n_muestras": 92
+        },
+        "tests": {
+          "duracion_s": 18.89698350004619,
+          "energia_kwh": 2.6636459428111244e-05,
+          "energia_traza_kwh": 2.6473313092671854e-05,
+          "emisiones_kg": 6.912454222648566e-06,
+          "emisiones_traza_kg": 6.870115953992355e-06,
+          "potencia_pico_w": 5.546683904,
+          "potencia_media_traza_w": 5.045475928453039,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFmTTCr41gr7kTBimS6",
+      "tiempo_llm_s": 9.7,
+      "tokens": {
+        "input": 4,
+        "output": 755,
+        "cache_write": 114058,
+        "cache_read": 330913,
+        "cache_write_1h": 0,
+        "cache_write_5m": 114058
+      },
+      "costo_usd": 0.3258,
+      "intentos_red": 1,
+      "riesgos_declarados": "Un renombrado literal sin alias rompería el despacho HTTP de Tornado (el método `get` se busca por nombre), por eso se mantiene `get = handle_get`. No he podido ejecutar la suite; no hay otras referencias a `HelloHandler.get` en el contexto recibido.",
+      "aviso_riesgo": true,
+      "bloques_edit": 1,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/test/web_test.py"
+      ],
+      "lineas_agregadas": 4,
+      "lineas_eliminadas": 1,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "17_rename_verbo_http_run2",
+      "caso": "17_rename_verbo_http",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 2,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/web_test.py",
+            "coincidencias": 4,
+            "caracteres": 184172
+          },
+          {
+            "archivo": "tornado/test/httpserver_test.py",
+            "coincidencias": 2,
+            "caracteres": 59272
+          },
+          {
+            "archivo": "tornado/test/iostream_test.py",
+            "coincidencias": 2,
+            "caracteres": 63978
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 8.744629208988044,
+          "energia_kwh": 1.2224398684692814e-05,
+          "energia_traza_kwh": 1.213713681390572e-05,
+          "emisiones_kg": 3.172365927063325e-06,
+          "emisiones_traza_kg": 3.1497205117134953e-06,
+          "potencia_pico_w": 5.457419312000001,
+          "potencia_media_traza_w": 5.030152677879518,
+          "n_muestras": 83
+        },
+        "tests": {
+          "duracion_s": 18.923547332989983,
+          "energia_kwh": 2.6771729617563827e-05,
+          "energia_traza_kwh": 2.65330734489839e-05,
+          "emisiones_kg": 6.947558324783609e-06,
+          "emisiones_traza_kg": 6.885624423819264e-06,
+          "potencia_pico_w": 6.02719925,
+          "potencia_media_traza_w": 5.0674039765,
+          "n_muestras": 180
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFoZty45rgcYQTUx5hd",
+      "tiempo_llm_s": 8.7,
+      "tokens": {
+        "input": 4,
+        "output": 810,
+        "cache_write": 0,
+        "cache_read": 444971,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0526,
+      "intentos_red": 1,
+      "riesgos_declarados": "Se añadió el alias `get = handle_get` porque el despacho de `RequestHandler` es dinámico (`getattr(self, \"get\")`); sin él fallaría `HandlerByNameTest`. No hay otras referencias directas a `HelloHandler.get` en el proyecto.",
+      "aviso_riesgo": true,
+      "bloques_edit": 1,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/test/web_test.py"
+      ],
+      "lineas_agregadas": 3,
+      "lineas_eliminadas": 1,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "17_rename_verbo_http_run3",
+      "caso": "17_rename_verbo_http",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 3,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/web_test.py",
+            "coincidencias": 4,
+            "caracteres": 184172
+          },
+          {
+            "archivo": "tornado/test/httpserver_test.py",
+            "coincidencias": 2,
+            "caracteres": 59272
+          },
+          {
+            "archivo": "tornado/test/iostream_test.py",
+            "coincidencias": 2,
+            "caracteres": 63978
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 15.250702790974174,
+          "energia_kwh": 2.137738058313396e-05,
+          "energia_traza_kwh": 2.1268270785221933e-05,
+          "emisiones_kg": 5.547665412509686e-06,
+          "emisiones_traza_kg": 5.519350219743738e-06,
+          "potencia_pico_w": 5.956832768,
+          "potencia_media_traza_w": 5.042770912271429,
+          "n_muestras": 140
+        },
+        "tests": {
+          "duracion_s": 18.943007958005182,
+          "energia_kwh": 2.697157665344221e-05,
+          "energia_traza_kwh": 2.6503599482591457e-05,
+          "emisiones_kg": 6.999420828911451e-06,
+          "emisiones_traza_kg": 6.8779756053268e-06,
+          "potencia_pico_w": 6.117784448,
+          "potencia_media_traza_w": 5.057282635535912,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFqcSKJuSnRX6A4Wz5B",
+      "tiempo_llm_s": 15.2,
+      "tokens": {
+        "input": 4,
+        "output": 713,
+        "cache_write": 0,
+        "cache_read": 444971,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0516,
+      "intentos_red": 1,
+      "riesgos_declarados": "El alias `get = handle_get` es necesario por el despacho de `RequestHandler`; sin él cambiaría el comportamiento. No hay otras referencias a `HelloHandler.get` en el contexto recibido, pero no he podido revisar archivos que no aparezcan en él.",
+      "aviso_riesgo": true,
+      "bloques_edit": 1,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/test/web_test.py"
+      ],
+      "lineas_agregadas": 3,
+      "lineas_eliminadas": 1,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "18_rename_handler_string_run1",
+      "caso": "18_rename_handler_string",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 1,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/web_test.py",
+            "coincidencias": 4,
+            "caracteres": 184172
+          },
+          {
+            "archivo": "tornado/test/httpserver_test.py",
+            "coincidencias": 2,
+            "caracteres": 59272
+          },
+          {
+            "archivo": "tornado/test/iostream_test.py",
+            "coincidencias": 2,
+            "caracteres": 63978
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 8.20913129200926,
+          "energia_kwh": 1.1510685591093503e-05,
+          "energia_traza_kwh": 1.1359215746707454e-05,
+          "emisiones_kg": 2.9871495284302773e-06,
+          "emisiones_traza_kg": 2.9478414376438092e-06,
+          "potencia_pico_w": 5.169090758,
+          "potencia_media_traza_w": 5.024359826692308,
+          "n_muestras": 78
+        },
+        "tests": {
+          "duracion_s": 18.861194791970775,
+          "energia_kwh": 2.6565064539862374e-05,
+          "energia_traza_kwh": 2.6429023764179535e-05,
+          "emisiones_kg": 6.893926463804223e-06,
+          "emisiones_traza_kg": 6.8586223860659936e-06,
+          "potencia_pico_w": 6.043290854,
+          "potencia_media_traza_w": 5.0621870286077355,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFt94cihhCwgGVgp4WH",
+      "tiempo_llm_s": 8.2,
+      "tokens": {
+        "input": 4,
+        "output": 947,
+        "cache_write": 114055,
+        "cache_read": 330913,
+        "cache_write_1h": 0,
+        "cache_write_5m": 114055
+      },
+      "costo_usd": 0.3277,
+      "intentos_red": 1,
+      "riesgos_declarados": "Las clases `HelloHandler` de `tornado/test/iostream_test.py` y `tornado/test/httpserver_test.py` (esta última es una clase interna de otra función) son independientes y no se han modificado. No he podido comprobar si algún otro archivo, como documentación, importa `tornado.test.web_test.HelloHandler`.",
+      "aviso_riesgo": true,
+      "bloques_edit": 2,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/test/web_test.py"
+      ],
+      "lineas_agregadas": 4,
+      "lineas_eliminadas": 4,
+      "residuos": {
+        "codigo": 4,
+        "archivos_codigo": {
+          "tornado/test/httpserver_test.py": 2,
+          "tornado/test/iostream_test.py": 2
+        },
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "18_rename_handler_string_run2",
+      "caso": "18_rename_handler_string",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 2,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/web_test.py",
+            "coincidencias": 4,
+            "caracteres": 184172
+          },
+          {
+            "archivo": "tornado/test/httpserver_test.py",
+            "coincidencias": 2,
+            "caracteres": 59272
+          },
+          {
+            "archivo": "tornado/test/iostream_test.py",
+            "coincidencias": 2,
+            "caracteres": 63978
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 10.418988583027385,
+          "energia_kwh": 1.4623029946382571e-05,
+          "energia_traza_kwh": 1.4464075829015707e-05,
+          "emisiones_kg": 3.794837124415683e-06,
+          "emisiones_traza_kg": 3.753586782463691e-06,
+          "potencia_pico_w": 5.448147584,
+          "potencia_media_traza_w": 5.038921911636364,
+          "n_muestras": 99
+        },
+        "tests": {
+          "duracion_s": 18.868406249966938,
+          "energia_kwh": 2.6595510548716177e-05,
+          "energia_traza_kwh": 2.638836698243141e-05,
+          "emisiones_kg": 6.901827538007894e-06,
+          "emisiones_traza_kg": 6.848071503977768e-06,
+          "potencia_pico_w": 5.3503719620000005,
+          "potencia_media_traza_w": 5.041652373524863,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFv93gCkZp1LTj576XV",
+      "tiempo_llm_s": 10.4,
+      "tokens": {
+        "input": 4,
+        "output": 918,
+        "cache_write": 0,
+        "cache_read": 444968,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0537,
+      "intentos_red": 1,
+      "riesgos_declarados": "Solo he podido revisar los archivos que me pasaste; si otro módulo importa `HelloHandler` desde `tornado.test.web_test`, no lo habría visto.",
+      "aviso_riesgo": true,
+      "bloques_edit": 2,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/test/web_test.py"
+      ],
+      "lineas_agregadas": 4,
+      "lineas_eliminadas": 4,
+      "residuos": {
+        "codigo": 4,
+        "archivos_codigo": {
+          "tornado/test/httpserver_test.py": 2,
+          "tornado/test/iostream_test.py": 2
+        },
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "18_rename_handler_string_run3",
+      "caso": "18_rename_handler_string",
+      "operacion": "Rename",
+      "fase": 3,
+      "corrida": 3,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/web_test.py",
+            "coincidencias": 4,
+            "caracteres": 184172
+          },
+          {
+            "archivo": "tornado/test/httpserver_test.py",
+            "coincidencias": 2,
+            "caracteres": 59272
+          },
+          {
+            "archivo": "tornado/test/iostream_test.py",
+            "coincidencias": 2,
+            "caracteres": 63978
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 7.470528915990144,
+          "energia_kwh": 1.0640306917090937e-05,
+          "energia_traza_kwh": 1.0389945647248617e-05,
+          "emisiones_kg": 2.7612766883611836e-06,
+          "emisiones_traza_kg": 2.6963051848631334e-06,
+          "potencia_pico_w": 5.646866,
+          "potencia_media_traza_w": 5.057050551521127,
+          "n_muestras": 71
+        },
+        "tests": {
+          "duracion_s": 18.976954499958083,
+          "energia_kwh": 2.6972713123413075e-05,
+          "energia_traza_kwh": 2.669619490421632e-05,
+          "emisiones_kg": 6.999715755370058e-06,
+          "emisiones_traza_kg": 6.927956235788089e-06,
+          "potencia_pico_w": 6.3817812499999995,
+          "potencia_media_traza_w": 5.0747236323186815,
+          "n_muestras": 182
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFxJbTSfmVxwUZPzNGG",
+      "tiempo_llm_s": 7.5,
+      "tokens": {
+        "input": 4,
+        "output": 825,
+        "cache_write": 0,
+        "cache_read": 444968,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0528,
+      "intentos_red": 1,
+      "riesgos_declarados": "Solo he revisado los archivos del contexto; si otro módulo importa `HelloHandler` desde `tornado.test.web_test`, no lo he podido ver.",
+      "aviso_riesgo": true,
+      "bloques_edit": 2,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/test/web_test.py"
+      ],
+      "lineas_agregadas": 4,
+      "lineas_eliminadas": 4,
+      "residuos": {
+        "codigo": 4,
+        "archivos_codigo": {
+          "tornado/test/httpserver_test.py": 2,
+          "tornado/test/iostream_test.py": 2
+        },
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "19_rename_modulo_run1",
+      "caso": "19_rename_modulo",
+      "operacion": "Rename (módulo)",
+      "fase": 3,
+      "corrida": 1,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/api.txt",
+            "coincidencias": 38,
+            "caracteres": 76853
+          },
+          {
+            "archivo": "tornado/test/http1connection_test.py",
+            "coincidencias": 1,
+            "caracteres": 6905
+          },
+          {
+            "archivo": "tornado/test/httpclient_test.py",
+            "coincidencias": 1,
+            "caracteres": 56423
+          },
+          {
+            "archivo": "tornado/test/httpserver_test.py",
+            "coincidencias": 1,
+            "caracteres": 59272
+          },
+          {
+            "archivo": "tornado/test/iostream_test.py",
+            "coincidencias": 1,
+            "caracteres": 63978
+          },
+          {
+            "archivo": "tornado/test/locks_test.py",
+            "coincidencias": 1,
+            "caracteres": 16906
+          },
+          {
+            "archivo": "tornado/test/simple_httpclient_test.py",
+            "coincidencias": 1,
+            "caracteres": 43575
+          },
+          {
+            "archivo": "tornado/test/testing_test.py",
+            "coincidencias": 1,
+            "caracteres": 10612
+          },
+          {
+            "archivo": "tornado/test/web_test.py",
+            "coincidencias": 1,
+            "caracteres": 184172
+          },
+          {
+            "archivo": "tornado/test/websocket_test.py",
+            "coincidencias": 1,
+            "caracteres": 49960
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 36.191212917037774,
+          "energia_kwh": 5.0665069947788965e-05,
+          "energia_traza_kwh": 5.046521337128492e-05,
+          "emisiones_kg": 1.3148142967220653e-05,
+          "emisiones_traza_kg": 1.3096277987195511e-05,
+          "potencia_pico_w": 6.249677558,
+          "potencia_media_traza_w": 5.029468422456647,
+          "n_muestras": 346
+        },
+        "tests": {
+          "duracion_s": 18.890000624989625,
+          "energia_kwh": 2.6772828964516057e-05,
+          "energia_traza_kwh": 2.631660946914555e-05,
+          "emisiones_kg": 6.947843617410534e-06,
+          "emisiones_traza_kg": 6.829449639947437e-06,
+          "potencia_pico_w": 5.395136000000001,
+          "potencia_media_traza_w": 5.031023910740331,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFzGAux5JVABmb8PKtK",
+      "tiempo_llm_s": 36.2,
+      "tokens": {
+        "input": 4,
+        "output": 4556,
+        "cache_write": 217498,
+        "cache_read": 330913,
+        "cache_write_1h": 0,
+        "cache_write_5m": 217498
+      },
+      "costo_usd": 0.6224,
+      "intentos_red": 1,
+      "riesgos_declarados": "No pude ver `tornado/test/runtests.py`, `docs/` (p. ej. `locks.rst`, `index.rst`) ni `setup.py`/`pyproject.toml`/`MANIFEST`. Si alguno menciona `tornado.locks` o `locks`, hay que actualizarlo; si `runtests.py` importa `tornado.locks` fallará.\nQuizá haya código externo que importe `tornado.locks`: no dejé alias de compatibilidad, porque la orden pide solo el renombrado.\n`tornado/test/locks_test.py` conserva su nombre de archivo y usa `sync as locks`.",
+      "aviso_riesgo": true,
+      "bloques_edit": 14,
+      "bloques_rename": 1,
+      "archivos_modificados": [
+        "tornado/__init__.py",
+        "tornado/queues.py",
+        "tornado/test/locks_test.py",
+        "tornado/test/httpclient_test.py",
+        "tornado/test/httpserver_test.py",
+        "tornado/test/http1connection_test.py",
+        "tornado/test/iostream_test.py",
+        "tornado/test/simple_httpclient_test.py",
+        "tornado/test/testing_test.py",
+        "tornado/test/web_test.py",
+        "tornado/test/websocket_test.py",
+        "tornado/test/api.txt",
+        "tornado/locks.py -> tornado/sync.py"
+      ],
+      "lineas_agregadas": 48,
+      "lineas_eliminadas": 47,
+      "residuos": {
+        "codigo": 5,
+        "archivos_codigo": {
+          "tornado/sync.py": 4,
+          "tornado/test/locks_test.py": 1
+        },
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "19_rename_modulo_run2",
+      "caso": "19_rename_modulo",
+      "operacion": "Rename (módulo)",
+      "fase": 3,
+      "corrida": 2,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/api.txt",
+            "coincidencias": 38,
+            "caracteres": 76853
+          },
+          {
+            "archivo": "tornado/test/http1connection_test.py",
+            "coincidencias": 1,
+            "caracteres": 6905
+          },
+          {
+            "archivo": "tornado/test/httpclient_test.py",
+            "coincidencias": 1,
+            "caracteres": 56423
+          },
+          {
+            "archivo": "tornado/test/httpserver_test.py",
+            "coincidencias": 1,
+            "caracteres": 59272
+          },
+          {
+            "archivo": "tornado/test/iostream_test.py",
+            "coincidencias": 1,
+            "caracteres": 63978
+          },
+          {
+            "archivo": "tornado/test/locks_test.py",
+            "coincidencias": 1,
+            "caracteres": 16906
+          },
+          {
+            "archivo": "tornado/test/simple_httpclient_test.py",
+            "coincidencias": 1,
+            "caracteres": 43575
+          },
+          {
+            "archivo": "tornado/test/testing_test.py",
+            "coincidencias": 1,
+            "caracteres": 10612
+          },
+          {
+            "archivo": "tornado/test/web_test.py",
+            "coincidencias": 1,
+            "caracteres": 184172
+          },
+          {
+            "archivo": "tornado/test/websocket_test.py",
+            "coincidencias": 1,
+            "caracteres": 49960
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 34.9806581249577,
+          "energia_kwh": 4.897243402285844e-05,
+          "energia_traza_kwh": 4.871643438340278e-05,
+          "emisiones_kg": 1.270888532570603e-05,
+          "emisiones_traza_kg": 1.2642450603271252e-05,
+          "potencia_pico_w": 5.490876218,
+          "potencia_media_traza_w": 5.023685417754491,
+          "n_muestras": 334
+        },
+        "tests": {
+          "duracion_s": 18.74961041699862,
+          "energia_kwh": 2.6473372324898616e-05,
+          "energia_traza_kwh": 2.62031325255434e-05,
+          "emisiones_kg": 6.87013132540676e-06,
+          "emisiones_traza_kg": 6.800001124836289e-06,
+          "potencia_pico_w": 6.3527260640000005,
+          "potencia_media_traza_w": 5.056101638167598,
+          "n_muestras": 179
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKG4LB8uMf5YUnyShTMe",
+      "tiempo_llm_s": 35.0,
+      "tokens": {
+        "input": 4,
+        "output": 5270,
+        "cache_write": 0,
+        "cache_read": 548411,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.1075,
+      "intentos_red": 1,
+      "riesgos_declarados": "No pude ver archivos fuera del contexto: la documentación (`docs/locks.rst`, `docs/index.rst`, etc.), `runtests.py`, que lista los módulos de test, y otros usos de `tornado.locks`. Esas referencias, si existen, siguen apuntando al nombre antiguo. El módulo `tornado.locks` deja de existir sin alias de compatibilidad, así que el código externo que lo importe dejará de funcionar. Tampoco pude confirmar que `api.txt` admita el nuevo orden de secciones.",
+      "aviso_riesgo": true,
+      "bloques_edit": 18,
+      "bloques_rename": 1,
+      "archivos_modificados": [
+        "tornado/__init__.py",
+        "tornado/queues.py",
+        "tornado/locks.py",
+        "tornado/test/locks_test.py",
+        "tornado/test/httpclient_test.py",
+        "tornado/test/httpserver_test.py",
+        "tornado/test/simple_httpclient_test.py",
+        "tornado/test/testing_test.py",
+        "tornado/test/web_test.py",
+        "tornado/test/http1connection_test.py",
+        "tornado/test/iostream_test.py",
+        "tornado/test/websocket_test.py",
+        "tornado/test/api.txt",
+        "tornado/locks.py -> tornado/sync.py"
+      ],
+      "lineas_agregadas": 53,
+      "lineas_eliminadas": 52,
+      "residuos": {
+        "codigo": 1,
+        "archivos_codigo": {
+          "tornado/test/locks_test.py": 1
+        },
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "19_rename_modulo_run3",
+      "caso": "19_rename_modulo",
+      "operacion": "Rename (módulo)",
+      "fase": 3,
+      "corrida": 3,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/api.txt",
+            "coincidencias": 38,
+            "caracteres": 76853
+          },
+          {
+            "archivo": "tornado/test/http1connection_test.py",
+            "coincidencias": 1,
+            "caracteres": 6905
+          },
+          {
+            "archivo": "tornado/test/httpclient_test.py",
+            "coincidencias": 1,
+            "caracteres": 56423
+          },
+          {
+            "archivo": "tornado/test/httpserver_test.py",
+            "coincidencias": 1,
+            "caracteres": 59272
+          },
+          {
+            "archivo": "tornado/test/iostream_test.py",
+            "coincidencias": 1,
+            "caracteres": 63978
+          },
+          {
+            "archivo": "tornado/test/locks_test.py",
+            "coincidencias": 1,
+            "caracteres": 16906
+          },
+          {
+            "archivo": "tornado/test/simple_httpclient_test.py",
+            "coincidencias": 1,
+            "caracteres": 43575
+          },
+          {
+            "archivo": "tornado/test/testing_test.py",
+            "coincidencias": 1,
+            "caracteres": 10612
+          },
+          {
+            "archivo": "tornado/test/web_test.py",
+            "coincidencias": 1,
+            "caracteres": 184172
+          },
+          {
+            "archivo": "tornado/test/websocket_test.py",
+            "coincidencias": 1,
+            "caracteres": 49960
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 27.00429787504254,
+          "energia_kwh": 3.782462275935374e-05,
+          "energia_traza_kwh": 3.769002002321759e-05,
+          "emisiones_kg": 9.815905676902655e-06,
+          "emisiones_traza_kg": 9.780974786245227e-06,
+          "potencia_pico_w": 6.100933712,
+          "potencia_media_traza_w": 5.032023782906976,
+          "n_muestras": 258
+        },
+        "tests": {
+          "duracion_s": 18.733786208962556,
+          "energia_kwh": 2.6485292716470665e-05,
+          "energia_traza_kwh": 2.624814994306604e-05,
+          "emisiones_kg": 6.873224798144035e-06,
+          "emisiones_traza_kg": 6.811683639875027e-06,
+          "potencia_pico_w": 5.77175,
+          "potencia_media_traza_w": 5.065404431351956,
+          "n_muestras": 179
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKG8JNqeWfaV64tSaEwP",
+      "tiempo_llm_s": 27.0,
+      "tokens": {
+        "input": 4,
+        "output": 4078,
+        "cache_write": 0,
+        "cache_read": 548411,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0956,
+      "intentos_red": 1,
+      "riesgos_declarados": "No pude ver archivos fuera del contexto (documentación `docs/locks.rst`, `runtests.py`, `setup.py`, etc.). Si mencionan `tornado.locks` (por ejemplo, un `automodule`), habrá que actualizarlos. No se mantiene un alias de compatibilidad `tornado.locks`, así que el código externo que lo importe dejará de funcionar. Las entradas de `api.txt` se reordenaron en el bloque pero se dejaron en la misma posición del archivo; si la prueba de API exige orden alfabético de secciones, `[tornado.sync]` quedaría fuera de orden.",
+      "aviso_riesgo": true,
+      "bloques_edit": 13,
+      "bloques_rename": 1,
+      "archivos_modificados": [
+        "tornado/__init__.py",
+        "tornado/queues.py",
+        "tornado/test/http1connection_test.py",
+        "tornado/test/httpclient_test.py",
+        "tornado/test/httpserver_test.py",
+        "tornado/test/iostream_test.py",
+        "tornado/test/simple_httpclient_test.py",
+        "tornado/test/testing_test.py",
+        "tornado/test/web_test.py",
+        "tornado/test/websocket_test.py",
+        "tornado/test/locks_test.py",
+        "tornado/test/api.txt",
+        "tornado/locks.py -> tornado/sync.py"
+      ],
+      "lineas_agregadas": 47,
+      "lineas_eliminadas": 46,
+      "residuos": {
+        "codigo": 5,
+        "archivos_codigo": {
+          "tornado/sync.py": 4,
+          "tornado/test/locks_test.py": 1
+        },
+        "texto": 0,
+        "archivos_texto": {}
+      },
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "20_extract_await_run1",
+      "caso": "20_extract_await",
+      "operacion": "Extract Method",
+      "fase": 3,
+      "corrida": 1,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 7.530985665973276,
+          "energia_kwh": 1.0540833870390127e-05,
+          "energia_traza_kwh": 1.0410749772806253e-05,
+          "emisiones_kg": 2.735462338538839e-06,
+          "emisiones_traza_kg": 2.70170408429075e-06,
+          "potencia_pico_w": 5.853882704,
+          "potencia_media_traza_w": 5.036867857577464,
+          "n_muestras": 71
+        },
+        "tests": {
+          "duracion_s": 62.064235166995786,
+          "energia_kwh": 8.702618252789821e-05,
+          "energia_traza_kwh": 8.660880570856048e-05,
+          "emisiones_kg": 2.2584251653997417e-05,
+          "emisiones_traza_kg": 2.2475937778234262e-05,
+          "potencia_pico_w": 5.87528825,
+          "potencia_media_traza_w": 5.026840209878788,
+          "n_muestras": 594
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKGBgPFvDEhz3NWARB3A",
+      "tiempo_llm_s": 7.5,
+      "tokens": {
+        "input": 4,
+        "output": 753,
+        "cache_write": 147,
+        "cache_read": 330913,
+        "cache_write_1h": 0,
+        "cache_write_5m": 147
+      },
+      "costo_usd": 0.041,
+      "intentos_red": 1,
+      "riesgos_declarados": "Al ser una corrutina nueva, `_run_prepare` añade un nivel de pila de await; en el caso síncrono (prepare devuelve None) no cede al bucle de eventos, así que el orden de ejecución no cambia. Subclases que sobrescriban `_execute` no se ven afectadas. No he ejecutado la suite de pruebas.",
+      "aviso_riesgo": true,
+      "bloques_edit": 1,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/web.py"
+      ],
+      "lineas_agregadas": 1,
+      "lineas_eliminadas": 3,
+      "residuos": null,
+      "tests": {
+        "returncode": 1,
+        "failed": 869,
+        "errors": 235,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 320,
+        "fallidos": [
+          "test_100_continue (tornado.test.httpserver_test.HTTPConnectionTest.test_100_continue)",
+          "test_100_continue (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_100_continue)",
+          "test_100_continue (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_100_continue)",
+          "test_100_continue_early_response (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_100_continue_early_response)",
+          "test_100_continue_early_response (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_100_continue_early_response)",
+          "test_204_headers (tornado.test.web_test.Header204Test.test_204_headers)",
+          "test_204_headers_via_httperror (tornado.test.web_test.Header204viaHTTPErrorTest.test_204_headers_via_httperror)",
+          "test_304_headers (tornado.test.web_test.Header304Test.test_304_headers)",
+          "test_304_with_content_length (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_304_with_content_length)",
+          "test_304_with_content_length (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_304_with_content_length)",
+          "test_403 (tornado.test.web_test.DefaultHandlerArgumentsTest.test_403)",
+          "test_404 (tornado.test.web_test.Custom404Test.test_404)",
+          "test_404 (tornado.test.web_test.Default404Test.test_404)",
+          "test_404_cross_origin (tornado.test.web_test.ErrorHandlerCrossOriginTest.test_404_cross_origin)",
+          "test_404_xsrf (tornado.test.web_test.ErrorHandlerXSRFTest.test_404_xsrf)",
+          "test_absolute_auth_redirect (tornado.test.web_test.AuthRedirectTest.test_absolute_auth_redirect)",
+          "test_absolute_static_url (tornado.test.web_test.StaticFileTest.test_absolute_static_url)",
+          "test_absolute_version_exclusion (tornado.test.web_test.StaticFileTest.test_absolute_version_exclusion)",
+          "test_accept_language (tornado.test.web_test.AcceptLanguageTest.test_accept_language)",
+          "test_accept_language_ignore (tornado.test.web_test.AcceptLanguageTest.test_accept_language_ignore)",
+          "test_accept_language_invalid (tornado.test.web_test.AcceptLanguageTest.test_accept_language_invalid)",
+          "test_addslash (tornado.test.web_test.DecoratorTest.test_addslash)",
+          "test_all_methods (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_all_methods)",
+          "test_all_methods (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_all_methods)",
+          "test_allowed_symlink_directory (tornado.test.web_test.StaticFileSymlinkTest.test_allowed_symlink_directory)",
+          "test_allowed_symlink_directory_list (tornado.test.web_test.StaticFileSymlinkTest.test_allowed_symlink_directory_list)",
+          "test_allowed_symlink_directory_list_rejects_others (tornado.test.web_test.StaticFileSymlinkTest.test_allowed_symlink_directory_list_rejects_others)",
+          "test_async_body_producer_chunked (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_async_body_producer_chunked)",
+          "test_async_body_producer_chunked (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_async_body_producer_chunked)",
+          "test_async_body_producer_content_length (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_async_body_producer_content_length)",
+          "test_async_body_producer_content_length (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_async_body_producer_content_length)",
+          "test_async_handler (tornado.test.circlerefs_test.CircleRefsTest.test_async_handler)",
+          "test_async_prepare (tornado.test.websocket_test.WebSocketTest.test_async_prepare)",
+          "test_async_prepare_error_handler (tornado.test.gen_test.GenWebTest.test_async_prepare_error_handler)",
+          "test_bad_websocket_version (tornado.test.websocket_test.WebSocketTest.test_bad_websocket_version)",
+          "test_basic_auth (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_basic_auth)",
+          "test_basic_auth (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_basic_auth)",
+          "test_basic_auth_explicit_mode (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_basic_auth_explicit_mode)",
+          "test_basic_auth_explicit_mode (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_basic_auth_explicit_mode)",
+          "test_basic_auth_unicode (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_basic_auth_unicode)",
+          "test_basic_auth_unicode (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_basic_auth_unicode)",
+          "test_basic_redirect (tornado.test.web_test.RedirectHandlerTest.test_basic_redirect)",
+          "test_binary_message (tornado.test.websocket_test.WebSocketTest.test_binary_message)",
+          "test_bind_source_ip (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_bind_source_ip)",
+          "test_bind_source_ip (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_bind_source_ip)",
+          "test_body_encoding (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_body_encoding)",
+          "test_body_encoding (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_body_encoding)",
+          "test_body_sanity_checks (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_body_sanity_checks)",
+          "test_body_sanity_checks (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_body_sanity_checks)",
+          "test_body_size_override_reset (tornado.test.httpserver_test.BodyLimitsTest.test_body_size_override_reset)",
+          "test_both_pass (tornado.test.web_test.CrossOriginProtectionWithXSRFCookiesTest.test_both_pass)",
+          "test_cancel_during_download (tornado.test.httpserver_test.KeepAliveTest.test_cancel_during_download)",
+          "test_cancelled_in_async_on_message (tornado.test.websocket_test.WebSocketTest.test_cancelled_in_async_on_message)",
+          "test_cancelled_in_on_message (tornado.test.websocket_test.WebSocketTest.test_cancelled_in_on_message)",
+          "test_cancelled_task (tornado.test.web_test.CancellationTest.test_cancelled_task)",
+          "test_cases (tornado.test.security_corpus_test.SecurityCorpusTest.test_cases) [2.2.1: redirect header injection]",
+          "test_cases (tornado.test.security_corpus_test.SecurityCorpusTest.test_cases) [2.2.1: set_header injection]",
+          "test_cases (tornado.test.security_corpus_test.SecurityCorpusTest.test_cases) [3.2.1: signed cookie moved to another name]",
+          "test_cases (tornado.test.security_corpus_test.SecurityCorpusTest.test_cases) [4.0.0: cross-origin websocket]",
+          "test_cases (tornado.test.security_corpus_test.SecurityCorpusTest.test_cases) [4.2.1: static path prefix traversal]",
+          "test_cases (tornado.test.security_corpus_test.SecurityCorpusTest.test_cases) [6.3.2 CVE-2023-28370: static open redirect]",
+          "test_cases (tornado.test.security_corpus_test.SecurityCorpusTest.test_cases) [6.5.3 CVE-2025-67724: reason header injection]",
+          "test_cases (tornado.test.security_corpus_test.SecurityCorpusTest.test_cases) [6.5.3 CVE-2025-67724: reason xss]",
+          "test_cases (tornado.test.security_corpus_test.SecurityCorpusTest.test_cases) [6.5.5: cookie domain injection]",
+          "test_cases (tornado.test.security_corpus_test.SecurityCorpusTest.test_cases) [6.5.5: cookie path injection]",
+          "test_cases (tornado.test.security_corpus_test.SecurityCorpusTest.test_cases) [6.5.5: cookie samesite injection]",
+          "test_cases (tornado.test.security_corpus_test.SecurityCorpusTest.test_cases) [6.6.0: static open redirect, backslash]",
+          "test_catch_error (tornado.test.web_test.GetArgumentErrorTest.test_catch_error)",
+          "test_check_origin_after_prepare (tornado.test.websocket_test.WebSocketOriginTest.test_check_origin_after_prepare)",
+          "test_check_origin_invalid (tornado.test.websocket_test.WebSocketTest.test_check_origin_invalid)",
+          "test_check_origin_invalid_partial_url (tornado.test.websocket_test.WebSocketTest.test_check_origin_invalid_partial_url)",
+          "test_check_origin_invalid_subdomains (tornado.test.websocket_test.WebSocketTest.test_check_origin_invalid_subdomains)",
+          "test_check_origin_override (tornado.test.websocket_test.WebSocketOriginTest.test_check_origin_override)",
+          "test_check_origin_valid_no_path (tornado.test.websocket_test.WebSocketTest.test_check_origin_valid_no_path)",
+          "test_check_origin_valid_with_path (tornado.test.websocket_test.WebSocketTest.test_check_origin_valid_with_path)",
+          "test_check_trusted_origin_override (tornado.test.websocket_test.WebSocketOriginTest.test_check_trusted_origin_override)",
+          "test_chunked (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_chunked)",
+          "test_chunked (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_chunked)",
+          "test_chunked_request_body (tornado.test.httpserver_test.HTTPServerRawTest.test_chunked_request_body)",
+          "test_chunked_request_uppercase (tornado.test.httpserver_test.HTTPServerRawTest.test_chunked_request_uppercase)",
+          "test_chunked_with_content_length (tornado.test.simple_httpclient_test.ChunkedWithContentLengthTest.test_chunked_with_content_length)",
+          "test_clear_all_cookies (tornado.test.web_test.ClearAllCookiesTest.test_clear_all_cookies)",
+          "test_clear_header (tornado.test.web_test.ClearHeaderTest.test_clear_header)",
+          "test_client_close (tornado.test.web_test.ClientCloseTest.test_client_close)",
+          "test_client_close_reason (tornado.test.websocket_test.WebSocketTest.test_client_close_reason)",
+          "test_client_no_context_takeover (tornado.test.websocket_test.ClientNoContextTakeoverTest.test_client_no_context_takeover)",
+          "test_client_ping (tornado.test.websocket_test.ClientPeriodicPingTest.test_client_ping)",
+          "test_client_ping_timeout (tornado.test.websocket_test.ServerPingTimeoutTest.test_client_ping_timeout)",
+          "test_close_during_upload (tornado.test.web_test.StreamingRequestBodyTest.test_close_during_upload)",
+          "test_compression_bomb (tornado.test.websocket_test.CompressedMessageMemoryTest.test_compression_bomb)",
+          "test_concatenated (tornado.test.simple_httpclient_test.GzipResponseTestCase.test_concatenated)",
+          "test_configure_defaults (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_configure_defaults)",
+          "test_configure_defaults (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_configure_defaults)",
+          "test_connection_close (tornado.test.web_test.ConnectionCloseTest.test_connection_close)",
+          "test_connection_closed (tornado.test.iostream_test.TestIOStreamWebHTTP.test_connection_closed)",
+          "test_connection_closed (tornado.test.iostream_test.TestIOStreamWebHTTPS.test_connection_closed)",
+          "test_connection_limit (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_connection_limit)",
+          "test_connection_limit (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_connection_limit)",
+          "test_content_length_too_high (tornado.test.web_test.IncorrectContentLengthTest.test_content_length_too_high)",
+          "test_content_length_too_low (tornado.test.web_test.IncorrectContentLengthTest.test_content_length_too_low)",
+          "test_context_vars (tornado.test.asyncio_test.SelectorThreadContextvarsTest.test_context_vars)",
+          "test_cookie_fails (tornado.test.web_test.CrossOriginProtectionWithXSRFCookiesTest.test_cookie_fails)",
+          "test_cookie_special_char (tornado.test.web_test.CookieTest.test_cookie_special_char)",
+          "test_coro_handler (tornado.test.circlerefs_test.CircleRefsTest.test_coro_handler)",
+          "test_coroutine (tornado.test.websocket_test.WebSocketTest.test_coroutine)",
+          "test_coroutine_sequence_handler (tornado.test.gen_test.GenWebTest.test_coroutine_sequence_handler)",
+          "test_coroutine_unfinished_sequence_handler (tornado.test.gen_test.GenWebTest.test_coroutine_unfinished_sequence_handler)",
+          "test_credentials_in_url (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_credentials_in_url)",
+          "test_credentials_in_url (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_credentials_in_url)",
+          "test_cross_user (tornado.test.web_test.XSRFTest.test_cross_user)",
+          "test_custom_router (tornado.test.routing_test.CustomRouterTestCase.test_custom_router)",
+          "test_date_header (tornado.test.web_test.DateHeaderTest.test_date_header)",
+          "test_decode_argument (tornado.test.web_test.WSGISafeWebTest.test_decode_argument)",
+          "test_decode_argument_invalid_unicode (tornado.test.web_test.WSGISafeWebTest.test_decode_argument_invalid_unicode)",
+          "test_decode_argument_plus (tornado.test.web_test.WSGISafeWebTest.test_decode_argument_plus)",
+          "test_decompressed_body_size (tornado.test.simple_httpclient_test.SimpleHTTPClientMaxBodySizeTestCase.test_decompressed_body_size)",
+          "test_decompression_bomb_without_streaming_callback (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_decompression_bomb_without_streaming_callback)",
+          "test_decompression_bomb_without_streaming_callback (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_decompression_bomb_without_streaming_callback)",
+          "test_default (tornado.test.web_test.ErrorResponseTest.test_default)",
+          "test_default_host_matching (tornado.test.web_test.DefaultHostMatchingTest.test_default_host_matching)",
+          "test_default_user_agent (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_default_user_agent)",
+          "test_default_user_agent (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_default_user_agent)",
+          "test_disabled_by_default (tornado.test.web_test.CrossOriginProtectionDisabledTest.test_disabled_by_default)",
+          "test_distinct_tokens (tornado.test.web_test.XSRFTest.test_distinct_tokens)",
+          "test_double_slash (tornado.test.httpserver_test.HTTPServerTest.test_double_slash)",
+          "test_early_return (tornado.test.web_test.StreamingRequestBodyTest.test_early_return)",
+          "test_early_return_with_data (tornado.test.web_test.StreamingRequestBodyTest.test_early_return_with_data)",
+          "test_empty_flush (tornado.test.web_test.NonWSGIWebTests.test_empty_flush)",
+          "test_empty_post_parameters (tornado.test.httpserver_test.HTTPServerTest.test_empty_post_parameters)",
+          "test_empty_query_string (tornado.test.httpserver_test.HTTPServerTest.test_empty_query_string)",
+          "test_error (tornado.test.web_test.RequestEncodingTest.test_error)",
+          "test_error_after_cancel (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_error_after_cancel)",
+          "test_error_after_cancel (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_error_after_cancel)",
+          "test_error_cross_origin (tornado.test.web_test.ErrorHandlerCrossOriginTest.test_error_cross_origin)",
+          "test_error_in_async_on_message (tornado.test.websocket_test.WebSocketTest.test_error_in_async_on_message)",
+          "test_error_in_async_open (tornado.test.websocket_test.WebSocketTest.test_error_in_async_open)",
+          "test_error_in_closed_client_write_message (tornado.test.websocket_test.WebSocketTest.test_error_in_closed_client_write_message)",
+          "test_error_in_on_message (tornado.test.websocket_test.WebSocketTest.test_error_in_on_message)",
+          "test_error_in_open (tornado.test.websocket_test.WebSocketTest.test_error_in_open)",
+          "test_error_xsrf (tornado.test.web_test.ErrorHandlerXSRFTest.test_error_xsrf)",
+          "test_escape_from_symlinked_directory (tornado.test.web_test.StaticFilePerRequestSymlinkDirectoryTest.test_escape_from_symlinked_directory)",
+          "test_facebook_login (tornado.test.auth_test.AuthTest.test_facebook_login)",
+          "test_fallback_case_insensitive (tornado.test.web_test.CrossOriginProtectionTest.test_fallback_case_insensitive)",
+          "test_fallback_no_origin (tornado.test.web_test.CrossOriginProtectionTest.test_fallback_no_origin)",
+          "test_fallback_origin_with_path (tornado.test.web_test.CrossOriginProtectionTest.test_fallback_origin_with_path)",
+          "test_fallback_success (tornado.test.web_test.CrossOriginProtectionTest.test_fallback_success)",
+          "test_fallback_trusted_origin (tornado.test.web_test.CrossOriginProtectionTest.test_fallback_trusted_origin)",
+          "test_fetch_full_http_url (tornado.test.testing_test.AsyncHTTPTestCaseTest.test_fetch_full_http_url)",
+          "test_fetch_segment (tornado.test.testing_test.AsyncHTTPTestCaseTest.test_fetch_segment)",
+          "test_finish_exception (tornado.test.web_test.FinishExceptionTest.test_finish_exception)",
+          "test_finish_exception_handler (tornado.test.circlerefs_test.CircleRefsTest.test_finish_exception_handler)",
+          "test_finish_in_prepare (tornado.test.web_test.FinishInPrepareTest.test_finish_in_prepare)",
+          "test_finish_method_return_future (tornado.test.web_test.FinalReturnTest.test_finish_method_return_future)",
+          "test_finish_while_closed (tornado.test.httpserver_test.KeepAliveTest.test_finish_while_closed)",
+          "test_first_root (tornado.test.web_test.StaticFileMultiRootTest.test_first_root)",
+          "test_first_root (tornado.test.web_test.StaticFileRootSwitchingTest.test_first_root)",
+          "test_flow_control_chunked_body (tornado.test.web_test.DecoratedStreamingRequestFlowControlTest.test_flow_control_chunked_body)",
+          "test_flow_control_chunked_body (tornado.test.web_test.NativeStreamingRequestFlowControlTest.test_flow_control_chunked_body)",
+          "test_flow_control_compressed_body (tornado.test.web_test.DecoratedStreamingRequestFlowControlTest.test_flow_control_compressed_body)",
+          "test_flow_control_compressed_body (tornado.test.web_test.NativeStreamingRequestFlowControlTest.test_flow_control_compressed_body)",
+          "test_flow_control_fixed_body (tornado.test.web_test.DecoratedStreamingRequestFlowControlTest.test_flow_control_fixed_body)",
+          "test_flow_control_fixed_body (tornado.test.web_test.NativeStreamingRequestFlowControlTest.test_flow_control_fixed_body)",
+          "test_follow_redirect (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_follow_redirect)",
+          "test_follow_redirect (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_follow_redirect)",
+          "test_future_close_while_reading (tornado.test.iostream_test.TestIOStreamWebHTTP.test_future_close_while_reading)",
+          "test_future_close_while_reading (tornado.test.iostream_test.TestIOStreamWebHTTPS.test_future_close_while_reading)",
+          "test_future_http_error (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_future_http_error)",
+          "test_future_http_error (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_future_http_error)",
+          "test_future_http_error_no_raise (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_future_http_error_no_raise)",
+          "test_future_http_error_no_raise (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_future_http_error_no_raise)",
+          "test_future_interface (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_future_interface)",
+          "test_future_interface (tornado.test.iostream_test.TestIOStreamWebHTTP.test_future_interface)",
+          "test_future_interface (tornado.test.iostream_test.TestIOStreamWebHTTPS.test_future_interface)",
+          "test_future_interface (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_future_interface)",
+          "test_future_read_until_close (tornado.test.iostream_test.TestIOStreamWebHTTP.test_future_read_until_close)",
+          "test_future_read_until_close (tornado.test.iostream_test.TestIOStreamWebHTTPS.test_future_read_until_close)",
+          "test_get_argument (tornado.test.web_test.WSGISafeWebTest.test_get_argument)",
+          "test_get_body_arguments (tornado.test.web_test.WSGISafeWebTest.test_get_body_arguments)",
+          "test_get_cookie (tornado.test.web_test.CookieTest.test_get_cookie)",
+          "test_get_current_user_from_ui_module_is_lazy (tornado.test.web_test.GetCurrentUserTest.test_get_current_user_from_ui_module_is_lazy)",
+          "test_get_current_user_from_ui_module_works (tornado.test.web_test.GetCurrentUserTest.test_get_current_user_from_ui_module_works)",
+          "test_get_current_user_works (tornado.test.web_test.GetCurrentUserTest.test_get_current_user_works)",
+          "test_get_query_arguments (tornado.test.web_test.WSGISafeWebTest.test_get_query_arguments)",
+          "test_get_ssl_certificate (tornado.test.httpserver_test.SSLClientCertificateTest.test_get_ssl_certificate)",
+          "test_get_ssl_certificate (tornado.test.httpserver_test.SSLClientCertificateTest.test_get_ssl_certificate) (path='/')",
+          "test_get_ssl_certificate (tornado.test.httpserver_test.SSLClientCertificateTest.test_get_ssl_certificate) (path='/?binary_form=false')",
+          "test_get_ssl_certificate_binary (tornado.test.httpserver_test.SSLClientCertificateTest.test_get_ssl_certificate_binary)",
+          "test_google_login (tornado.test.auth_test.GoogleOAuth2Test.test_google_login)",
+          "test_group_encoding (tornado.test.web_test.RequestEncodingTest.test_group_encoding)",
+          "test_group_question_mark (tornado.test.web_test.RequestEncodingTest.test_group_question_mark)",
+          "test_gzip (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_gzip)",
+          "test_gzip (tornado.test.httpserver_test.GzipTest.test_gzip)",
+          "test_gzip (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_gzip)",
+          "test_gzip (tornado.test.web_test.GzipTestCase.test_gzip)",
+          "test_gzip_case_insensitive (tornado.test.httpserver_test.GzipTest.test_gzip_case_insensitive)",
+          "test_gzip_concatenated (tornado.test.httpserver_test.GzipTest.test_gzip_concatenated)",
+          "test_gzip_not_requested (tornado.test.web_test.GzipTestCase.test_gzip_not_requested)",
+          "test_gzip_static (tornado.test.web_test.GzipTestCase.test_gzip_static)",
+          "test_handler_by_name (tornado.test.web_test.HandlerByNameTest.test_handler_by_name)",
+          "test_head (tornado.test.simple_httpclient_test.GzipResponseTestCase.test_head)",
+          "test_head_request (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_head_request)",
+          "test_head_request (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_head_request)",
+          "test_header_callback (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_header_callback)",
+          "test_header_callback (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_header_callback)",
+          "test_header_callback_to_parse_line (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_header_callback_to_parse_line)",
+          "test_header_callback_to_parse_line (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_header_callback_to_parse_line)",
+          "test_header_encoding (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_header_encoding)",
+          "test_header_encoding (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_header_encoding)",
+          "test_header_injection (tornado.test.web_test.StatusReasonTest.test_header_injection)",
+          "test_header_injection (tornado.test.web_test.WSGISafeWebTest.test_header_injection)",
+          "test_header_reuse (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_header_reuse)",
+          "test_header_reuse (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_header_reuse)",
+          "test_header_types (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_header_types)",
+          "test_header_types (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_header_types)",
+          "test_hello_world (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_hello_world)",
+          "test_hello_world (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_hello_world)",
+          "test_host_header (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_host_header)",
+          "test_host_header (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_host_header)",
+          "test_host_matching (tornado.test.web_test.HostMatchingTest.test_host_matching)",
+          "test_hostname_mapping (tornado.test.simple_httpclient_test.HostnameMappingTestCase.test_hostname_mapping)",
+          "test_http10 (tornado.test.httpserver_test.KeepAliveTest.test_http10)",
+          "test_http10_keepalive (tornado.test.httpserver_test.KeepAliveTest.test_http10_keepalive)",
+          "test_http10_keepalive_extra_crlf (tornado.test.httpserver_test.KeepAliveTest.test_http10_keepalive_extra_crlf)",
+          "test_http_error (tornado.test.web_test.ExceptionHandlerTest.test_http_error)",
+          "test_http_method_router (tornado.test.routing_test.HTTPMethodRouterTestCase.test_http_method_router)",
+          "test_http_request (tornado.test.websocket_test.WebSocketTest.test_http_request)",
+          "test_idle_after_use (tornado.test.httpserver_test.IdleTimeoutTest.test_idle_after_use)",
+          "test_include_host_override (tornado.test.web_test.StaticFileTest.test_include_host_override)",
+          "test_invalid (tornado.test.simple_httpclient_test.GzipResponseTestCase.test_invalid)",
+          "test_invalid (tornado.test.simple_httpclient_test.GzipResponseTestCase.test_invalid) (kind='trailing_garbage')",
+          "test_invalid (tornado.test.simple_httpclient_test.GzipResponseTestCase.test_invalid) (kind='trailing_nul')",
+          "test_invalid (tornado.test.simple_httpclient_test.GzipResponseTestCase.test_invalid) (kind='truncated')",
+          "test_invalid_compressed_data (tornado.test.websocket_test.InvalidCompressedDataTest.test_invalid_compressed_data)",
+          "test_invalid_gzip (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_invalid_gzip)",
+          "test_invalid_gzip (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_invalid_gzip)",
+          "test_invalid_offers (tornado.test.websocket_test.InvalidCompressionOfferTest.test_invalid_offers)",
+          "test_invalid_offers (tornado.test.websocket_test.InvalidCompressionOfferTest.test_invalid_offers) [client_max_window_bits=7]",
+          "test_invalid_offers (tornado.test.websocket_test.InvalidCompressionOfferTest.test_invalid_offers) [foo=1]",
+          "test_invalid_offers (tornado.test.websocket_test.InvalidCompressionOfferTest.test_invalid_offers) [server_max_window_bits=11111111111111111]",
+          "test_invalid_offers (tornado.test.websocket_test.InvalidCompressionOfferTest.test_invalid_offers) [server_max_window_bits=16]",
+          "test_invalid_offers (tornado.test.websocket_test.InvalidCompressionOfferTest.test_invalid_offers) [server_max_window_bits=8]",
+          "test_invalid_offers (tornado.test.websocket_test.InvalidCompressionOfferTest.test_invalid_offers) [server_max_window_bits=abc]",
+          "test_ip_headers (tornado.test.httpserver_test.XHeaderTest.test_ip_headers)",
+          "test_ipv6 (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_ipv6)",
+          "test_ipv6 (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_ipv6)",
+          "test_keepalive_chunked (tornado.test.httpserver_test.KeepAliveTest.test_keepalive_chunked)",
+          "test_keepalive_chunked_head_no_body (tornado.test.httpserver_test.KeepAliveTest.test_keepalive_chunked_head_no_body)",
+          "test_known_error (tornado.test.web_test.ExceptionHandlerTest.test_known_error)",
+          "test_kw (tornado.test.web_test.PathArgsInPrepareTest.test_kw)",
+          "test_large_body (tornado.test.simple_httpclient_test.MaxBufferSizeTest.test_large_body)",
+          "test_large_body (tornado.test.simple_httpclient_test.SimpleHTTPClientMaxBodySizeTestCase.test_large_body)",
+          "test_large_body_streaming (tornado.test.httpserver_test.BodyLimitsTest.test_large_body_streaming)",
+          "test_large_body_streaming_chunked (tornado.test.httpserver_test.BodyLimitsTest.test_large_body_streaming_chunked)",
+          "test_large_body_streaming_chunked_override (tornado.test.httpserver_test.BodyLimitsTest.test_large_body_streaming_chunked_override)",
+          "test_large_body_streaming_override (tornado.test.httpserver_test.BodyLimitsTest.test_large_body_streaming_override)",
+          "test_large_body_until_close (tornado.test.simple_httpclient_test.MaxBodySizeUntilCloseTest.test_large_body_until_close)",
+          "test_large_body_until_close (tornado.test.simple_httpclient_test.MaxBufferSizeUntilCloseTest.test_large_body_until_close)",
+          "test_large_headers (tornado.test.simple_httpclient_test.MaxHeaderSizeTest.test_large_headers)",
+          "test_large_message (tornado.test.websocket_test.MaxMessageSizeTest.test_large_message)",
+          "test_large_post (tornado.test.httpserver_test.SSLTest.test_large_post)",
+          "test_leaked_coroutine (tornado.test.testing_test.LeakTest.test_leaked_coroutine)",
+          "test_long_chunk_size_line (tornado.test.simple_httpclient_test.LongChunkSizeLineTest.test_long_chunk_size_line)",
+          "test_manual_ping (tornado.test.websocket_test.ManualPingTest.test_manual_ping)",
+          "test_manual_protocol (tornado.test.httpserver_test.ManualProtocolTest.test_manual_protocol)",
+          "test_many_small_messages_yield (tornado.test.websocket_test.FloodTest.test_many_small_messages_yield)",
+          "test_max_redirects (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_max_redirects)",
+          "test_max_redirects (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_max_redirects)",
+          "test_message_sizes (tornado.test.websocket_test.ClientOnlyCompressionTest.test_message_sizes)",
+          "test_message_sizes (tornado.test.websocket_test.DefaultCompressionTest.test_message_sizes)",
+          "test_message_sizes (tornado.test.websocket_test.NoCompressionTest.test_message_sizes)",
+          "test_message_sizes (tornado.test.websocket_test.ServerOnlyCompressionTest.test_message_sizes)",
+          "test_method_after_redirect (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_method_after_redirect)",
+          "test_method_after_redirect (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_method_after_redirect)",
+          "test_missing_remote_ip (tornado.test.web_test.RequestSummaryTest.test_missing_remote_ip)",
+          "test_missing_websocket_key (tornado.test.websocket_test.WebSocketTest.test_missing_websocket_key)",
+          "test_mixed_case_upgrade_header (tornado.test.websocket_test.WebSocketOriginTest.test_mixed_case_upgrade_header)",
+          "test_multi_header (tornado.test.web_test.WSGISafeWebTest.test_multi_header)",
+          "test_multi_process (tornado.test.process_test.ProcessTest.test_multi_process)",
+          "test_multipart_form (tornado.test.httpserver_test.HTTPConnectionTest.test_multipart_form)",
+          "test_multiple_content_length_accepted (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_multiple_content_length_accepted)",
+          "test_multiple_content_length_accepted (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_multiple_content_length_accepted)",
+          "test_multiple_strong_etag_match (tornado.test.web_test.CacheTest.test_multiple_strong_etag_match)",
+          "test_multiple_strong_etag_not_match (tornado.test.web_test.CacheTest.test_multiple_strong_etag_not_match)",
+          "test_multiple_weak_etag_match (tornado.test.web_test.CacheTest.test_multiple_weak_etag_match)",
+          "test_multiple_weak_etag_not_match (tornado.test.web_test.CacheTest.test_multiple_weak_etag_not_match)",
+          "test_named_urlspec_groups (tornado.test.web_test.NamedURLSpecGroupsTest.test_named_urlspec_groups)",
+          "test_native_body_producer_chunked (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_native_body_producer_chunked)",
+          "test_native_body_producer_chunked (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_native_body_producer_chunked)",
+          "test_native_body_producer_content_length (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_native_body_producer_content_length)",
+          "test_native_body_producer_content_length (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_native_body_producer_content_length)",
+          "test_native_coroutine (tornado.test.websocket_test.WebSocketNativeCoroutineTest.test_native_coroutine)",
+          "test_native_coroutine_handler (tornado.test.gen_test.GenWebTest.test_native_coroutine_handler)",
+          "test_newlines (tornado.test.httpserver_test.HTTPConnectionTest.test_newlines)",
+          "test_no_client_certificate (tornado.test.httpserver_test.SSLClientCertificateTest.test_no_client_certificate)",
+          "test_no_client_certificate (tornado.test.httpserver_test.SSLClientCertificateTest.test_no_client_certificate) (path='/')",
+          "test_no_client_certificate (tornado.test.httpserver_test.SSLClientCertificateTest.test_no_client_certificate) (path='/?binary_form=false')",
+          "test_no_client_certificate (tornado.test.httpserver_test.SSLClientCertificateTest.test_no_client_certificate) (path='/?binary_form=true')",
+          "test_no_content (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_no_content)",
+          "test_no_content (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_no_content)",
+          "test_no_content_length (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_no_content_length)",
+          "test_no_content_length (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_no_content_length)",
+          "test_no_context_takeover_accepted (tornado.test.websocket_test.InvalidCompressionOfferTest.test_no_context_takeover_accepted)",
+          "test_no_existence_oracle_for_symlinked_directory (tornado.test.web_test.StaticFileSymlinkTest.test_no_existence_oracle_for_symlinked_directory)",
+          "test_no_gzip (tornado.test.web_test.WSGISafeWebTest.test_no_gzip)",
+          "test_no_open_redirect (tornado.test.web_test.StaticDefaultFilenameRootTest.test_no_open_redirect)",
+          "test_no_open_redirect_backslash (tornado.test.web_test.StaticDefaultFilenameRootTest.test_no_open_redirect_backslash)",
+          "test_no_origin (tornado.test.websocket_test.WebSocketOriginTest.test_no_origin)",
+          "test_nodelay (tornado.test.websocket_test.WebSocketTest.test_nodelay)",
+          "test_non_ascii_header (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_non_ascii_header)",
+          "test_non_ascii_header (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_non_ascii_header)",
+          "test_oauth10_get_user (tornado.test.auth_test.AuthTest.test_oauth10_get_user)",
+          "test_oauth10_redirect (tornado.test.auth_test.AuthTest.test_oauth10_redirect)",
+          "test_oauth10_request_parameters (tornado.test.auth_test.AuthTest.test_oauth10_request_parameters)",
+          "test_oauth10a_get_user (tornado.test.auth_test.AuthTest.test_oauth10a_get_user)",
+          "test_oauth10a_get_user_coroutine_exception (tornado.test.auth_test.AuthTest.test_oauth10a_get_user_coroutine_exception)",
+          "test_oauth10a_redirect (tornado.test.auth_test.AuthTest.test_oauth10a_redirect)",
+          "test_oauth10a_request_parameters (tornado.test.auth_test.AuthTest.test_oauth10a_request_parameters)",
+          "test_oauth2_redirect (tornado.test.auth_test.AuthTest.test_oauth2_redirect)",
+          "test_open_coroutine (tornado.test.websocket_test.WebSocketTest.test_open_coroutine)",
+          "test_optional_path (tornado.test.web_test.WSGISafeWebTest.test_optional_path)",
+          "test_options_request (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_options_request)",
+          "test_options_request (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_options_request)",
+          "test_origin_fails (tornado.test.web_test.CrossOriginProtectionWithXSRFCookiesTest.test_origin_fails)",
+          "test_other (tornado.test.web_test.PatchMethodTest.test_other)",
+          "test_override_allows (tornado.test.web_test.CrossOriginProtectionCheckTrustedOriginTest.test_override_allows)",
+          "test_override_allows (tornado.test.web_test.CrossOriginProtectionCheckTrustedOriginTest.test_override_allows) (headers={'Origin': 'https://app.example.com'})",
+          "test_override_allows (tornado.test.web_test.CrossOriginProtectionCheckTrustedOriginTest.test_override_allows) (headers={'Sec-Fetch-Site': 'same-site', 'Origin': 'https://app.example.com'})",
+          "test_override_not_called_for_same_origin (tornado.test.web_test.CrossOriginProtectionCheckTrustedOriginTest.test_override_not_called_for_same_origin)",
+          "test_patch (tornado.test.web_test.PatchMethodTest.test_patch)",
+          "test_patch_receives_payload (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_patch_receives_payload)",
+          "test_patch_receives_payload (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_patch_receives_payload)",
+          "test_path_args (tornado.test.websocket_test.WebSocketTest.test_path_args)",
+          "test_path_traversal (tornado.test.web_test.StaticFilePrefixRoutedTest.test_path_traversal)",
+          "test_path_traversal_into_other_root (tornado.test.web_test.StaticFilePrefixRoutedTest.test_path_traversal_into_other_root)",
+          "test_path_traversal_protection (tornado.test.web_test.StaticFileTest.test_path_traversal_protection)",
+          "test_pipelined_cancel (tornado.test.httpserver_test.KeepAliveTest.test_pipelined_cancel)",
+          "test_pipelined_requests (tornado.test.httpserver_test.KeepAliveTest.test_pipelined_requests)",
+          "test_pong_most_recent_ping (tornado.test.websocket_test.FloodTest.test_pong_most_recent_ping)",
+          "test_port_mapping (tornado.test.simple_httpclient_test.HostnameMappingTestCase.test_port_mapping)",
+          "test_pos (tornado.test.web_test.PathArgsInPrepareTest.test_pos)",
+          "test_post (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_post)",
+          "test_post (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_post)",
+          "test_post_encodings (tornado.test.httpserver_test.HTTPServerTest.test_post_encodings)",
+          "test_post_encodings (tornado.test.httpserver_test.HTTPServerTest.test_post_encodings) (enc='gbk', quote=False)",
+          "test_post_encodings (tornado.test.httpserver_test.HTTPServerTest.test_post_encodings) (enc='gbk', quote=True)",
+          "test_post_encodings (tornado.test.httpserver_test.HTTPServerTest.test_post_encodings) (enc='utf8', quote=False)",
+          "test_post_encodings (tornado.test.httpserver_test.HTTPServerTest.test_post_encodings) (enc='utf8', quote=True)",
+          "test_put_307 (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_put_307)",
+          "test_put_307 (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_put_307)",
+          "test_query_string_encoding (tornado.test.httpserver_test.HTTPServerTest.test_query_string_encoding)",
+          "test_queue_timeout (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_queue_timeout)",
+          "test_queue_timeout (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_queue_timeout)",
+          "test_raise_with_reason (tornado.test.web_test.RaiseWithReasonTest.test_raise_with_reason)",
+          "test_read_until_close (tornado.test.iostream_test.TestIOStreamWebHTTP.test_read_until_close)",
+          "test_read_until_close (tornado.test.iostream_test.TestIOStreamWebHTTPS.test_read_until_close)",
+          "test_read_zero_bytes (tornado.test.iostream_test.TestIOStreamWebHTTP.test_read_zero_bytes)",
+          "test_read_zero_bytes (tornado.test.iostream_test.TestIOStreamWebHTTPS.test_read_zero_bytes)",
+          "test_reason_xss (tornado.test.web_test.StatusReasonTest.test_reason_xss)",
+          "test_redirect (tornado.test.web_test.WSGISafeWebTest.test_redirect)",
+          "test_redirect_cannot_change_host (tornado.test.web_test.RedirectHandlerTest.test_redirect_cannot_change_host)",
+          "test_redirect_connection_limit (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_redirect_connection_limit)",
+          "test_redirect_connection_limit (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_redirect_connection_limit)",
+          "test_redirect_double_slash (tornado.test.web_test.RedirectHandlerTest.test_redirect_double_slash)",
+          "test_redirect_pattern (tornado.test.web_test.RedirectHandlerTest.test_redirect_pattern)",
+          "test_redirect_put_with_body (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_redirect_put_with_body)",
+          "test_redirect_put_with_body (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_redirect_put_with_body)",
+          "test_redirect_put_without_body (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_redirect_put_without_body)",
+          "test_redirect_put_without_body (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_redirect_put_without_body)",
+          "test_redirect_with_appending_argument (tornado.test.web_test.RedirectHandlerTest.test_redirect_with_appending_argument)",
+          "test_redirect_with_argument (tornado.test.web_test.RedirectHandlerTest.test_redirect_with_argument)",
+          "test_redirect_without_location (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_redirect_without_location)",
+          "test_redirect_without_location (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_redirect_without_location)",
+          "test_refresh_token (tornado.test.web_test.XSRFTest.test_refresh_token)",
+          "test_regular_file (tornado.test.web_test.StaticFileSymlinkTest.test_regular_file)",
+          "test_relative_auth_redirect (tornado.test.web_test.AuthRedirectTest.test_relative_auth_redirect)",
+          "test_relative_version_exclusion (tornado.test.web_test.StaticFileTest.test_relative_version_exclusion)",
+          "test_removeslash (tornado.test.web_test.DecoratorTest.test_removeslash)",
+          "test_render_message (tornado.test.websocket_test.WebSocketTest.test_render_message)",
+          "test_render_method_return_future (tornado.test.web_test.FinalReturnTest.test_render_method_return_future)",
+          "test_request_close (tornado.test.httpserver_test.KeepAliveTest.test_request_close)",
+          "test_request_timeout (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_request_timeout)",
+          "test_request_timeout (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_request_timeout)",
+          "test_request_without_xprotocol (tornado.test.httpserver_test.SSLXHeaderTest.test_request_without_xprotocol)",
+          "test_response_times (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_response_times)",
+          "test_response_times (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_response_times)",
+          "test_reuse_after_refusal (tornado.test.simple_httpclient_test.SimpleHTTPClientMaxBodySizeTestCase.test_reuse_after_refusal)",
+          "test_reuse_request_from_response (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_reuse_request_from_response)",
+          "test_reuse_request_from_response (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_reuse_request_from_response)",
+          "test_root_static_path (tornado.test.web_test.StaticFileTest.test_root_static_path)",
+          "test_rule_based_router (tornado.test.routing_test.RuleRouterTest.test_rule_based_router)",
+          "test_safe_methods_not_checked (tornado.test.web_test.CrossOriginProtectionTest.test_safe_methods_not_checked)",
+          "test_safe_methods_not_checked (tornado.test.web_test.CrossOriginProtectionTest.test_safe_methods_not_checked) (method='GET')",
+          "test_safe_methods_not_checked (tornado.test.web_test.CrossOriginProtectionTest.test_safe_methods_not_checked) (method='HEAD')",
+          "test_safe_methods_not_checked (tornado.test.web_test.CrossOriginProtectionTest.test_safe_methods_not_checked) (method='OPTIONS')",
+          "test_same_origin_with_xsrf_cookies (tornado.test.websocket_test.WebSocketOriginTest.test_same_origin_with_xsrf_cookies)",
+          "test_scaling (tornado.test.security_corpus_test.SecurityCorpusTest.test_scaling) [6.4.2 CVE-2024-7592: cookie backslashes]",
+          "test_scaling (tornado.test.security_corpus_test.SecurityCorpusTest.test_scaling) [6.5.3 CVE-2025-67725: repeated header]",
+          "test_scaling (tornado.test.security_corpus_test.SecurityCorpusTest.test_scaling) [6.5.3 CVE-2025-67726: content-disposition semicolons]",
+          "test_scheme_headers (tornado.test.httpserver_test.XHeaderTest.test_scheme_headers)",
+          "test_sec_fetch_site_cross_site (tornado.test.websocket_test.WebSocketOriginTest.test_sec_fetch_site_cross_site)",
+          "test_sec_fetch_site_none (tornado.test.web_test.CrossOriginProtectionTest.test_sec_fetch_site_none)",
+          "test_sec_fetch_site_same_origin (tornado.test.websocket_test.WebSocketOriginTest.test_sec_fetch_site_same_origin)",
+          "test_sec_fetch_site_same_site (tornado.test.websocket_test.WebSocketOriginTest.test_sec_fetch_site_same_site)",
+          "test_sec_fetch_site_success (tornado.test.web_test.CrossOriginProtectionTest.test_sec_fetch_site_success)",
+          "test_sec_fetch_site_trusted_origin (tornado.test.web_test.CrossOriginProtectionTest.test_sec_fetch_site_trusted_origin)",
+          "test_second_offer_accepted (tornado.test.websocket_test.InvalidCompressionOfferTest.test_second_offer_accepted)",
+          "test_second_root (tornado.test.web_test.StaticFileMultiRootTest.test_second_root)",
+          "test_second_root (tornado.test.web_test.StaticFileRootSwitchingTest.test_second_root)",
+          "test_see_other_redirect (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_see_other_redirect)",
+          "test_see_other_redirect (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_see_other_redirect)",
+          "test_serve (tornado.test.web_test.CustomStaticFileTest.test_serve)",
+          "test_serve (tornado.test.web_test.StaticFilePrefixRoutedTest.test_serve)",
+          "test_serve (tornado.test.web_test.StaticFileWithPathTest.test_serve)",
+          "test_served_directory_itself (tornado.test.web_test.StaticFileSymlinkTest.test_served_directory_itself)",
+          "test_server_close_reason (tornado.test.websocket_test.WebSocketTest.test_server_close_reason)",
+          "test_server_ping (tornado.test.websocket_test.ServerPeriodicPingTest.test_server_ping)",
+          "test_set_cookie (tornado.test.web_test.CookieTest.test_set_cookie)",
+          "test_set_cookie_deprecated (tornado.test.web_test.CookieTest.test_set_cookie_deprecated)",
+          "test_set_cookie_domain (tornado.test.web_test.CookieTest.test_set_cookie_domain)",
+          "test_set_cookie_expires_days (tornado.test.web_test.CookieTest.test_set_cookie_expires_days)",
+          "test_set_cookie_false_flags (tornado.test.web_test.CookieTest.test_set_cookie_false_flags)",
+          "test_set_cookie_forbidden_char (tornado.test.web_test.CookieTest.test_set_cookie_forbidden_char)",
+          "test_set_cookie_max_age (tornado.test.web_test.CookieTest.test_set_cookie_max_age)",
+          "test_set_cookie_max_age_sanitized (tornado.test.web_test.CookieTest.test_set_cookie_max_age_sanitized)",
+          "test_set_cookie_overwrite (tornado.test.web_test.CookieTest.test_set_cookie_overwrite)",
+          "test_set_header (tornado.test.web_test.WSGISafeWebTest.test_set_header)",
+          "test_set_properties (tornado.test.web_test.SetLazyPropertiesTest.test_set_properties)",
+          "test_single_file (tornado.test.web_test.StaticFileSingleFileTest.test_single_file)",
+          "test_size_limit (tornado.test.websocket_test.ClientOnlyCompressionTest.test_size_limit)",
+          "test_size_limit (tornado.test.websocket_test.DefaultCompressionTest.test_size_limit)",
+          "test_size_limit (tornado.test.websocket_test.NoCompressionTest.test_size_limit)",
+          "test_size_limit (tornado.test.websocket_test.ServerOnlyCompressionTest.test_size_limit)",
+          "test_slashes (tornado.test.web_test.RequestEncodingTest.test_slashes)",
+          "test_small_body (tornado.test.httpserver_test.BodyLimitsTest.test_small_body)",
+          "test_small_body (tornado.test.simple_httpclient_test.SimpleHTTPClientMaxBodySizeTestCase.test_small_body)",
+          "test_small_headers (tornado.test.httpserver_test.MaxHeaderSizeTest.test_small_headers)",
+          "test_small_headers (tornado.test.simple_httpclient_test.MaxHeaderSizeTest.test_small_headers)",
+          "test_ssl (tornado.test.httpserver_test.SSLTest.test_ssl)",
+          "test_ssl_context (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_ssl_context)",
+          "test_ssl_options (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_ssl_options)",
+          "test_standard_methods (tornado.test.web_test.AllHTTPMethodsTest.test_standard_methods)",
+          "test_static_304_etag_modified_bug (tornado.test.web_test.StaticFileTest.test_static_304_etag_modified_bug)",
+          "test_static_304_if_modified_since (tornado.test.web_test.StaticFileTest.test_static_304_if_modified_since)",
+          "test_static_304_if_modified_since_invalid (tornado.test.web_test.StaticFileTest.test_static_304_if_modified_since_invalid)",
+          "test_static_304_if_none_match (tornado.test.web_test.StaticFileTest.test_static_304_if_none_match)",
+          "test_static_404 (tornado.test.web_test.StaticFileTest.test_static_404)",
+          "test_static_compressed_files (tornado.test.web_test.StaticFileTest.test_static_compressed_files)",
+          "test_static_default_filename (tornado.test.web_test.StaticDefaultFilenameTest.test_static_default_filename)",
+          "test_static_default_redirect (tornado.test.web_test.StaticDefaultFilenameTest.test_static_default_redirect)",
+          "test_static_directory_without_default_filename (tornado.test.web_test.StaticFileTest.test_static_directory_without_default_filename)",
+          "test_static_etag (tornado.test.web_test.StaticFileTest.test_static_etag)",
+          "test_static_files (tornado.test.web_test.StaticFileTest.test_static_files)",
+          "test_static_files_cacheable (tornado.test.web_test.StaticFileTest.test_static_files_cacheable)",
+          "test_static_head (tornado.test.web_test.StaticFileTest.test_static_head)",
+          "test_static_head_range (tornado.test.web_test.StaticFileTest.test_static_head_range)",
+          "test_static_if_modified_since_pre_epoch (tornado.test.web_test.StaticFileTest.test_static_if_modified_since_pre_epoch)",
+          "test_static_if_modified_since_time_zone (tornado.test.web_test.StaticFileTest.test_static_if_modified_since_time_zone)",
+          "test_static_invalid_range (tornado.test.web_test.StaticFileTest.test_static_invalid_range)",
+          "test_static_range_if_none_match (tornado.test.web_test.StaticFileTest.test_static_range_if_none_match)",
+          "test_static_unsatisfiable_range_end_less_than_start (tornado.test.web_test.StaticFileTest.test_static_unsatisfiable_range_end_less_than_start)",
+          "test_static_unsatisfiable_range_invalid_start (tornado.test.web_test.StaticFileTest.test_static_unsatisfiable_range_invalid_start)",
+          "test_static_unsatisfiable_range_zero_suffix (tornado.test.web_test.StaticFileTest.test_static_unsatisfiable_range_zero_suffix)",
+          "test_static_url (tornado.test.web_test.CustomStaticFileTest.test_static_url)",
+          "test_static_url (tornado.test.web_test.StaticFileMultiRootTest.test_static_url)",
+          "test_static_url (tornado.test.web_test.StaticFileTest.test_static_url)",
+          "test_static_url_missing_file (tornado.test.web_test.StaticFileMultiRootTest.test_static_url_missing_file)",
+          "test_static_windows_special_filenames (tornado.test.web_test.StaticFileTest.test_static_windows_special_filenames)",
+          "test_static_windows_special_filenames (tornado.test.web_test.StaticFileTest.test_static_windows_special_filenames) (filename='AUX')",
+          "test_static_windows_special_filenames (tornado.test.web_test.StaticFileTest.test_static_windows_special_filenames) (filename='COM1')",
+          "test_static_windows_special_filenames (tornado.test.web_test.StaticFileTest.test_static_windows_special_filenames) (filename='CON')",
+          "test_static_windows_special_filenames (tornado.test.web_test.StaticFileTest.test_static_windows_special_filenames) (filename='LPT1')",
+          "test_static_windows_special_filenames (tornado.test.web_test.StaticFileTest.test_static_windows_special_filenames) (filename='NUL')",
+          "test_static_windows_special_filenames (tornado.test.web_test.StaticFileTest.test_static_windows_special_filenames) (filename='PRN')",
+          "test_static_with_range (tornado.test.web_test.StaticFileTest.test_static_with_range)",
+          "test_static_with_range_end_edge (tornado.test.web_test.StaticFileTest.test_static_with_range_end_edge)",
+          "test_static_with_range_full_file (tornado.test.web_test.StaticFileTest.test_static_with_range_full_file)",
+          "test_static_with_range_full_past_end (tornado.test.web_test.StaticFileTest.test_static_with_range_full_past_end)",
+          "test_static_with_range_neg_end (tornado.test.web_test.StaticFileTest.test_static_with_range_neg_end)",
+          "test_static_with_range_neg_past_start (tornado.test.web_test.StaticFileTest.test_static_with_range_neg_past_start)",
+          "test_static_with_range_partial_past_end (tornado.test.web_test.StaticFileTest.test_static_with_range_partial_past_end)",
+          "test_status (tornado.test.web_test.StatusReasonTest.test_status)",
+          "test_streaming_body (tornado.test.web_test.StreamingRequestBodyTest.test_streaming_body)",
+          "test_streaming_callback (tornado.test.circlerefs_test.CircleRefsTest.test_streaming_callback)",
+          "test_streaming_callback (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_streaming_callback)",
+          "test_streaming_callback (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_streaming_callback)",
+          "test_streaming_callback_coroutine (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_streaming_callback_coroutine)",
+          "test_streaming_callback_coroutine (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_streaming_callback_coroutine)",
+          "test_streaming_callback_decompressed_over_limit (tornado.test.simple_httpclient_test.SimpleHTTPClientMaxBodySizeTestCase.test_streaming_callback_decompressed_over_limit)",
+          "test_streaming_callback_large_body (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_streaming_callback_large_body)",
+          "test_streaming_callback_large_body (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_streaming_callback_large_body)",
+          "test_streaming_callback_over_limit (tornado.test.simple_httpclient_test.SimpleHTTPClientMaxBodySizeTestCase.test_streaming_callback_over_limit)",
+          "test_streaming_decompression_bomb (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_streaming_decompression_bomb)",
+          "test_streaming_decompression_bomb (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_streaming_decompression_bomb)",
+          "test_streaming_follow_redirects (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_streaming_follow_redirects)",
+          "test_streaming_follow_redirects (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_streaming_follow_redirects)",
+          "test_strip_headers_on_redirect (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_strip_headers_on_redirect)",
+          "test_strip_headers_on_redirect (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_strip_headers_on_redirect) (name='auth parameters', origin='different')",
+          "test_strip_headers_on_redirect (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_strip_headers_on_redirect) (name='auth parameters', origin='same')",
+          "test_strip_headers_on_redirect (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_strip_headers_on_redirect) (name='credentials in URL', origin='different')",
+          "test_strip_headers_on_redirect (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_strip_headers_on_redirect) (name='credentials in URL', origin='same')",
+          "test_strip_headers_on_redirect (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_strip_headers_on_redirect) (name='manual auth header', origin='different')",
+          "test_strip_headers_on_redirect (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_strip_headers_on_redirect) (name='manual auth header', origin='same')",
+          "test_strip_headers_on_redirect (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_strip_headers_on_redirect) (name='manual cookie header', origin='different')",
+          "test_strip_headers_on_redirect (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_strip_headers_on_redirect) (name='manual cookie header', origin='same')",
+          "test_strip_headers_on_redirect (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_strip_headers_on_redirect)",
+          "test_strip_headers_on_redirect (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_strip_headers_on_redirect) (name='auth parameters', origin='different')",
+          "test_strip_headers_on_redirect (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_strip_headers_on_redirect) (name='auth parameters', origin='same')",
+          "test_strip_headers_on_redirect (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_strip_headers_on_redirect) (name='credentials in URL', origin='different')",
+          "test_strip_headers_on_redirect (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_strip_headers_on_redirect) (name='credentials in URL', origin='same')",
+          "test_strip_headers_on_redirect (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_strip_headers_on_redirect) (name='manual auth header', origin='different')",
+          "test_strip_headers_on_redirect (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_strip_headers_on_redirect) (name='manual auth header', origin='same')",
+          "test_strip_headers_on_redirect (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_strip_headers_on_redirect) (name='manual cookie header', origin='different')",
+          "test_strip_headers_on_redirect (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_strip_headers_on_redirect) (name='manual cookie header', origin='same')",
+          "test_strong_etag_match (tornado.test.web_test.CacheTest.test_strong_etag_match)",
+          "test_strong_etag_not_match (tornado.test.web_test.CacheTest.test_strong_etag_not_match)",
+          "test_subprotocols (tornado.test.websocket_test.WebSocketTest.test_subprotocols)",
+          "test_subprotocols_not_offered (tornado.test.websocket_test.WebSocketTest.test_subprotocols_not_offered)",
+          "test_symlink_escaping_root (tornado.test.web_test.StaticFilePrefixRoutedTest.test_symlink_escaping_root)",
+          "test_symlink_escaping_roots_rejected (tornado.test.web_test.StaticFileMultiRootTest.test_symlink_escaping_roots_rejected)",
+          "test_symlink_to_other_root (tornado.test.web_test.StaticFileRootSwitchingTest.test_symlink_to_other_root)",
+          "test_symlink_to_other_root_rejected (tornado.test.web_test.StaticFileMultiRootTest.test_symlink_to_other_root_rejected)",
+          "test_symlink_within_root (tornado.test.web_test.StaticFileSymlinkTest.test_symlink_within_root)",
+          "test_symlinked_default_filename (tornado.test.web_test.StaticFileSymlinkTest.test_symlinked_default_filename)",
+          "test_symlinked_directory (tornado.test.web_test.StaticFilePerRequestSymlinkDirectoryTest.test_symlinked_directory)",
+          "test_symlinked_directory_escaping_root (tornado.test.web_test.StaticFileSymlinkTest.test_symlinked_directory_escaping_root)",
+          "test_symlinked_file (tornado.test.web_test.StaticFilePerRequestSymlinkDirectoryTest.test_symlinked_file)",
+          "test_symlinked_file_escaping_root (tornado.test.web_test.StaticFileSymlinkTest.test_symlinked_file_escaping_root)",
+          "test_symlinked_root (tornado.test.web_test.StaticFileSymlinkedRootTest.test_symlinked_root)",
+          "test_symlinked_single_file (tornado.test.web_test.StaticFileSingleFileTest.test_symlinked_single_file)",
+          "test_sync_body_producer_chunked (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_sync_body_producer_chunked)",
+          "test_sync_body_producer_chunked (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_sync_body_producer_chunked)",
+          "test_sync_body_producer_content_length (tornado.test.simple_httpclient_test.SimpleHTTPClientTestCase.test_sync_body_producer_content_length)",
+          "test_sync_body_producer_content_length (tornado.test.simple_httpclient_test.SimpleHTTPSClientTestCase.test_sync_body_producer_content_length)",
+          "test_sync_client (tornado.test.httpclient_test.SyncHTTPClientTest.test_sync_client)",
+          "test_sync_client_error (tornado.test.httpclient_test.SyncHTTPClientTest.test_sync_client_error)",
+          "test_sync_handler (tornado.test.circlerefs_test.CircleRefsTest.test_sync_handler)",
+          "test_template_starting_with_substitution (tornado.test.web_test.RedirectHandlerTest.test_template_starting_with_substitution)",
+          "test_timeout (tornado.test.httpserver_test.BodyLimitsTest.test_timeout)",
+          "test_trusted_downstream (tornado.test.httpserver_test.XHeaderTest.test_trusted_downstream)",
+          "test_trusted_origin (tornado.test.websocket_test.WebSocketOriginTest.test_trusted_origin)",
+          "test_trusted_origin_cross_site (tornado.test.websocket_test.WebSocketOriginTest.test_trusted_origin_cross_site)",
+          "test_twitter_authenticate_redirect (tornado.test.auth_test.AuthTest.test_twitter_authenticate_redirect)",
+          "test_twitter_get_user (tornado.test.auth_test.AuthTest.test_twitter_get_user)",
+          "test_twitter_redirect (tornado.test.auth_test.AuthTest.test_twitter_redirect)",
+          "test_twitter_redirect_gen_coroutine (tornado.test.auth_test.AuthTest.test_twitter_redirect_gen_coroutine)",
+          "test_twitter_show_user (tornado.test.auth_test.AuthTest.test_twitter_show_user)",
+          "test_twitter_show_user_error (tornado.test.auth_test.AuthTest.test_twitter_show_user_error)",
+          "test_two_requests (tornado.test.httpserver_test.KeepAliveTest.test_two_requests)",
+          "test_types (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_types)",
+          "test_types (tornado.test.httpserver_test.HTTPServerTest.test_types)",
+          "test_types (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_types)",
+          "test_types (tornado.test.web_test.WSGISafeWebTest.test_types)",
+          "test_ui_method (tornado.test.web_test.UIMethodUIModuleTest.test_ui_method)",
+          "test_uimodule_resources (tornado.test.web_test.WSGISafeWebTest.test_uimodule_resources)",
+          "test_uimodule_unescaped (tornado.test.web_test.WSGISafeWebTest.test_uimodule_unescaped)",
+          "test_uncompressed (tornado.test.httpserver_test.GzipBaseTest.test_uncompressed)",
+          "test_uncompressed (tornado.test.httpserver_test.GzipTest.test_uncompressed)",
+          "test_uncompressed (tornado.test.httpserver_test.GzipUnsupportedTest.test_uncompressed)",
+          "test_undecorated_coroutines (tornado.test.gen_test.GenWebTest.test_undecorated_coroutines)",
+          "test_unicode_message (tornado.test.websocket_test.WebSocketTest.test_unicode_message)",
+          "test_unimplemented_patch (tornado.test.web_test.UnimplementedNonStandardMethodsTest.test_unimplemented_patch)",
+          "test_unimplemented_standard_methods (tornado.test.web_test.UnimplementedHTTPMethodsTest.test_unimplemented_standard_methods)",
+          "test_unix_socket (tornado.test.httpserver_test.UnixSocketTestFile.test_unix_socket)",
+          "test_unknown_prefix (tornado.test.web_test.StaticFilePrefixRoutedTest.test_unknown_prefix)",
+          "test_vary_already_present (tornado.test.web_test.GzipTestCase.test_vary_already_present)",
+          "test_vary_already_present_multiple (tornado.test.web_test.GzipTestCase.test_vary_already_present_multiple)",
+          "test_versioning (tornado.test.web_test.XSRFTest.test_versioning)",
+          "test_weak_etag_match (tornado.test.web_test.CacheTest.test_weak_etag_match)",
+          "test_weak_etag_not_match (tornado.test.web_test.CacheTest.test_weak_etag_not_match)",
+          "test_web_redirect (tornado.test.web_test.WSGISafeWebTest.test_web_redirect)",
+          "test_web_redirect_double_slash (tornado.test.web_test.WSGISafeWebTest.test_web_redirect_double_slash)",
+          "test_websocket_callbacks (tornado.test.websocket_test.WebSocketTest.test_websocket_callbacks)",
+          "test_websocket_close_buffered_data (tornado.test.websocket_test.WebSocketTest.test_websocket_close_buffered_data)",
+          "test_websocket_gen (tornado.test.websocket_test.WebSocketTest.test_websocket_gen)",
+          "test_websocket_header_echo (tornado.test.websocket_test.WebSocketTest.test_websocket_header_echo)",
+          "test_websocket_headers (tornado.test.websocket_test.WebSocketTest.test_websocket_headers)",
+          "test_websocket_http_fail (tornado.test.websocket_test.WebSocketTest.test_websocket_http_fail)",
+          "test_websocket_http_redirect (tornado.test.websocket_test.WebSocketTest.test_websocket_http_redirect)",
+          "test_websocket_http_success (tornado.test.websocket_test.WebSocketTest.test_websocket_http_success)",
+          "test_websocket_upgrade_header_not_checked (tornado.test.web_test.CrossOriginProtectionBeforePrepareTest.test_websocket_upgrade_header_not_checked)",
+          "test_wildcard_etag (tornado.test.web_test.CacheTest.test_wildcard_etag)",
+          "test_write_after_close (tornado.test.websocket_test.WebSocketTest.test_write_after_close)",
+          "test_write_error (tornado.test.web_test.ErrorResponseTest.test_write_error)",
+          "test_write_while_connecting (tornado.test.iostream_test.TestIOStreamWebHTTP.test_write_while_connecting)",
+          "test_write_while_connecting (tornado.test.iostream_test.TestIOStreamWebHTTPS.test_write_while_connecting)",
+          "test_wsgi_container (tornado.test.routing_test.WSGIContainerTestCase.test_wsgi_container)",
+          "test_xsrf_fail_argument_invalid_format (tornado.test.web_test.XSRFTest.test_xsrf_fail_argument_invalid_format)",
+          "test_xsrf_fail_body_no_cookie (tornado.test.web_test.XSRFCookieNameTest.test_xsrf_fail_body_no_cookie)",
+          "test_xsrf_fail_body_no_cookie (tornado.test.web_test.XSRFTest.test_xsrf_fail_body_no_cookie)",
+          "test_xsrf_fail_cookie_invalid_format (tornado.test.web_test.XSRFTest.test_xsrf_fail_cookie_invalid_format)",
+          "test_xsrf_fail_cookie_no_body (tornado.test.web_test.XSRFTest.test_xsrf_fail_cookie_no_body)",
+          "test_xsrf_fail_no_token (tornado.test.web_test.XSRFCookieNameTest.test_xsrf_fail_no_token)",
+          "test_xsrf_fail_no_token (tornado.test.web_test.XSRFTest.test_xsrf_fail_no_token)",
+          "test_xsrf_httponly (tornado.test.web_test.XSRFCookieKwargsTest.test_xsrf_httponly)",
+          "test_xsrf_success_header (tornado.test.web_test.XSRFTest.test_xsrf_success_header)",
+          "test_xsrf_success_non_hex_token (tornado.test.web_test.XSRFTest.test_xsrf_success_non_hex_token)",
+          "test_xsrf_success_post_body (tornado.test.web_test.XSRFCookieNameTest.test_xsrf_success_post_body)",
+          "test_xsrf_success_post_body (tornado.test.web_test.XSRFTest.test_xsrf_success_post_body)",
+          "test_xsrf_success_query_string (tornado.test.web_test.XSRFTest.test_xsrf_success_query_string)",
+          "test_xsrf_success_short_token (tornado.test.web_test.XSRFTest.test_xsrf_success_short_token)",
+          "test_xsrf_token_masked (tornado.test.security_corpus_test.SecurityCorpusTest.test_xsrf_token_masked)",
+          "test_zero_timeout (tornado.test.httpclient_test.HTTPClientCommonTestCase.test_zero_timeout)",
+          "test_zero_timeout (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase.test_zero_timeout)"
+        ]
+      },
+      "veredicto": "ROMPE TESTS"
+    },
+    {
+      "id": "20_extract_await_run2",
+      "caso": "20_extract_await",
+      "operacion": "Extract Method",
+      "fase": 3,
+      "corrida": 2,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 7.810934707988054,
+          "energia_kwh": 1.0925469699470244e-05,
+          "energia_traza_kwh": 1.081762774298831e-05,
+          "emisiones_kg": 2.835279567179217e-06,
+          "emisiones_traza_kg": 2.8072933932106337e-06,
+          "potencia_pico_w": 5.646866,
+          "potencia_media_traza_w": 5.040468887243244,
+          "n_muestras": 74
+        },
+        "tests": {
+          "duracion_s": 18.989147374988534,
+          "energia_kwh": 2.689185059263216e-05,
+          "energia_traza_kwh": 2.6571163084023188e-05,
+          "emisiones_kg": 6.97873103914457e-06,
+          "emisiones_traza_kg": 6.8955091030979475e-06,
+          "potencia_pico_w": 5.7263649260000005,
+          "potencia_media_traza_w": 5.0502206215934065,
+          "n_muestras": 182
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKGGoz3EExuwCpV5EDTK",
+      "tiempo_llm_s": 7.8,
+      "tokens": {
+        "input": 4,
+        "output": 854,
+        "cache_write": 0,
+        "cache_read": 331060,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0417,
+      "intentos_red": 1,
+      "riesgos_declarados": "`WebSocketHandler` hereda de `RequestHandler`, así que usa el nuevo método sin cambios. No he comprobado si hay subclases que definan su propio `_run_prepare`; es improbable. Además, el `await` extra sobre la corrutina no cede control al bucle de eventos cuando `prepare()` es síncrono, por lo que no debería alterar el orden de ejecución.",
+      "aviso_riesgo": true,
+      "bloques_edit": 2,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/web.py"
+      ],
+      "lineas_agregadas": 6,
+      "lineas_eliminadas": 3,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "20_extract_await_run3",
+      "caso": "20_extract_await",
+      "operacion": "Extract Method",
+      "fase": 3,
+      "corrida": 3,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 6.929596667003352,
+          "energia_kwh": 9.688338608692185e-06,
+          "energia_traza_kwh": 9.62281053259043e-06,
+          "emisiones_kg": 2.5142304406803283e-06,
+          "emisiones_traza_kg": 2.4972251841230856e-06,
+          "potencia_pico_w": 5.612220032,
+          "potencia_media_traza_w": 5.028120464,
+          "n_muestras": 66
+        },
+        "tests": {
+          "duracion_s": 18.92365825001616,
+          "energia_kwh": 2.6712629069437516e-05,
+          "energia_traza_kwh": 2.6520755612787648e-05,
+          "emisiones_kg": 6.932221082438781e-06,
+          "emisiones_traza_kg": 6.882427809830118e-06,
+          "potencia_pico_w": 6.575510912,
+          "potencia_media_traza_w": 5.0645861256906075,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKGJo1orJu2Byz7UGJCX",
+      "tiempo_llm_s": 6.9,
+      "tokens": {
+        "input": 4,
+        "output": 734,
+        "cache_write": 0,
+        "cache_read": 331060,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0405,
+      "intentos_red": 1,
+      "riesgos_declarados": "Posible cambio en tipado estático: `result` ya no se asigna con el tipo de `prepare()` dentro de `_execute`, pero las asignaciones posteriores (`method(...)`) siguen declarando la variable, así que mypy no debería quejarse. No hay cambio de comportamiento en tiempo de ejecución.",
+      "aviso_riesgo": true,
+      "bloques_edit": 2,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/web.py"
+      ],
+      "lineas_agregadas": 7,
+      "lineas_eliminadas": 3,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+--- a/tornado/httputil.py
++++ b/tornado/httputil.py
+@@ -895,11 +895,10 @@
+     if unit != "bytes":
+         return None
+     start_b, _, end_b = value.partition("-")
+-    try:
+-        start = _int_or_none(start_b)
+-        end = _int_or_none(end_b)
+-    except ValueError:
++    bounds = _parse_range_bounds(start_b, end_b)
++    if bounds is None:
+         return None
++    start, end = bounds
+     if end is not None:
+         if start is None:
+             if end != 0:
+@@ -908,6 +907,17 @@
+         else:
+             end += 1
+     return (start, end)
++
++
++def _parse_range_bounds(
++    start_b: str, end_b: str
++) -> tuple[int | None, int | None] | None:
++    try:
++        start = _int_or_none(start_b)
++        end = _int_or_none(end_b)
++    except ValueError:
++        return None
++    return start, end
+ 
+ 
+ def _get_content_range(start: int | None, end: int | None, total: int) -> str:

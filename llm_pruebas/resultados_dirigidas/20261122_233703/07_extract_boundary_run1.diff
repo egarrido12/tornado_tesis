@@ -1,0 +1,35 @@
+--- a/tornado/httputil.py
++++ b/tornado/httputil.py
+@@ -1087,6 +1087,17 @@
+             raise HTTPInputError("Invalid multipart/form-data: %s" % e) from e
+ 
+ 
++def _unquote_boundary(boundary: bytes) -> bytes:
++    # The standard allows for the boundary to be quoted in the header,
++    # although it's rare (it happens at least for google app engine
++    # xmpp).  I think we're also supposed to handle backslash-escapes
++    # here but I'll save that until we see a client that uses them
++    # in the wild.
++    if boundary.startswith(b'"') and boundary.endswith(b'"'):
++        boundary = boundary[1:-1]
++    return boundary
++
++
+ def parse_multipart_form_data(
+     boundary: bytes,
+     data: bytes,
+@@ -1110,13 +1121,7 @@
+         config = _DEFAULT_PARSE_BODY_CONFIG.multipart
+     if not config.enabled:
+         raise HTTPInputError("multipart/form-data parsing is disabled")
+-    # The standard allows for the boundary to be quoted in the header,
+-    # although it's rare (it happens at least for google app engine
+-    # xmpp).  I think we're also supposed to handle backslash-escapes
+-    # here but I'll save that until we see a client that uses them
+-    # in the wild.
+-    if boundary.startswith(b'"') and boundary.endswith(b'"'):
+-        boundary = boundary[1:-1]
++    boundary = _unquote_boundary(boundary)
+     final_boundary_index = data.rfind(b"--" + boundary + b"--")
+     if final_boundary_index == -1:
+         raise HTTPInputError("Invalid multipart/form-data: no final boundary found")

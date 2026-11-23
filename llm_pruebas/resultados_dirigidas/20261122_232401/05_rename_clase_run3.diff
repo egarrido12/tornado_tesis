@@ -1,0 +1,350 @@
+--- a/tornado/util.py
++++ b/tornado/util.py
+@@ -4,8 +4,8 @@
+ that the functions and classes defined here will be useful to other
+ applications, but they are documented here in case they are.
+ 
+-The one public-facing part of this module is the `Configurable` class
+-and its `~Configurable.configure` method, which becomes a part of the
++The one public-facing part of this module is the `ConfigurableBase` class
++and its `~ConfigurableBase.configure` method, which becomes a part of the
+ interface of its subclasses, including `.AsyncHTTPClient`, `.IOLoop`,
+ and `.Resolver`.
+ """
+@@ -301,7 +301,7 @@
+     return _re_unescape_pattern.sub(_re_unescape_replacement, s)
+ 
+ 
+-class Configurable:
++class ConfigurableBase:
+     """Base class for configurable interfaces.
+ 
+     A configurable interface is an (abstract) class whose constructor
+@@ -329,14 +329,14 @@
+     """
+ 
+     # Type annotations on this class are mostly done with comments
+-    # because they need to refer to Configurable, which isn't defined
++    # because they need to refer to ConfigurableBase, which isn't defined
+     # until after the class definition block. These can use regular
+     # annotations when our minimum python version is 3.7.
+     #
+     # There may be a clever way to use generics here to get more
+     # precise types (i.e. for a particular Configurable subclass T,
+     # all the types are subclasses of T, not just Configurable).
+-    __impl_class: type[Configurable] | None = None
++    __impl_class: type[ConfigurableBase] | None = None
+     __impl_kwargs: dict[str, Any] | None = None
+ 
+     def __new__(cls, *args: Any, **kwargs: Any) -> typing.Self:
+@@ -360,7 +360,7 @@
+         return instance
+ 
+     @classmethod
+-    def configurable_base(cls) -> type[Configurable]:
++    def configurable_base(cls) -> type[ConfigurableBase]:
+         """Returns the base class of a configurable hierarchy.
+ 
+         This will normally return the class in which it is defined.
+@@ -371,7 +371,7 @@
+         raise NotImplementedError()
+ 
+     @classmethod
+-    def configurable_default(cls) -> type[Configurable]:
++    def configurable_default(cls) -> type[ConfigurableBase]:
+         """Returns the implementation class to be used if none is configured."""
+         raise NotImplementedError()
+ 
+@@ -388,7 +388,9 @@
+     """
+ 
+     @classmethod
+-    def configure(cls, impl: None | str | type[Configurable], **kwargs: Any) -> None:
++    def configure(
++        cls, impl: None | str | type[ConfigurableBase], **kwargs: Any
++    ) -> None:
+         """Sets the class to use when the base class is instantiated.
+ 
+         Keyword arguments will be saved and added to the arguments passed
+@@ -397,20 +399,20 @@
+         """
+         base = cls.configurable_base()
+         if isinstance(impl, str):
+-            impl = typing.cast(type[Configurable], import_object(impl))
++            impl = typing.cast(type[ConfigurableBase], import_object(impl))
+         if impl is not None and not issubclass(impl, cls):
+             raise ValueError("Invalid subclass of %s" % cls)
+         base.__impl_class = impl
+         base.__impl_kwargs = kwargs
+ 
+     @classmethod
+-    def configured_class(cls) -> type[Configurable]:
++    def configured_class(cls) -> type[ConfigurableBase]:
+         """Returns the currently configured class."""
+         base = cls.configurable_base()
+         # Manually mangle the private name to see whether this base
+         # has been configured (and not another base higher in the
+         # hierarchy).
+-        if base.__dict__.get("_Configurable__impl_class") is None:
++        if base.__dict__.get("_ConfigurableBase__impl_class") is None:
+             base.__impl_class = cls.configurable_default()
+         if base.__impl_class is not None:
+             return base.__impl_class
+@@ -421,13 +423,13 @@
+     @classmethod
+     def _save_configuration(
+         cls,
+-    ) -> tuple[type[Configurable] | None, dict[str, Any] | None]:
++    ) -> tuple[type[ConfigurableBase] | None, dict[str, Any] | None]:
+         base = cls.configurable_base()
+         return (base.__impl_class, base.__impl_kwargs)
+ 
+     @classmethod
+     def _restore_configuration(
+-        cls, saved: tuple[type[Configurable] | None, dict[str, Any] | None]
++        cls, saved: tuple[type[ConfigurableBase] | None, dict[str, Any] | None]
+     ) -> None:
+         base = cls.configurable_base()
+         base.__impl_class = saved[0]
+--- a/tornado/httpclient.py
++++ b/tornado/httpclient.py
+@@ -53,7 +53,7 @@
+ )
+ from tornado.escape import native_str, utf8
+ from tornado.ioloop import IOLoop
+-from tornado.util import Configurable
++from tornado.util import ConfigurableBase
+ 
+ 
+ class HTTPClient:
+@@ -136,7 +136,7 @@
+         )
+ 
+ 
+-class AsyncHTTPClient(Configurable):
++class AsyncHTTPClient(ConfigurableBase):
+     """An non-blocking HTTP client.
+ 
+     Example usage::
+@@ -178,11 +178,11 @@
+     _instance_cache: dict[IOLoop, "AsyncHTTPClient"] | None
+ 
+     @classmethod
+-    def configurable_base(cls) -> type[Configurable]:
++    def configurable_base(cls) -> type[ConfigurableBase]:
+         return AsyncHTTPClient
+ 
+     @classmethod
+-    def configurable_default(cls) -> type[Configurable]:
++    def configurable_default(cls) -> type[ConfigurableBase]:
+         from tornado.simple_httpclient import SimpleAsyncHTTPClient
+ 
+         return SimpleAsyncHTTPClient
+@@ -313,7 +313,7 @@
+ 
+     @classmethod
+     def configure(
+-        cls, impl: "Union[None, str, Type[Configurable]]", **kwargs: Any
++        cls, impl: "Union[None, str, Type[ConfigurableBase]]", **kwargs: Any
+     ) -> None:
+         """Configures the `AsyncHTTPClient` subclass to use.
+ 
+--- a/tornado/httpserver.py
++++ b/tornado/httpserver.py
+@@ -35,10 +35,10 @@
+ from tornado.escape import native_str
+ from tornado.http1connection import HTTP1ConnectionParameters, HTTP1ServerConnection
+ from tornado.tcpserver import TCPServer
+-from tornado.util import Configurable
+-
+-
+-class HTTPServer(TCPServer, Configurable, httputil.HTTPServerConnectionDelegate):
++from tornado.util import ConfigurableBase
++
++
++class HTTPServer(TCPServer, ConfigurableBase, httputil.HTTPServerConnectionDelegate):
+     r"""A non-blocking, single-threaded HTTP server.
+ 
+     A server is defined by a subclass of `.HTTPServerConnectionDelegate`,
+@@ -139,7 +139,7 @@
+        documentation) instead of one ``(request_conn)``.
+ 
+     .. versionchanged:: 4.2
+-       `HTTPServer` is now a subclass of `tornado.util.Configurable`.
++       `HTTPServer` is now a subclass of `tornado.util.ConfigurableBase`.
+ 
+     .. versionchanged:: 4.5
+        Added the ``trusted_downstream`` argument.
+@@ -152,7 +152,7 @@
+         # Ignore args to __init__; real initialization belongs in
+         # initialize since we're Configurable. (there's something
+         # weird in initialization order between this class,
+-        # Configurable, and TCPServer so we can't leave __init__ out
++        # ConfigurableBase, and TCPServer so we can't leave __init__ out
+         # completely)
+         pass
+ 
+@@ -201,11 +201,11 @@
+         self.trusted_downstream = trusted_downstream
+ 
+     @classmethod
+-    def configurable_base(cls) -> type[Configurable]:
++    def configurable_base(cls) -> type[ConfigurableBase]:
+         return HTTPServer
+ 
+     @classmethod
+-    def configurable_default(cls) -> type[Configurable]:
++    def configurable_default(cls) -> type[ConfigurableBase]:
+         return HTTPServer
+ 
+     async def close_all_connections(self) -> None:
+--- a/tornado/ioloop.py
++++ b/tornado/ioloop.py
+@@ -49,7 +49,7 @@
+     is_future,
+ )
+ from tornado.log import app_log
+-from tornado.util import Configurable, import_object
++from tornado.util import ConfigurableBase, import_object
+ from tornado.util import TimeoutError as TimeoutError  # re-exported for compatibility
+ 
+ 
+@@ -65,7 +65,7 @@
+ _S = TypeVar("_S", bound=_Selectable)
+ 
+ 
+-class IOLoop(Configurable):
++class IOLoop(ConfigurableBase):
+     """An I/O event loop.
+ 
+     As of Tornado 6.0, `IOLoop` is a wrapper around the `asyncio` event loop.
+@@ -165,7 +165,9 @@
+     _pending_tasks: set[Future[Any]] = set()
+ 
+     @classmethod
+-    def configure(cls, impl: None | str | type[Configurable], **kwargs: Any) -> None:
++    def configure(
++        cls, impl: None | str | type[ConfigurableBase], **kwargs: Any
++    ) -> None:
+         from tornado.platform.asyncio import BaseAsyncIOLoop
+ 
+         if isinstance(impl, str):
+@@ -343,11 +345,11 @@
+         pass
+ 
+     @classmethod
+-    def configurable_base(cls) -> type[Configurable]:
++    def configurable_base(cls) -> type[ConfigurableBase]:
+         return IOLoop
+ 
+     @classmethod
+-    def configurable_default(cls) -> type[Configurable]:
++    def configurable_default(cls) -> type[ConfigurableBase]:
+         from tornado.platform.asyncio import AsyncIOLoop
+ 
+         return AsyncIOLoop
+--- a/tornado/netutil.py
++++ b/tornado/netutil.py
+@@ -29,7 +29,7 @@
+ 
+ from tornado.concurrent import dummy_executor, run_on_executor
+ from tornado.ioloop import IOLoop
+-from tornado.util import Configurable, errno_from_exception
++from tornado.util import ConfigurableBase, errno_from_exception
+ 
+ 
+ # Note that the naming of ssl.Purpose is confusing; the purpose
+@@ -336,12 +336,12 @@
+     return True
+ 
+ 
+-class Resolver(Configurable):
++class Resolver(ConfigurableBase):
+     """Configurable asynchronous DNS resolver interface.
+ 
+     By default, a blocking implementation is used (which simply calls
+     `socket.getaddrinfo`).  An alternative implementation can be
+-    chosen with the `Resolver.configure <.Configurable.configure>`
++    chosen with the `Resolver.configure <.ConfigurableBase.configure>`
+     class method::
+ 
+         Resolver.configure('tornado.netutil.ThreadedResolver')
+--- a/tornado/test/util_test.py
++++ b/tornado/test/util_test.py
+@@ -10,7 +10,7 @@
+ from tornado.escape import utf8
+ from tornado.util import (
+     ArgReplacer,
+-    Configurable,
++    ConfigurableBase,
+     GzipDecompressor,
+     exec_in,
+     import_object,
+@@ -162,7 +162,7 @@
+             self.assertIs(e, exc_info[1])
+ 
+ 
+-class TestConfigurable(Configurable):
++class TestConfigurable(ConfigurableBase):
+     @classmethod
+     def configurable_base(cls):
+         return TestConfigurable
+--- a/tornado/test/api.txt
++++ b/tornado/test/api.txt
+@@ -158,7 +158,7 @@
+ tornado.http1connection.parse_int: function(s)
+ 
+ [tornado.httpclient]
+-tornado.httpclient.AsyncHTTPClient: class(tornado.util.Configurable)
++tornado.httpclient.AsyncHTTPClient: class(tornado.util.ConfigurableBase)
+ tornado.httpclient.AsyncHTTPClient.__new__: staticmethod(cls, force_instance=False, **kwargs)
+ tornado.httpclient.AsyncHTTPClient.close: method(self)
+ tornado.httpclient.AsyncHTTPClient.configurable_base: classmethod(cls)
+@@ -235,7 +235,7 @@
+ 
+ [tornado.httpserver]
+ tornado.httpserver.HTTPRequest: alias of tornado.httputil.HTTPServerRequest
+-tornado.httpserver.HTTPServer: class(tornado.tcpserver.TCPServer, tornado.util.Configurable, tornado.httputil.HTTPServerConnectionDelegate)
++tornado.httpserver.HTTPServer: class(tornado.tcpserver.TCPServer, tornado.util.ConfigurableBase, tornado.httputil.HTTPServerConnectionDelegate)
+ tornado.httpserver.HTTPServer.__init__: method(self, *args, **kwargs)
+ tornado.httpserver.HTTPServer.close_all_connections: method(self)
+ tornado.httpserver.HTTPServer.configurable_base: classmethod(cls)
+@@ -352,7 +352,7 @@
+ tornado.httputil.url_concat: function(url, args)
+ 
+ [tornado.ioloop]
+-tornado.ioloop.IOLoop: class(tornado.util.Configurable)
++tornado.ioloop.IOLoop: class(tornado.util.ConfigurableBase)
+ tornado.ioloop.IOLoop.ERROR: attribute
+ tornado.ioloop.IOLoop.NONE: attribute
+ tornado.ioloop.IOLoop.READ: attribute
+@@ -561,7 +561,7 @@
+ tornado.netutil.OverrideResolver.mapping: attribute
+ tornado.netutil.OverrideResolver.resolve: method(self, host, port, family=<AddressFamily.AF_UNSPEC: 0>)
+ tornado.netutil.OverrideResolver.resolver: attribute
+-tornado.netutil.Resolver: class(tornado.util.Configurable)
++tornado.netutil.Resolver: class(tornado.util.ConfigurableBase)
+ tornado.netutil.Resolver.close: method(self)
+ tornado.netutil.Resolver.configurable_base: classmethod(cls)
+ tornado.netutil.Resolver.configurable_default: classmethod(cls)
+@@ -892,13 +892,13 @@
+ tornado.util.ArgReplacer.get_old_value: method(self, args, kwargs, default=None)
+ tornado.util.ArgReplacer.name: attribute
+ tornado.util.ArgReplacer.replace: method(self, new_value, args, kwargs)
+-tornado.util.Configurable: class()
+-tornado.util.Configurable.__new__: staticmethod(cls, *args, **kwargs)
+-tornado.util.Configurable.configurable_base: classmethod(cls)
+-tornado.util.Configurable.configurable_default: classmethod(cls)
+-tornado.util.Configurable.configure: classmethod(cls, impl, **kwargs)
+-tornado.util.Configurable.configured_class: classmethod(cls)
+-tornado.util.Configurable.initialize: method(self)
++tornado.util.ConfigurableBase: class()
++tornado.util.ConfigurableBase.__new__: staticmethod(cls, *args, **kwargs)
++tornado.util.ConfigurableBase.configurable_base: classmethod(cls)
++tornado.util.ConfigurableBase.configurable_default: classmethod(cls)
++tornado.util.ConfigurableBase.configure: classmethod(cls, impl, **kwargs)
++tornado.util.ConfigurableBase.configured_class: classmethod(cls)
++tornado.util.ConfigurableBase.initialize: method(self)
+ tornado.util.GzipDecompressor: class()
+ tornado.util.GzipDecompressor.__init__: method(self)
+ tornado.util.GzipDecompressor.decompress: method(self, value, max_length=0)

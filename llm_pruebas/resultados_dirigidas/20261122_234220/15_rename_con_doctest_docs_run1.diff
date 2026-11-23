@@ -1,0 +1,63 @@
+--- a/tornado/httputil.py
++++ b/tornado/httputil.py
+@@ -117,10 +117,10 @@
+ 
+ 
+ @lru_cache(1000)
+-def _normalize_header(name: str) -> str:
++def _to_header_case(name: str) -> str:
+     """Map a header name to Http-Header-Case.
+ 
+-    >>> _normalize_header("coNtent-TYPE")
++    >>> _to_header_case("coNtent-TYPE")
+     'Content-Type'
+     """
+     return "-".join([w.capitalize() for w in name.split("-")])
+@@ -202,7 +202,7 @@
+         else:
+             if _FORBIDDEN_HEADER_CHARS_RE.search(value):
+                 raise HTTPInputError("Invalid header value %r" % value)
+-        norm_name = _normalize_header(name)
++        norm_name = _to_header_case(name)
+         if norm_name in self:
+             self._combined_cache.pop(norm_name, None)
+             self._as_list[norm_name].append(value)
+@@ -211,7 +211,7 @@
+ 
+     def get_list(self, name: str) -> list[str]:
+         """Returns all values for the given header as a list."""
+-        norm_name = _normalize_header(name)
++        norm_name = _to_header_case(name)
+         return self._as_list.get(norm_name, [])
+ 
+     def get_all(self) -> Iterable[tuple[str, str]]:
+@@ -311,7 +311,7 @@
+     # MutableMapping abstract method implementations.
+ 
+     def __setitem__(self, name: str, value: str) -> None:
+-        norm_name = _normalize_header(name)
++        norm_name = _to_header_case(name)
+         self._combined_cache[norm_name] = value
+         self._as_list[norm_name] = [value]
+ 
+@@ -320,17 +320,17 @@
+         # in __getitem__ when it's not needed.
+         if not isinstance(name, str):
+             return False
+-        norm_name = _normalize_header(name)
++        norm_name = _to_header_case(name)
+         return norm_name in self._as_list
+ 
+     def __getitem__(self, name: str) -> str:
+-        header = _normalize_header(name)
++        header = _to_header_case(name)
+         if header not in self._combined_cache:
+             self._combined_cache[header] = ",".join(self._as_list[header])
+         return self._combined_cache[header]
+ 
+     def __delitem__(self, name: str) -> None:
+-        norm_name = _normalize_header(name)
++        norm_name = _to_header_case(name)
+         # _combined_cache is populated lazily by __getitem__ and invalidated
+         # by add(), so the name may be absent from it even when the header is
+         # present. Only _as_list determines whether the key exists.

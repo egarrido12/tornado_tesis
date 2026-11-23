@@ -1,0 +1,33 @@
+--- a/tornado/httputil.py
++++ b/tornado/httputil.py
+@@ -1342,7 +1342,7 @@
+     return utf8(username) + b":" + utf8(password)
+ 
+ 
+-def doctests() -> unittest.TestSuite:
++def doctest_suite() -> unittest.TestSuite:
+     import doctest
+ 
+     return doctest.DocTestSuite(optionflags=doctest.ELLIPSIS)
+--- a/tornado/test/runtests.py
++++ b/tornado/test/runtests.py
+@@ -16,7 +16,7 @@
+ from tornado.test.util import ABT_SKIP_MESSAGE
+ 
+ TEST_MODULES = [
+-    "tornado.httputil.doctests",
++    "tornado.httputil.doctest_suite",
+     "tornado.iostream.doctests",
+     "tornado.util.doctests",
+     "tornado.test.api_test",
+--- a/tornado/test/api.txt
++++ b/tornado/test/api.txt
+@@ -337,7 +337,7 @@
+ tornado.httputil.ResponseStartLine.code: attribute
+ tornado.httputil.ResponseStartLine.reason: attribute
+ tornado.httputil.ResponseStartLine.version: attribute
+-tornado.httputil.doctests: function()
++tornado.httputil.doctest_suite: function()
+ tornado.httputil.encode_username_password: function(username, password)
+ tornado.httputil.format_timestamp: function(ts)
+ tornado.httputil.parse_body_arguments: function(content_type, body, arguments, files, headers=None, *, config=None)

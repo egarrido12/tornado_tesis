@@ -1,0 +1,16 @@
+--- a/tornado/httputil.py
++++ b/tornado/httputil.py
+@@ -857,6 +857,13 @@
+     filename: str
+     body: bytes
+     content_type: str
++
++
++def _split_range_header(range_header: str) -> tuple[str, str]:
++    """Splits a Range header into its unit and value (both stripped)."""
++    unit, _, value = range_header.partition("=")
++    unit, value = unit.strip(), value.strip()
++    return unit, value
+ 
+ 
+ def _parse_request_range(

@@ -1,0 +1,174 @@
+{
+  "proyecto": "tornado",
+  "python": "3.12.15",
+  "anthropic": "2.8.0",
+  "modelo": "claude-sonnet-5-5",
+  "effort": "high",
+  "prompt": "Eres un ingeniero de software experto en Python y en refactoring.\n\nRecibirás el código fuente de un proyecto y UNA orden de refactoring concreta. Debes aplicar exactamente esa orden y nada más.\n\nReglas:\n- El comportamiento observable del proyecto no debe cambiar: la suite de pruebas del proyecto debe seguir pasando igual que antes.\n- Haz solo lo que pide la orden. No corrijas otros problemas, no cambies el estilo y no reformatees código que no tocas.\n- Si la orden obliga a cambiar otros archivos (llamadores, importaciones, pruebas, etc.), inclúyelos en tu respuesta.\n- Solo puedes editar archivos que aparezcan en el contexto que recibes.\n\nFormato de la respuesta (estricto; un programa la aplicará tal cual):\n\n1. Cada cambio es un bloque `<edit>` con la ruta del archivo, el texto exacto que hay que buscar y el texto con el que se reemplaza:\n\n<edit file=\"ruta/relativa/archivo.py\">\n<search>\ntexto exacto que existe hoy en el archivo (debe aparecer UNA sola vez en él; incluye las líneas de contexto necesarias)\n</search>\n<replace>\ntexto nuevo\n</replace>\n</edit>\n\n2. Puedes escribir tantos bloques `<edit>` como necesites. El texto de `<search>` debe copiarse carácter por carácter, con su indentación. Para borrar código deja `<replace>` vacío. Los bloques se aplican en orden, sobre el texto ya modificado por los anteriores.\n\n3. Para renombrar un archivo usa `<rename_file from=\"ruta/vieja.py\" to=\"ruta/nueva.py\"/>`. Los renombrados se aplican al final, de modo que las rutas de los bloques `<edit>` son las de antes del renombrado.\n\n4. Al terminar, escribe en un bloque `<riesgos>` una o dos líneas con los riesgos o las referencias que no pudiste verificar. Si no hay ninguno, escribe `ninguno`.\n\nPuedes escribir antes una explicación breve de tu plan; solo se aplican los bloques descritos arriba.\n",
+  "prompt_sha256": "f93b3aaeb105f4b642975556690ddef7679ae083a005f9f2b3d5dd91fefdc579",
+  "linea_base": {
+    "returncode": 0,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 111,
+    "expected_failures": 0,
+    "ran": 1535,
+    "passed": 1424,
+    "fallidos": []
+  },
+  "costo_total_usd": 1.4048,
+  "corridas": [
+    {
+      "id": "12_move_funcion_run1",
+      "caso": "12_move_funcion",
+      "operacion": "Move",
+      "fase": 1,
+      "corrida": 1,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/tcpclient_test.py",
+            "coincidencias": 4,
+            "caracteres": 24940
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 14.026474333018996,
+          "energia_kwh": 1.9635964319420456e-05,
+          "energia_traza_kwh": 1.946631886931773e-05,
+          "emisiones_kg": 5.095748736497123e-06,
+          "emisiones_traza_kg": 5.051723876095514e-06,
+          "potencia_pico_w": 5.305542674,
+          "potencia_media_traza_w": 5.017385135716418,
+          "n_muestras": 134
+        },
+        "tests": {
+          "duracion_s": 18.910782167047728,
+          "energia_kwh": 2.6808483228507208e-05,
+          "energia_traza_kwh": 2.6422120672698815e-05,
+          "emisiones_kg": 6.9570962911131365e-06,
+          "emisiones_traza_kg": 6.856830957892745e-06,
+          "potencia_pico_w": 5.785055744,
+          "potencia_media_traza_w": 5.050490823325966,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKDmrnRqko9H328seFzc",
+      "tiempo_llm_s": 14.0,
+      "tokens": {
+        "input": 4,
+        "output": 1063,
+        "cache_write": 340881,
+        "cache_read": 0,
+        "cache_write_1h": 330913,
+        "cache_write_5m": 9968
+      },
+      "costo_usd": 1.3592,
+      "intentos_red": 1,
+      "riesgos_declarados": "ninguno (`Any` ya se importa en netutil.py y sigue usándose en tcpclient.py; no hay riesgo de importación circular porque tcpclient ya importaba de netutil).",
+      "aviso_riesgo": true,
+      "bloques_edit": 3,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/netutil.py",
+        "tornado/tcpclient.py",
+        "tornado/test/tcpclient_test.py"
+      ],
+      "lineas_agregadas": 17,
+      "lineas_eliminadas": 17,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "12_move_funcion_run2",
+      "caso": "12_move_funcion",
+      "operacion": "Move",
+      "fase": 1,
+      "corrida": 2,
+      "contexto_extra": {
+        "incluidos": [
+          {
+            "archivo": "tornado/test/tcpclient_test.py",
+            "coincidencias": 4,
+            "caracteres": 24940
+          }
+        ],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 10.723887333006132,
+          "energia_kwh": 1.4966953760569619e-05,
+          "energia_traza_kwh": 1.4858177163049502e-05,
+          "emisiones_kg": 3.884089137359185e-06,
+          "emisiones_traza_kg": 3.855860413760142e-06,
+          "potencia_pico_w": 5.125421678,
+          "potencia_media_traza_w": 5.015963008117647,
+          "n_muestras": 102
+        },
+        "tests": {
+          "duracion_s": 19.006531958992127,
+          "energia_kwh": 2.686503321314047e-05,
+          "energia_traza_kwh": 2.6557082881865616e-05,
+          "emisiones_kg": 6.971771634175296e-06,
+          "emisiones_traza_kg": 6.8918551357558274e-06,
+          "potencia_pico_w": 5.8398080000000006,
+          "potencia_media_traza_w": 5.042369928813186,
+          "n_muestras": 182
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKDpHnPZBNdwNrEkrRno",
+      "tiempo_llm_s": 10.7,
+      "tokens": {
+        "input": 4,
+        "output": 1152,
+        "cache_write": 0,
+        "cache_read": 340881,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0456,
+      "intentos_red": 1,
+      "riesgos_declarados": "Sin verificar: otros archivos que importen `_format_addr` desde `tornado.tcpclient` (solo vi el test). `tcpclient.py` sigue exponiendo el nombre vía la importación, así que esas importaciones seguirían funcionando.",
+      "aviso_riesgo": true,
+      "bloques_edit": 5,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/netutil.py",
+        "tornado/tcpclient.py",
+        "tornado/test/tcpclient_test.py"
+      ],
+      "lineas_agregadas": 17,
+      "lineas_eliminadas": 17,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    }
+  ]
+}

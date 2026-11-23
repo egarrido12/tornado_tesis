@@ -1,0 +1,25 @@
+--- a/tornado/httputil.py
++++ b/tornado/httputil.py
+@@ -1087,6 +1087,12 @@
+             raise HTTPInputError("Invalid multipart/form-data: %s" % e) from e
+ 
+ 
++def _unquote_boundary(boundary: bytes) -> bytes:
++    if boundary.startswith(b'"') and boundary.endswith(b'"'):
++        boundary = boundary[1:-1]
++    return boundary
++
++
+ def parse_multipart_form_data(
+     boundary: bytes,
+     data: bytes,
+@@ -1115,8 +1121,7 @@
+     # xmpp).  I think we're also supposed to handle backslash-escapes
+     # here but I'll save that until we see a client that uses them
+     # in the wild.
+-    if boundary.startswith(b'"') and boundary.endswith(b'"'):
+-        boundary = boundary[1:-1]
++    boundary = _unquote_boundary(boundary)
+     final_boundary_index = data.rfind(b"--" + boundary + b"--")
+     if final_boundary_index == -1:
+         raise HTTPInputError("Invalid multipart/form-data: no final boundary found")

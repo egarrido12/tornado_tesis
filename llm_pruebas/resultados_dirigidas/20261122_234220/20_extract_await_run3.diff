@@ -1,0 +1,26 @@
+--- a/tornado/web.py
++++ b/tornado/web.py
+@@ -1956,6 +1956,12 @@
+                     break
+         return match
+ 
++    async def _run_prepare(self) -> None:
++        """Calls `prepare` and waits for its result if it is awaitable."""
++        result = self.prepare()
++        if result is not None:
++            result = await result  # type: ignore
++
+     async def _execute(
+         self, transforms: list["OutputTransform"], *args: bytes, **kwargs: bytes
+     ) -> None:
+@@ -1979,9 +1985,7 @@
+             # XSRF checks (if enabled): cookie-based and/or cross-origin protection.
+             self._cross_origin_protection()
+ 
+-            result = self.prepare()
+-            if result is not None:
+-                result = await result  # type: ignore
++            await self._run_prepare()
+             if self._prepared_future is not None:
+                 # Tell the Application we've finished with prepare()
+                 # and are ready for the body to arrive.

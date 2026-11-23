@@ -1,0 +1,257 @@
+--- a/tornado/__init__.py
++++ b/tornado/__init__.py
+@@ -42,7 +42,7 @@
+     "ioloop",
+     "iostream",
+     "locale",
+-    "locks",
++
+     "log",
+     "netutil",
+     "options",
+@@ -51,6 +51,7 @@
+     "queues",
+     "routing",
+     "simple_httpclient",
++    "sync",
+     "tcpclient",
+     "tcpserver",
+     "template",
+--- a/tornado/queues.py
++++ b/tornado/queues.py
+@@ -35,7 +35,7 @@
+ 
+ from tornado import ioloop
+ from tornado.concurrent import Future, future_set_result_unless_cancelled
+-from tornado.locks import Event
++from tornado.sync import Event
+ 
+ _T = TypeVar("_T")
+ 
+--- a/tornado/test/locks_test.py
++++ b/tornado/test/locks_test.py
+@@ -14,7 +14,7 @@
+ import unittest
+ from datetime import timedelta
+ 
+-from tornado import gen, locks
++from tornado import gen, sync as locks
+ from tornado.test.util import AsyncTestCase
+ from tornado.testing import gen_test
+ 
+--- a/tornado/test/httpclient_test.py
++++ b/tornado/test/httpclient_test.py
+@@ -30,7 +30,7 @@
+ 
+ from tornado.escape import utf8, native_str, to_unicode, json_encode, json_decode
+ from tornado import gen, netutil
+-from tornado.locks import Event
++from tornado.sync import Event
+ from tornado.httpclient import (
+     HTTPClient,
+     HTTPError,
+--- a/tornado/test/httpserver_test.py
++++ b/tornado/test/httpserver_test.py
+@@ -34,7 +34,7 @@
+     ResponseStartLine,
+ )
+ from tornado.iostream import IOStream, StreamClosedError
+-from tornado.locks import Event
++from tornado.sync import Event
+ from tornado.log import app_log, gen_log
+ from tornado.simple_httpclient import SimpleAsyncHTTPClient
+ from tornado.test.util import (
+--- a/tornado/test/simple_httpclient_test.py
++++ b/tornado/test/simple_httpclient_test.py
+@@ -30,7 +30,7 @@
+ from tornado.httputil import HTTPHeaders, ResponseStartLine
+ from tornado.ioloop import IOLoop
+ from tornado.iostream import IOStream, UnsatisfiableReadError
+-from tornado.locks import Event
++from tornado.sync import Event
+ from tornado.log import app_log, gen_log
+ from tornado.netutil import Resolver, bind_sockets
+ from tornado.queues import Queue
+--- a/tornado/test/testing_test.py
++++ b/tornado/test/testing_test.py
+@@ -10,7 +10,7 @@
+ 
+ from tornado import gen
+ from tornado.httpserver import HTTPServer
+-from tornado.locks import Event
++from tornado.sync import Event
+ import tornado.testing
+ from tornado.test.util import AsyncHTTPTestCase, AsyncTestCase, TestCase
+ from tornado.testing import bind_unused_port, gen_test
+--- a/tornado/test/web_test.py
++++ b/tornado/test/web_test.py
+@@ -32,7 +32,7 @@
+ from tornado.httpclient import HTTPClientError
+ from tornado.httputil import format_timestamp
+ from tornado.iostream import IOStream
+-from tornado.locks import Event
++from tornado.sync import Event
+ from tornado.log import app_log, gen_log
+ from tornado.simple_httpclient import SimpleAsyncHTTPClient
+ from tornado.template import DictLoader
+--- a/tornado/test/http1connection_test.py
++++ b/tornado/test/http1connection_test.py
+@@ -5,7 +5,7 @@
+ from tornado.http1connection import HTTP1Connection
+ from tornado.httputil import HTTPMessageDelegate
+ from tornado.iostream import IOStream
+-from tornado.locks import Event
++from tornado.sync import Event
+ from tornado.log import app_log, gen_log
+ from tornado.netutil import add_accept_handler
+ from tornado.test.util import AsyncTestCase
+--- a/tornado/test/iostream_test.py
++++ b/tornado/test/iostream_test.py
+@@ -24,7 +24,7 @@
+     StreamClosedError,
+     _StreamBuffer,
+ )
+-from tornado.locks import Condition, Event
++from tornado.sync import Condition, Event
+ from tornado.log import gen_log
+ from tornado.netutil import ssl_options_to_context, ssl_wrap_socket
+ from tornado.platform.asyncio import AddThreadSelectorEventLoop
+--- a/tornado/test/websocket_test.py
++++ b/tornado/test/websocket_test.py
+@@ -12,7 +12,7 @@
+ from tornado.httpclient import HTTPError, HTTPRequest
+ from tornado.httputil import HTTPHeaders
+ from tornado.iostream import IOStream
+-from tornado.locks import Event
++from tornado.sync import Event
+ from tornado.log import app_log, gen_log
+ from tornado.netutil import Resolver
+ from tornado.simple_httpclient import SimpleAsyncHTTPClient
+--- a/tornado/test/api.txt
++++ b/tornado/test/api.txt
+@@ -491,42 +491,6 @@
+ tornado.locale.load_translations: function(directory, encoding=None)
+ tornado.locale.set_default_locale: function(code)
+ 
+-[tornado.locks]
+-tornado.locks.BoundedSemaphore: class(tornado.locks.Semaphore)
+-tornado.locks.BoundedSemaphore.__init__: method(self, value=1)
+-tornado.locks.BoundedSemaphore.release: method(self)
+-tornado.locks.Condition: class(tornado.locks._TimeoutGarbageCollector)
+-tornado.locks.Condition.__init__: method(self)
+-tornado.locks.Condition.__repr__: method(self)
+-tornado.locks.Condition.notify: method(self, n=1)
+-tornado.locks.Condition.notify_all: method(self)
+-tornado.locks.Condition.wait: method(self, timeout=None)
+-tornado.locks.Event: class()
+-tornado.locks.Event.__init__: method(self)
+-tornado.locks.Event.__repr__: method(self)
+-tornado.locks.Event.clear: method(self)
+-tornado.locks.Event.is_set: method(self)
+-tornado.locks.Event.set: method(self)
+-tornado.locks.Event.wait: method(self, timeout=None)
+-tornado.locks.Lock: class()
+-tornado.locks.Lock.__aenter__: method(self)
+-tornado.locks.Lock.__aexit__: method(self, typ, value, tb)
+-tornado.locks.Lock.__enter__: method(self)
+-tornado.locks.Lock.__exit__: method(self, typ, value, tb)
+-tornado.locks.Lock.__init__: method(self)
+-tornado.locks.Lock.__repr__: method(self)
+-tornado.locks.Lock.acquire: method(self, timeout=None)
+-tornado.locks.Lock.release: method(self)
+-tornado.locks.Semaphore: class(tornado.locks._TimeoutGarbageCollector)
+-tornado.locks.Semaphore.__aenter__: method(self)
+-tornado.locks.Semaphore.__aexit__: method(self, typ, value, tb)
+-tornado.locks.Semaphore.__enter__: method(self)
+-tornado.locks.Semaphore.__exit__: method(self, typ, value, traceback)
+-tornado.locks.Semaphore.__init__: method(self, value=1)
+-tornado.locks.Semaphore.__repr__: method(self)
+-tornado.locks.Semaphore.acquire: method(self, timeout=None)
+-tornado.locks.Semaphore.release: method(self)
+-
+ [tornado.log]
+ tornado.log.LogFormatter: class(logging.Formatter)
+ tornado.log.LogFormatter.DEFAULT_COLORS: attribute
+@@ -778,6 +742,42 @@
+ tornado.simple_httpclient.SimpleAsyncHTTPClient.resolver: attribute
+ tornado.simple_httpclient.SimpleAsyncHTTPClient.tcp_client: attribute
+ tornado.simple_httpclient.SimpleAsyncHTTPClient.waiting: attribute
++
++[tornado.sync]
++tornado.sync.BoundedSemaphore: class(tornado.sync.Semaphore)
++tornado.sync.BoundedSemaphore.__init__: method(self, value=1)
++tornado.sync.BoundedSemaphore.release: method(self)
++tornado.sync.Condition: class(tornado.sync._TimeoutGarbageCollector)
++tornado.sync.Condition.__init__: method(self)
++tornado.sync.Condition.__repr__: method(self)
++tornado.sync.Condition.notify: method(self, n=1)
++tornado.sync.Condition.notify_all: method(self)
++tornado.sync.Condition.wait: method(self, timeout=None)
++tornado.sync.Event: class()
++tornado.sync.Event.__init__: method(self)
++tornado.sync.Event.__repr__: method(self)
++tornado.sync.Event.clear: method(self)
++tornado.sync.Event.is_set: method(self)
++tornado.sync.Event.set: method(self)
++tornado.sync.Event.wait: method(self, timeout=None)
++tornado.sync.Lock: class()
++tornado.sync.Lock.__aenter__: method(self)
++tornado.sync.Lock.__aexit__: method(self, typ, value, tb)
++tornado.sync.Lock.__enter__: method(self)
++tornado.sync.Lock.__exit__: method(self, typ, value, tb)
++tornado.sync.Lock.__init__: method(self)
++tornado.sync.Lock.__repr__: method(self)
++tornado.sync.Lock.acquire: method(self, timeout=None)
++tornado.sync.Lock.release: method(self)
++tornado.sync.Semaphore: class(tornado.sync._TimeoutGarbageCollector)
++tornado.sync.Semaphore.__aenter__: method(self)
++tornado.sync.Semaphore.__aexit__: method(self, typ, value, tb)
++tornado.sync.Semaphore.__enter__: method(self)
++tornado.sync.Semaphore.__exit__: method(self, typ, value, traceback)
++tornado.sync.Semaphore.__init__: method(self, value=1)
++tornado.sync.Semaphore.__repr__: method(self)
++tornado.sync.Semaphore.acquire: method(self, timeout=None)
++tornado.sync.Semaphore.release: method(self)
+ 
+ [tornado.tcpclient]
+ tornado.tcpclient.TCPClient: class()
+--- a/tornado/locks.py
++++ b/tornado/sync.py
+@@ -58,7 +58,7 @@
+ 
+         import asyncio
+         from tornado import gen
+-        from tornado.locks import Condition
++        from tornado.sync import Condition
+ 
+         condition = Condition()
+ 
+@@ -167,7 +167,7 @@
+ 
+         import asyncio
+         from tornado import gen
+-        from tornado.locks import Event
++        from tornado.sync import Event
+ 
+         event = Event()
+ 
+@@ -326,7 +326,7 @@
+ 
+         import asyncio
+         from tornado import gen
+-        from tornado.locks import Semaphore
++        from tornado.sync import Semaphore
+ 
+         sem = Semaphore(2)
+ 
+@@ -502,8 +502,8 @@
+     A Lock can be used as an async context manager with the ``async
+     with`` statement:
+ 
+-    >>> from tornado import locks
+-    >>> lock = locks.Lock()
++    >>> from tornado import sync
++    >>> lock = sync.Lock()
+     >>>
+     >>> async def f():
+     ...    async with lock:

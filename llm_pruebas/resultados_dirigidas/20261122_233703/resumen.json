@@ -1,0 +1,838 @@
+{
+  "proyecto": "tornado",
+  "python": "3.12.15",
+  "anthropic": "2.8.0",
+  "modelo": "claude-sonnet-5-5",
+  "effort": "high",
+  "prompt": "Eres un ingeniero de software experto en Python y en refactoring.\n\nRecibirás el código fuente de un proyecto y UNA orden de refactoring concreta. Debes aplicar exactamente esa orden y nada más.\n\nReglas:\n- El comportamiento observable del proyecto no debe cambiar: la suite de pruebas del proyecto debe seguir pasando igual que antes.\n- Haz solo lo que pide la orden. No corrijas otros problemas, no cambies el estilo y no reformatees código que no tocas.\n- Si la orden obliga a cambiar otros archivos (llamadores, importaciones, pruebas, etc.), inclúyelos en tu respuesta.\n- Solo puedes editar archivos que aparezcan en el contexto que recibes.\n\nFormato de la respuesta (estricto; un programa la aplicará tal cual):\n\n1. Cada cambio es un bloque `<edit>` con la ruta del archivo, el texto exacto que hay que buscar y el texto con el que se reemplaza:\n\n<edit file=\"ruta/relativa/archivo.py\">\n<search>\ntexto exacto que existe hoy en el archivo (debe aparecer UNA sola vez en él; incluye las líneas de contexto necesarias)\n</search>\n<replace>\ntexto nuevo\n</replace>\n</edit>\n\n2. Puedes escribir tantos bloques `<edit>` como necesites. El texto de `<search>` debe copiarse carácter por carácter, con su indentación. Para borrar código deja `<replace>` vacío. Los bloques se aplican en orden, sobre el texto ya modificado por los anteriores.\n\n3. Para renombrar un archivo usa `<rename_file from=\"ruta/vieja.py\" to=\"ruta/nueva.py\"/>`. Los renombrados se aplican al final, de modo que las rutas de los bloques `<edit>` son las de antes del renombrado.\n\n4. Al terminar, escribe en un bloque `<riesgos>` una o dos líneas con los riesgos o las referencias que no pudiste verificar. Si no hay ninguno, escribe `ninguno`.\n\nPuedes escribir antes una explicación breve de tu plan; solo se aplican los bloques descritos arriba.\n",
+  "prompt_sha256": "f93b3aaeb105f4b642975556690ddef7679ae083a005f9f2b3d5dd91fefdc579",
+  "linea_base": {
+    "returncode": 0,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 111,
+    "expected_failures": 0,
+    "ran": 1535,
+    "passed": 1424,
+    "fallidos": []
+  },
+  "costo_total_usd": 0.463,
+  "corridas": [
+    {
+      "id": "07_extract_boundary_run1",
+      "caso": "07_extract_boundary",
+      "operacion": "Extract Method",
+      "fase": 2,
+      "corrida": 1,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 10.969864082988352,
+          "energia_kwh": 1.534685798723932e-05,
+          "energia_traza_kwh": 1.5169269922924478e-05,
+          "emisiones_kg": 3.982678463126463e-06,
+          "emisiones_traza_kg": 3.936592406968055e-06,
+          "potencia_pico_w": 5.189062262,
+          "potencia_media_traza_w": 5.015708454442308,
+          "n_muestras": 104
+        },
+        "tests": {
+          "duracion_s": 18.989373666001484,
+          "energia_kwh": 2.6830107844311747e-05,
+          "energia_traza_kwh": 2.6636985851532073e-05,
+          "emisiones_kg": 6.962708116785188e-06,
+          "emisiones_traza_kg": 6.912590835316942e-06,
+          "potencia_pico_w": 7.318177250000001,
+          "potencia_media_traza_w": 5.076473046740332,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKEuUVL5pKLYjvqejuDY",
+      "tiempo_llm_s": 11.0,
+      "tokens": {
+        "input": 4,
+        "output": 771,
+        "cache_write": 158,
+        "cache_read": 330913,
+        "cache_write_1h": 0,
+        "cache_write_5m": 158
+      },
+      "costo_usd": 0.0412,
+      "intentos_red": 1,
+      "riesgos_declarados": "ninguno",
+      "aviso_riesgo": false,
+      "bloques_edit": 2,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 12,
+      "lineas_eliminadas": 7,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "07_extract_boundary_run2",
+      "caso": "07_extract_boundary",
+      "operacion": "Extract Method",
+      "fase": 2,
+      "corrida": 2,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 10.853525291022379,
+          "energia_kwh": 1.5170188880788098e-05,
+          "energia_traza_kwh": 1.5035638838656516e-05,
+          "emisiones_kg": 3.9368308866422015e-06,
+          "emisiones_traza_kg": 3.901913670658592e-06,
+          "potencia_pico_w": 5.178890750000001,
+          "potencia_media_traza_w": 5.015666960407767,
+          "n_muestras": 103
+        },
+        "tests": {
+          "duracion_s": 18.886389374965802,
+          "energia_kwh": 2.6633641579374792e-05,
+          "energia_traza_kwh": 2.634468200756743e-05,
+          "emisiones_kg": 6.911722959905133e-06,
+          "emisiones_traza_kg": 6.836734772465832e-06,
+          "potencia_pico_w": 6.02719925,
+          "potencia_media_traza_w": 5.0452148809,
+          "n_muestras": 180
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKEwgkpRRoZQqjwDEZSg",
+      "tiempo_llm_s": 10.9,
+      "tokens": {
+        "input": 4,
+        "output": 815,
+        "cache_write": 0,
+        "cache_read": 331071,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0413,
+      "intentos_red": 1,
+      "riesgos_declarados": "ninguno",
+      "aviso_riesgo": false,
+      "bloques_edit": 2,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 12,
+      "lineas_eliminadas": 7,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "07_extract_boundary_run3",
+      "caso": "07_extract_boundary",
+      "operacion": "Extract Method",
+      "fase": 2,
+      "corrida": 3,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 5.357986917020753,
+          "energia_kwh": 7.541705836054726e-06,
+          "energia_traza_kwh": 7.491927316961965e-06,
+          "emisiones_kg": 1.9571556232203973e-06,
+          "emisiones_traza_kg": 1.944237549952116e-06,
+          "potencia_pico_w": 5.4299816960000005,
+          "potencia_media_traza_w": 5.048753013764706,
+          "n_muestras": 51
+        },
+        "tests": {
+          "duracion_s": 18.984186625049915,
+          "energia_kwh": 2.6821213683116265e-05,
+          "energia_traza_kwh": 2.6536809970786146e-05,
+          "emisiones_kg": 6.9603999841191846e-06,
+          "emisiones_traza_kg": 6.886594092328683e-06,
+          "potencia_pico_w": 5.557264592,
+          "potencia_media_traza_w": 5.0374602592967035,
+          "n_muestras": 182
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKEyt3HHBEjJbx5c13AE",
+      "tiempo_llm_s": 5.4,
+      "tokens": {
+        "input": 4,
+        "output": 602,
+        "cache_write": 0,
+        "cache_read": 331071,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0391,
+      "intentos_red": 1,
+      "riesgos_declarados": "ninguno",
+      "aviso_riesgo": false,
+      "bloques_edit": 2,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 7,
+      "lineas_eliminadas": 2,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "08_extract_rango_run1",
+      "caso": "08_extract_rango",
+      "operacion": "Extract Method",
+      "fase": 2,
+      "corrida": 1,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 4.155860083003063,
+          "energia_kwh": 5.829972928789794e-06,
+          "energia_traza_kwh": 5.747998182755103e-06,
+          "emisiones_kg": 1.5129421047231677e-06,
+          "emisiones_traza_kg": 1.4916687564049593e-06,
+          "potencia_pico_w": 6.043290854,
+          "potencia_media_traza_w": 5.066987903692308,
+          "n_muestras": 39
+        },
+        "tests": {
+          "duracion_s": 18.927903875010088,
+          "energia_kwh": 2.6738158676198836e-05,
+          "energia_traza_kwh": 2.643375317565131e-05,
+          "emisiones_kg": 6.938846296219037e-06,
+          "emisiones_traza_kg": 6.8598497203664475e-06,
+          "potencia_pico_w": 5.541444158,
+          "potencia_media_traza_w": 5.047319029403315,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKF1gv6z7ewGJ4aCWzDS",
+      "tiempo_llm_s": 4.2,
+      "tokens": {
+        "input": 4,
+        "output": 452,
+        "cache_write": 136,
+        "cache_read": 330913,
+        "cache_write_1h": 0,
+        "cache_write_5m": 136
+      },
+      "costo_usd": 0.038,
+      "intentos_red": 1,
+      "riesgos_declarados": "ninguno",
+      "aviso_riesgo": false,
+      "bloques_edit": 2,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 8,
+      "lineas_eliminadas": 2,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "08_extract_rango_run2",
+      "caso": "08_extract_rango",
+      "operacion": "Extract Method",
+      "fase": 2,
+      "corrida": 2,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 4.688471375033259,
+          "energia_kwh": 6.559753391657548e-06,
+          "energia_traza_kwh": 6.436099377680231e-06,
+          "emisiones_kg": 1.7023281624224391e-06,
+          "emisiones_traza_kg": 1.670238585601172e-06,
+          "potencia_pico_w": 5.207777168,
+          "potencia_media_traza_w": 5.023924297863636,
+          "n_muestras": 44
+        },
+        "tests": {
+          "duracion_s": 18.95164800004568,
+          "energia_kwh": 2.6726561606026252e-05,
+          "energia_traza_kwh": 2.6473183985924473e-05,
+          "emisiones_kg": 6.935836728941478e-06,
+          "emisiones_traza_kg": 6.870082449371246e-06,
+          "potencia_pico_w": 5.868113792,
+          "potencia_media_traza_w": 5.044563133535911,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKF3PKk1wLNFY8BB3ck7",
+      "tiempo_llm_s": 4.7,
+      "tokens": {
+        "input": 4,
+        "output": 504,
+        "cache_write": 0,
+        "cache_read": 331049,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0382,
+      "intentos_red": 1,
+      "riesgos_declarados": "ninguno",
+      "aviso_riesgo": false,
+      "bloques_edit": 1,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 7,
+      "lineas_eliminadas": 0,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "08_extract_rango_run3",
+      "caso": "08_extract_rango",
+      "operacion": "Extract Method",
+      "fase": 2,
+      "corrida": 3,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 4.578616917016916,
+          "energia_kwh": 6.4493168082905715e-06,
+          "energia_traza_kwh": 6.2708959303782026e-06,
+          "emisiones_kg": 1.6736686542362982e-06,
+          "emisiones_traza_kg": 1.6273664737883815e-06,
+          "potencia_pico_w": 5.288054144,
+          "potencia_media_traza_w": 5.0330977507441865,
+          "n_muestras": 43
+        },
+        "tests": {
+          "duracion_s": 18.95743033400504,
+          "energia_kwh": 2.6814331564664563e-05,
+          "energia_traza_kwh": 2.6366865048147986e-05,
+          "emisiones_kg": 6.9586139986776695e-06,
+          "emisiones_traza_kg": 6.842491515509936e-06,
+          "potencia_pico_w": 5.342614934,
+          "potencia_media_traza_w": 5.033652719149171,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKF59hFSpYEx6QF3baAy",
+      "tiempo_llm_s": 4.6,
+      "tokens": {
+        "input": 4,
+        "output": 435,
+        "cache_write": 0,
+        "cache_read": 331049,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0375,
+      "intentos_red": 1,
+      "riesgos_declarados": "ninguno",
+      "aviso_riesgo": false,
+      "bloques_edit": 2,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 8,
+      "lineas_eliminadas": 2,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "09_extract_con_return_run1",
+      "caso": "09_extract_con_return",
+      "operacion": "Extract Method",
+      "fase": 2,
+      "corrida": 1,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 5.0353532080189325,
+          "energia_kwh": 7.061488731241152e-06,
+          "energia_traza_kwh": 7.065283088035278e-06,
+          "emisiones_kg": 1.8325340021331198e-06,
+          "emisiones_traza_kg": 1.8335186794591202e-06,
+          "potencia_pico_w": 5.87528825,
+          "potencia_media_traza_w": 5.060640485375,
+          "n_muestras": 48
+        },
+        "tests": {
+          "duracion_s": 18.994085417012684,
+          "energia_kwh": 2.6787665985843743e-05,
+          "energia_traza_kwh": 2.668218775925758e-05,
+          "emisiones_kg": 6.951693987652293e-06,
+          "emisiones_traza_kg": 6.924321227592691e-06,
+          "potencia_pico_w": 7.318177250000001,
+          "potencia_media_traza_w": 5.060516712384616,
+          "n_muestras": 182
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKF6sbC9HfTMPsNVGG3T",
+      "tiempo_llm_s": 5.0,
+      "tokens": {
+        "input": 4,
+        "output": 529,
+        "cache_write": 138,
+        "cache_read": 330913,
+        "cache_write_1h": 0,
+        "cache_write_5m": 138
+      },
+      "costo_usd": 0.0387,
+      "intentos_red": 1,
+      "riesgos_declarados": "ninguno",
+      "aviso_riesgo": false,
+      "bloques_edit": 2,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 14,
+      "lineas_eliminadas": 4,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "09_extract_con_return_run2",
+      "caso": "09_extract_con_return",
+      "operacion": "Extract Method",
+      "fase": 2,
+      "corrida": 2,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 4.72274399996968,
+          "energia_kwh": 6.610768118191603e-06,
+          "energia_traza_kwh": 6.5714406949956575e-06,
+          "emisiones_kg": 1.7155670451200262e-06,
+          "emisiones_traza_kg": 1.7053611461990232e-06,
+          "potencia_pico_w": 5.121522842,
+          "potencia_media_traza_w": 5.0192208924,
+          "n_muestras": 45
+        },
+        "tests": {
+          "duracion_s": 18.897355291992426,
+          "energia_kwh": 2.667330418337858e-05,
+          "energia_traza_kwh": 2.6380824488296292e-05,
+          "emisiones_kg": 6.922015841932759e-06,
+          "emisiones_traza_kg": 6.846114143782259e-06,
+          "potencia_pico_w": 5.5953708980000005,
+          "potencia_media_traza_w": 5.046680132729282,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKF8fZT6yWUuUDuEM6va",
+      "tiempo_llm_s": 4.7,
+      "tokens": {
+        "input": 4,
+        "output": 494,
+        "cache_write": 0,
+        "cache_read": 331051,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0381,
+      "intentos_red": 1,
+      "riesgos_declarados": "ninguno",
+      "aviso_riesgo": false,
+      "bloques_edit": 1,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 14,
+      "lineas_eliminadas": 4,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "09_extract_con_return_run3",
+      "caso": "09_extract_con_return",
+      "operacion": "Extract Method",
+      "fase": 2,
+      "corrida": 3,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 5.100576666009147,
+          "energia_kwh": 7.145083782040889e-06,
+          "energia_traza_kwh": 7.013165442003627e-06,
+          "emisiones_kg": 1.8542278373612139e-06,
+          "emisiones_traza_kg": 1.8199935770198039e-06,
+          "potencia_pico_w": 5.3867291360000005,
+          "potencia_media_traza_w": 5.02053992225,
+          "n_muestras": 48
+        },
+        "tests": {
+          "duracion_s": 18.911886250018142,
+          "energia_kwh": 2.6672892802200867e-05,
+          "energia_traza_kwh": 2.656453190675175e-05,
+          "emisiones_kg": 6.9219090839919465e-06,
+          "emisiones_traza_kg": 6.89378823965305e-06,
+          "potencia_pico_w": 5.745591248,
+          "potencia_media_traza_w": 5.0578657120221,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFAQnzR1CwZMnApha6y",
+      "tiempo_llm_s": 5.1,
+      "tokens": {
+        "input": 4,
+        "output": 486,
+        "cache_write": 0,
+        "cache_read": 331051,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.038,
+      "intentos_red": 1,
+      "riesgos_declarados": "ninguno",
+      "aviso_riesgo": false,
+      "bloques_edit": 1,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 14,
+      "lineas_eliminadas": 4,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "10_extract_bucle_run1",
+      "caso": "10_extract_bucle",
+      "operacion": "Extract Method",
+      "fase": 2,
+      "corrida": 1,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 4.307175916968845,
+          "energia_kwh": 6.026820009496462e-06,
+          "energia_traza_kwh": 6.008373933110426e-06,
+          "emisiones_kg": 1.564026087484441e-06,
+          "emisiones_traza_kg": 1.5592391277554244e-06,
+          "potencia_pico_w": 5.291496986,
+          "potencia_media_traza_w": 5.036499056146342,
+          "n_muestras": 41
+        },
+        "tests": {
+          "duracion_s": 18.926262374967337,
+          "energia_kwh": 2.6804292221079538e-05,
+          "energia_traza_kwh": 2.6532760067859023e-05,
+          "emisiones_kg": 6.956008678584577e-06,
+          "emisiones_traza_kg": 6.885543097970167e-06,
+          "potencia_pico_w": 5.525926016,
+          "potencia_media_traza_w": 5.049330503348067,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFCARrKVZ9f1YoMMZrA",
+      "tiempo_llm_s": 4.3,
+      "tokens": {
+        "input": 4,
+        "output": 452,
+        "cache_write": 136,
+        "cache_read": 330913,
+        "cache_write_1h": 0,
+        "cache_write_5m": 136
+      },
+      "costo_usd": 0.038,
+      "intentos_red": 1,
+      "riesgos_declarados": "ninguno",
+      "aviso_riesgo": false,
+      "bloques_edit": 2,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 9,
+      "lineas_eliminadas": 3,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "10_extract_bucle_run2",
+      "caso": "10_extract_bucle",
+      "operacion": "Extract Method",
+      "fase": 2,
+      "corrida": 2,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 4.3984592909691855,
+          "energia_kwh": 6.151765247793385e-06,
+          "energia_traza_kwh": 6.123921267438593e-06,
+          "emisiones_kg": 1.5964507512201113e-06,
+          "emisiones_traza_kg": 1.5892249320342587e-06,
+          "potencia_pico_w": 5.378442368,
+          "potencia_media_traza_w": 5.0250241095714285,
+          "n_muestras": 42
+        },
+        "tests": {
+          "duracion_s": 18.927789583045524,
+          "energia_kwh": 2.6914239437078353e-05,
+          "energia_traza_kwh": 2.6485813166481783e-05,
+          "emisiones_kg": 6.9845411905556396e-06,
+          "emisiones_traza_kg": 6.8733598606468534e-06,
+          "potencia_pico_w": 5.5733902340000006,
+          "potencia_media_traza_w": 5.0423242554475145,
+          "n_muestras": 181
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFDtg7jt7K2zSVjhJXu",
+      "tiempo_llm_s": 4.4,
+      "tokens": {
+        "input": 4,
+        "output": 433,
+        "cache_write": 0,
+        "cache_read": 331049,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0374,
+      "intentos_red": 1,
+      "riesgos_declarados": "ninguno",
+      "aviso_riesgo": false,
+      "bloques_edit": 2,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 10,
+      "lineas_eliminadas": 3,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    },
+    {
+      "id": "10_extract_bucle_run3",
+      "caso": "10_extract_bucle",
+      "operacion": "Extract Method",
+      "fase": 2,
+      "corrida": 3,
+      "contexto_extra": {
+        "incluidos": [],
+        "omitidos": []
+      },
+      "carbono": {
+        "llm": {
+          "duracion_s": 4.520212375035044,
+          "energia_kwh": 6.34624104637032e-06,
+          "energia_traza_kwh": 6.322028857189366e-06,
+          "emisiones_kg": 1.646919360184611e-06,
+          "emisiones_traza_kg": 1.6406360307580725e-06,
+          "potencia_pico_w": 5.919166598,
+          "potencia_media_traza_w": 5.047114943488372,
+          "n_muestras": 43
+        },
+        "tests": {
+          "duracion_s": 19.09872083296068,
+          "energia_kwh": 2.6915932542818054e-05,
+          "energia_traza_kwh": 2.6603617201467505e-05,
+          "emisiones_kg": 6.984980570119256e-06,
+          "emisiones_traza_kg": 6.9039313035700335e-06,
+          "potencia_pico_w": 5.37434375,
+          "potencia_media_traza_w": 5.037253805864407,
+          "n_muestras": 177
+        }
+      },
+      "modelo_respuesta": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "message_id": "msg_011ChKFFdWrmkAM9NA5hyTdB",
+      "tiempo_llm_s": 4.5,
+      "tokens": {
+        "input": 4,
+        "output": 435,
+        "cache_write": 0,
+        "cache_read": 331049,
+        "cache_write_1h": 0,
+        "cache_write_5m": 0
+      },
+      "costo_usd": 0.0375,
+      "intentos_red": 1,
+      "riesgos_declarados": "ninguno",
+      "aviso_riesgo": false,
+      "bloques_edit": 2,
+      "bloques_rename": 0,
+      "archivos_modificados": [
+        "tornado/httputil.py"
+      ],
+      "lineas_agregadas": 10,
+      "lineas_eliminadas": 3,
+      "residuos": null,
+      "tests": {
+        "returncode": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 111,
+        "expected_failures": 0,
+        "ran": 1535,
+        "passed": 1424,
+        "fallidos": []
+      },
+      "veredicto": "COMPORTAMIENTO PRESERVADO"
+    }
+  ]
+}

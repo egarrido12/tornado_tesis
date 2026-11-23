@@ -1,0 +1,14 @@
+--- a/tornado/test/web_test.py
++++ b/tornado/test/web_test.py
+@@ -107,8 +107,10 @@
+ 
+ 
+ class HelloHandler(RequestHandler):
+-    def get(self):
++    def handle_get(self):
+         self.write("hello")
++
++    get = handle_get
+ 
+ 
+ class CookieTestRequestHandler(RequestHandler):

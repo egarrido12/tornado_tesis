@@ -1,0 +1,26 @@
+--- a/tornado/httputil.py
++++ b/tornado/httputil.py
+@@ -859,6 +859,13 @@
+     content_type: str
+ 
+ 
++def _split_range_header(range_header: str) -> tuple[str, str]:
++    """Splits a Range header into its (unit, value) parts."""
++    unit, _, value = range_header.partition("=")
++    unit, value = unit.strip(), value.strip()
++    return unit, value
++
++
+ def _parse_request_range(
+     range_header: str,
+ ) -> tuple[int | None, int | None] | None:
+@@ -890,8 +897,7 @@
+ 
+     [0]: http://greenbytes.de/tech/webdav/draft-ietf-httpbis-p5-range-latest.html#byte.ranges
+     """
+-    unit, _, value = range_header.partition("=")
+-    unit, value = unit.strip(), value.strip()
++    unit, value = _split_range_header(range_header)
+     if unit != "bytes":
+         return None
+     start_b, _, end_b = value.partition("-")

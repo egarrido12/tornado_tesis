@@ -1,0 +1,67 @@
+--- a/tornado/iostream.py
++++ b/tornado/iostream.py
+@@ -366,7 +366,7 @@
+         self._read_regex = re.compile(regex)
+         self._read_max_bytes = max_bytes
+         try:
+-            self._try_inline_read()
++            self._read_inline_if_possible()
+         except UnsatisfiableReadError as e:
+             # Handle this the same way as in _handle_events.
+             gen_log.info("Unsatisfiable read, closing connection: %s" % e)
+@@ -403,7 +403,7 @@
+         self._read_delimiter = delimiter
+         self._read_max_bytes = max_bytes
+         try:
+-            self._try_inline_read()
++            self._read_inline_if_possible()
+         except UnsatisfiableReadError as e:
+             # Handle this the same way as in _handle_events.
+             gen_log.info("Unsatisfiable read, closing connection: %s" % e)
+@@ -436,7 +436,7 @@
+         self._read_bytes = num_bytes
+         self._read_partial = partial
+         try:
+-            self._try_inline_read()
++            self._read_inline_if_possible()
+         except:
+             future.add_done_callback(lambda f: f.exception())
+             raise
+@@ -483,7 +483,7 @@
+         self._read_partial = partial
+ 
+         try:
+-            self._try_inline_read()
++            self._read_inline_if_possible()
+         except:
+             future.add_done_callback(lambda f: f.exception())
+             raise
+@@ -513,7 +513,7 @@
+             return future
+         self._read_until_close = True
+         try:
+-            self._try_inline_read()
++            self._read_inline_if_possible()
+         except:
+             future.add_done_callback(lambda f: f.exception())
+             raise
+@@ -858,7 +858,7 @@
+             future_set_result_unless_cancelled(future, result)
+         self._maybe_add_error_listener()
+ 
+-    def _try_inline_read(self) -> None:
++    def _read_inline_if_possible(self) -> None:
+         """Attempt to complete the current read operation from buffered data.
+ 
+         If the read can be completed without blocking, schedules the
+--- a/tornado/test/iostream_test.py
++++ b/tornado/test/iostream_test.py
+@@ -928,7 +928,7 @@
+         server, client = yield self.make_iostream_pair()
+         try:
+             with mock.patch(
+-                "tornado.iostream.BaseIOStream._try_inline_read",
++                "tornado.iostream.BaseIOStream._read_inline_if_possible",
+                 side_effect=IOError("boom"),
+             ):
+                 with self.assertRaisesRegex(IOError, "boom"):

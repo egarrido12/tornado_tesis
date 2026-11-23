@@ -1,0 +1,86 @@
+--- a/tornado/escape.py
++++ b/tornado/escape.py
+@@ -109,22 +109,22 @@
+     return re.sub(r"[\x00-\x20]+", " ", value).strip()
+ 
+ 
+-def url_escape(value: str | bytes, plus: bool = True) -> str:
++def url_escape(value: str | bytes, use_plus: bool = True) -> str:
+     """Returns a URL-encoded version of the given value.
+ 
+-    Equivalent to either `urllib.parse.quote_plus` or `urllib.parse.quote` depending on the ``plus``
++    Equivalent to either `urllib.parse.quote_plus` or `urllib.parse.quote` depending on the ``use_plus``
+     argument.
+ 
+-    If ``plus`` is true (the default), spaces will be represented as ``+`` and slashes will be
+-    represented as ``%2F``.  This is appropriate for query strings. If ``plus`` is false, spaces
++    If ``use_plus`` is true (the default), spaces will be represented as ``+`` and slashes will be
++    represented as ``%2F``.  This is appropriate for query strings. If ``use_plus`` is false, spaces
+     will be represented as ``%20`` and slashes are left as-is. This is appropriate for the path
+-    component of a URL. Note that the default of ``plus=True`` is effectively the
++    component of a URL. Note that the default of ``use_plus=True`` is effectively the
+     reverse of Python's urllib module.
+ 
+     .. versionadded:: 3.1
+-        The ``plus`` argument
+-    """
+-    quote = urllib.parse.quote_plus if plus else urllib.parse.quote
++        The ``use_plus`` argument
++    """
++    quote = urllib.parse.quote_plus if use_plus else urllib.parse.quote
+     return quote(value)
+ 
+ 
+--- a/tornado/routing.py
++++ b/tornado/routing.py
+@@ -607,7 +607,7 @@
+         for a in args:
+             if not isinstance(a, (unicode_type, bytes)):
+                 a = str(a)
+-            converted_args.append(url_escape(utf8(a), plus=False))
++            converted_args.append(url_escape(utf8(a), use_plus=False))
+         return self._path % tuple(converted_args)
+ 
+     def _find_groups(self) -> tuple[str | None, int | None]:
+--- a/tornado/test/escape_test.py
++++ b/tornado/test/escape_test.py
+@@ -295,7 +295,7 @@
+         plus_escaped = "%2B+%23%25"
+         escaped = "%2B%20%23%25"
+         self.assertEqual(url_escape(unescaped), plus_escaped)
+-        self.assertEqual(url_escape(unescaped, plus=False), escaped)
++        self.assertEqual(url_escape(unescaped, use_plus=False), escaped)
+         self.assertEqual(url_unescape(plus_escaped), unescaped)
+         self.assertEqual(url_unescape(escaped, plus=False), unescaped)
+         self.assertEqual(url_unescape(plus_escaped, encoding=None), utf8(unescaped))
+--- a/tornado/test/property_test.py
++++ b/tornado/test/property_test.py
+@@ -248,13 +248,15 @@
+ class EscapePropertyTest(TestCase):
+     @given(st.text(), st.booleans())
+     def test_url_escape_round_trip(self, s, plus):
+-        escaped = url_escape(s, plus=plus)
++        escaped = url_escape(s, use_plus=plus)
+         self.assertTrue(escaped.isascii())
+         self.assertEqual(url_unescape(escaped, plus=plus), s)
+ 
+     @given(st.binary(), st.booleans())
+     def test_url_escape_bytes_round_trip(self, b, plus):
+-        self.assertEqual(url_unescape(url_escape(b, plus=plus), None, plus=plus), b)
++        self.assertEqual(
++            url_unescape(url_escape(b, use_plus=plus), None, plus=plus), b
++        )
+ 
+     @given(st.text())
+     def test_xhtml_escape_round_trip(self, s):
+--- a/tornado/test/api.txt
++++ b/tornado/test/api.txt
+@@ -69,7 +69,7 @@
+ tornado.escape.squeeze: function(value)
+ tornado.escape.to_basestring: alias of tornado.escape.to_unicode
+ tornado.escape.to_unicode: function(value)
+-tornado.escape.url_escape: function(value, plus=True)
++tornado.escape.url_escape: function(value, use_plus=True)
+ tornado.escape.url_unescape: function(value, encoding='utf-8', plus=True)
+ tornado.escape.utf8: function(value)
+ tornado.escape.xhtml_escape: function(value)

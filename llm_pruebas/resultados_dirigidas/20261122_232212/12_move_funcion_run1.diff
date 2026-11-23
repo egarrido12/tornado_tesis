@@ -1,0 +1,64 @@
+--- a/tornado/netutil.py
++++ b/tornado/netutil.py
+@@ -70,6 +70,20 @@
+ 
+ # Default backlog used when calling sock.listen()
+ _DEFAULT_BACKLOG = 128
++
++
++def _format_addr(addr: Any) -> str:
++    """Format a socket address for use in error messages.
++
++    IPv4 addresses are formatted as ``1.2.3.4:443`` and IPv6 addresses as
++    ``[::1]:443``. Anything else is formatted with `str`.
++    """
++    if isinstance(addr, tuple) and len(addr) >= 2:
++        host, port = addr[:2]
++        if isinstance(host, str) and ":" in host:
++            return f"[{host}]:{port}"
++        return f"{host}:{port}"
++    return str(addr)
+ 
+ 
+ def bind_sockets(
+--- a/tornado/tcpclient.py
++++ b/tornado/tcpclient.py
+@@ -28,23 +28,9 @@
+ from tornado.concurrent import Future, future_add_done_callback
+ from tornado.ioloop import IOLoop
+ from tornado.iostream import IOStream
+-from tornado.netutil import Resolver
++from tornado.netutil import Resolver, _format_addr
+ 
+ _INITIAL_CONNECT_TIMEOUT = 0.3
+-
+-
+-def _format_addr(addr: Any) -> str:
+-    """Format a socket address for use in error messages.
+-
+-    IPv4 addresses are formatted as ``1.2.3.4:443`` and IPv6 addresses as
+-    ``[::1]:443``. Anything else is formatted with `str`.
+-    """
+-    if isinstance(addr, tuple) and len(addr) >= 2:
+-        host, port = addr[:2]
+-        if isinstance(host, str) and ":" in host:
+-            return f"[{host}]:{port}"
+-        return f"{host}:{port}"
+-    return str(addr)
+ 
+ 
+ class _Connector:
+--- a/tornado/test/tcpclient_test.py
++++ b/tornado/test/tcpclient_test.py
+@@ -21,9 +21,9 @@
+ 
+ from tornado.concurrent import Future
+ from tornado.iostream import IOStream
+-from tornado.netutil import Resolver, bind_sockets
++from tornado.netutil import Resolver, _format_addr, bind_sockets
+ from tornado.queues import Queue
+-from tornado.tcpclient import TCPClient, _Connector, _format_addr
++from tornado.tcpclient import TCPClient, _Connector
+ from tornado.tcpserver import TCPServer
+ from tornado.test.util import (
+     AsyncTestCase,

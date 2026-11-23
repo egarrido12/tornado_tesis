@@ -1,0 +1,29 @@
+--- a/tornado/httputil.py
++++ b/tornado/httputil.py
+@@ -1028,6 +1028,15 @@
+     _DEFAULT_PARSE_BODY_CONFIG = config
+ 
+ 
++def _merge_urlencoded_arguments(
++    uri_arguments: dict[str, list[bytes]],
++    arguments: dict[str, list[bytes]],
++) -> None:
++    for name, values in uri_arguments.items():
++        if values:
++            arguments.setdefault(name, []).extend(values)
++
++
+ def parse_body_arguments(
+     content_type: str,
+     body: bytes,
+@@ -1061,9 +1070,7 @@
+             )
+         except Exception as e:
+             raise HTTPInputError("Invalid x-www-form-urlencoded body: %s" % e) from e
+-        for name, values in uri_arguments.items():
+-            if values:
+-                arguments.setdefault(name, []).extend(values)
++        _merge_urlencoded_arguments(uri_arguments, arguments)
+     elif content_type.startswith("multipart/form-data"):
+         if headers and "Content-Encoding" in headers:
+             raise HTTPInputError(

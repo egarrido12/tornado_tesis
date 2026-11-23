@@ -1,0 +1,26 @@
+--- a/tornado/httputil.py
++++ b/tornado/httputil.py
+@@ -896,8 +896,8 @@
+         return None
+     start_b, _, end_b = value.partition("-")
+     try:
+-        start = _int_or_none(start_b)
+-        end = _int_or_none(end_b)
++        start = None if start_b.strip() == "" else int(start_b.strip())
++        end = None if end_b.strip() == "" else int(end_b.strip())
+     except ValueError:
+         return None
+     if end is not None:
+@@ -924,12 +924,6 @@
+     end = (end or total) - 1
+     return f"bytes {start}-{end}/{total}"
+ 
+-
+-def _int_or_none(val: str) -> int | None:
+-    val = val.strip()
+-    if val == "":
+-        return None
+-    return int(val)
+ 
+ 
+ @dataclasses.dataclass
