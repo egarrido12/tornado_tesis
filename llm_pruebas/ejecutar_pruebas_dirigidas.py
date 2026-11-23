@@ -83,12 +83,40 @@ else:
 IGNORAR = shutil.ignore_patterns(*IGNORAR_DIRS, '*.egg-info')
 TEST_FORMATO = 'tests/test_black.py::BlackTestCase::test_piping'   # solo Black
 
-# USD por millón de tokens: (input, output, escritura de caché de 1 h, lectura de caché)
+# USD por millón de tokens:
+#   (input, output, escritura de caché de 1 h, lectura de caché, escritura de caché de 5 min)
+# Sonnet 5.5 cobra la lectura de caché a 0,10 (no 0,20 como Sonnet 5).
 PRECIOS = {
-    'claude-opus-5-5': (4.00, 20.00, 8.00, 0.20),
-    'claude-sonnet-5-5': (2.00, 10.00, 4.00, 0.20),
-    'claude-haiku-5-5': (0.10, 0.50, 0.20, 0.01),
+    'claude-opus-5-5': (4.00, 20.00, 8.00, 0.20, 5.00),
+    'claude-sonnet-5-5': (2.00, 10.00, 4.00, 0.10, 2.50),
+    'claude-haiku-5-5': (0.10, 0.50, 0.20, 0.01, 0.125),
 }
+
+# Medición de carbono (opcional): si existe rope_pruebas/carbono_traza.py, cada
+# llamada a la API y cada corrida de la suite se miden con CodeCarbon + una
+# traza de potencia cada 0,1 s, igual que en los otros experimentos. Si no
+# existe (p. ej. en otro repositorio), el script funciona igual sin medir.
+MEDIDOR = None
+MEDICIONES = []
+try:
+    sys.path.insert(0, str(REPO / 'rope_pruebas'))
+    from carbono_traza import Medidor
+except Exception:
+    Medidor = None
+CAMPOS_CARBONO = ('duracion_s', 'energia_kwh', 'energia_traza_kwh', 'emisiones_kg',
+                  'emisiones_traza_kg', 'potencia_pico_w', 'potencia_media_traza_w',
+                  'n_muestras')
+
+
+def medir(fase, nombre, funcion, fila=None):
+    """Ejecuta funcion() midiendo su carbono si hay medidor; anota el resultado en fila."""
+    if MEDIDOR is None:
+        return funcion()
+    try:
+        return MEDIDOR.medir(fase, nombre, funcion)
+    finally:
+        if fila is not None and MEDICIONES:
+            fila.setdefault('carbono', {})[fase] = {c: MEDICIONES[-1][c] for c in CAMPOS_CARBONO}
 
 EXTENSIONES = {'.py', '.pyi', '.json', '.toml', '.md', '.rst', '.txt', '.cfg', '.ini',
                '.yaml', '.yml'}
@@ -531,9 +559,12 @@ def costo(modelo, uso):
     precios = PRECIOS.get(modelo)
     if not precios:
         return None
-    p_in, p_out, p_cw, p_cr = precios
+    p_in, p_out, p_cw, p_cr, p_cw5 = precios
+    # Si la API no desglosa la escritura por TTL, se cobra todo como 1 h (cota superior).
+    w5 = uso.get('cache_write_5m', 0)
+    w1 = uso.get('cache_write_1h', uso['cache_write'] - w5)
     return round((uso['input'] * p_in + uso['output'] * p_out
-                  + uso['cache_write'] * p_cw + uso['cache_read'] * p_cr) / 1e6, 4)
+                  + w1 * p_cw + w5 * p_cw5 + uso['cache_read'] * p_cr) / 1e6, 4)
 
 
 def es_error_de_red(e):
@@ -546,7 +577,11 @@ def pedir(cliente, args, sistema, prefijo, extra, orden):
     contenido = [
         # Prefijo idéntico en todas las llamadas -> se reutiliza la caché (TTL 1 h).
         {'type': 'text', 'text': prefijo, 'cache_control': {'type': 'ephemeral', 'ttl': '1h'}},
-        {'type': 'text', 'text': (extra + '\n\n' if extra else '') + 'Orden de refactoring:\n' + orden},
+        # Bloque del caso (archivos extra + orden): es idéntico en las corridas de un
+        # mismo caso, que van seguidas -> caché de 5 min. Solo cambia el precio, no el
+        # texto que recibe el modelo: la corrida 1 lo escribe y las demás lo leen.
+        {'type': 'text', 'text': (extra + '\n\n' if extra else '') + 'Orden de refactoring:\n' + orden,
+         'cache_control': {'type': 'ephemeral', 'ttl': '5m'}},
     ]
     with cliente.beta.messages.stream(
         model=args.modelo,
@@ -565,6 +600,10 @@ def pedir(cliente, args, sistema, prefijo, extra, orden):
     uso = {'input': u.input_tokens, 'output': u.output_tokens,
            'cache_write': u.cache_creation_input_tokens or 0,
            'cache_read': u.cache_read_input_tokens or 0}
+    desglose = getattr(u, 'cache_creation', None)
+    if desglose is not None:
+        uso['cache_write_1h'] = getattr(desglose, 'ephemeral_1h_input_tokens', 0) or 0
+        uso['cache_write_5m'] = getattr(desglose, 'ephemeral_5m_input_tokens', 0) or 0
     meta = {'modelo_respuesta': respuesta.model, 'stop_reason': respuesta.stop_reason,
             'message_id': respuesta.id, 'tiempo_llm_s': round(time.perf_counter() - t0, 1),
             'tokens': uso, 'costo_usd': costo(respuesta.model, uso)}
@@ -635,7 +674,7 @@ def evaluar(fila, texto, caso, base, salida_dir, conservar=False):
     fila['lineas_eliminadas'] = sum(1 for l in diff.splitlines() if l.startswith('-') and not l.startswith('---'))
     fila['residuos'] = contar_residuos(caso, carpeta)
 
-    resumen, salida = correr_suite(carpeta)
+    resumen, salida = medir('tests', nombre, lambda: correr_suite(carpeta), fila)
     (salida_dir / (nombre + '_pytest.txt')).write_text(salida)
     fila['tests'] = resumen
     igual = (resumen['passed'] == base['passed'] and resumen['failed'] == 0
@@ -674,7 +713,8 @@ def corrida(cliente, args, sistema, prefijo, caso, n, base, salida_dir):
     extra, incluidos, omitidos = contexto_extra(caso, args.max_tokens_extra)
     fila['contexto_extra'] = {'incluidos': incluidos, 'omitidos': omitidos}
     try:
-        texto, meta = pedir_con_reintentos(cliente, args, sistema, prefijo, extra, caso['orden'])
+        texto, meta = medir('llm', nombre, lambda: pedir_con_reintentos(
+            cliente, args, sistema, prefijo, extra, caso['orden']), fila)
     except anthropic.APIStatusError as e:
         fila['veredicto'] = 'ERROR API %s' % e.status_code
         fila['detalle'] = str(e.message)
@@ -684,6 +724,8 @@ def corrida(cliente, args, sistema, prefijo, caso, n, base, salida_dir):
     (salida_dir / (nombre + '_respuesta.md')).write_text(texto)
     evaluar(fila, texto, caso, base, salida_dir)
     imprimir(fila)
+    if MEDIDOR is not None:
+        MEDIDOR.guardar_traza(salida_dir / 'traza_carbono.csv', anexar=True)
     return fila
 
 
@@ -747,13 +789,15 @@ def dry_run(args, casos, sistema):
     print('=== SYSTEM (prompt_v2.md, SHA-256 %s) ===\n%s\n' % (
         hashlib.sha256(sistema.encode()).hexdigest(), sistema))
     print('Prefijo (paquete completo): %d caracteres, ≈ %d tokens\n' % (len(prefijo), n_pref))
-    p_in, p_out, p_cw, p_cr = PRECIOS[args.modelo]
-    total = n_pref * p_cw / 1e6            # una escritura de caché
+    p_in, p_out, p_cw, p_cr, p_cw5 = PRECIOS[args.modelo]
+    total = n_pref * p_cw / 1e6            # una escritura de la caché de 1 h (fases seguidas)
     for c in casos:
         extra, inc, omi = contexto_extra(c, args.max_tokens_extra)
         n_extra = len(extra) / CARACTERES_POR_TOKEN
-        por_llamada = (n_extra * p_in + n_pref * p_cr + 4000 * p_out) / 1e6
-        total += por_llamada * args.corridas
+        # corrida 1: escribe el bloque del caso (5 min); las demás lo leen
+        por_llamada = (n_extra * p_cw5 + n_pref * p_cr + 4000 * p_out) / 1e6
+        siguientes = (n_extra * p_cr + n_pref * p_cr + 4000 * p_out) / 1e6
+        total += por_llamada + siguientes * (args.corridas - 1)
         print('%s  [%s, fase %d]  extra≈%d tokens (%d archivos%s)  ≈US$%.3f/llamada' % (
             c['id'], c['op'], c['fase'], n_extra, len(inc),
             ', %d OMITIDOS' % len(omi) if omi else '', por_llamada))
@@ -864,6 +908,11 @@ def main():
         sys.exit('Falta el paquete anthropic: .venv/bin/pip install anthropic')
     cliente = anthropic.Anthropic()
     prefijo = contexto_paquete()
+    global MEDIDOR
+    if Medidor is not None:
+        MEDIDOR = Medidor(os.environ.get('CODECARBON_PAIS', 'COL'),
+                          float(os.environ.get('CODECARBON_TDP', '20')), MEDICIONES,
+                          '%s_llm_dirigidas' % PROYECTO)
     filas = []
     if args.reanudar:
         salida_dir = RESULTADOS / args.reanudar
