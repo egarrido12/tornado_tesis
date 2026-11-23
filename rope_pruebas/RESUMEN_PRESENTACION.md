@@ -57,11 +57,11 @@ Detalle completo en [README.md](README.md). Datos en [`resultados/`](resultados/
 
 | | Tiempo | Energía | Emisiones |
 |---|---|---|---|
-| **1 operación de Rope** (media de 91) | 0,8 s | 0,0016 Wh | **0,40 mg CO2eq** |
-| **1 corrida de la suite de tests** | 18,4 s | 0,0285 Wh | **7,40 mg CO2eq** |
-| **Experimento completo** (91 operaciones de Rope + 21 corridas de tests) | 7,5 min | 0,73 Wh | **0,19 g CO2eq** |
+| **1 operación de Rope** (media de 91) | 0,7 s | 0,0011 Wh | **0,28 mg CO2eq** |
+| **1 corrida de la suite de tests** | 18,4 s | 0,0265 Wh | **6,87 mg CO2eq** |
+| **Experimento completo** (91 operaciones de Rope + 21 corridas de tests) | 7,4 min | 0,63 Wh | **0,16 g CO2eq** |
 
-- **Verificar cuesta ~18 veces más que refactorizar.** El 80 % de la energía se fue en tests y el 19 % en Rope.
+- **Verificar cuesta ~25 veces más que refactorizar.** El 84 % de la energía se fue en tests y el 15 % en Rope.
 - **La huella de Rope es despreciable**, pero sin verificar no es seguro usarlo (11 de 19 rompen algo).
 - **Limitaciones:** CodeCarbon **estima**, no mide. Sin `sudo` no hay acceso a `powermetrics`; usa `TDP × carga³` y 3 W fijos para la RAM.
   - La suite de tests (5,6 W) consume casi lo mismo que el equipo en reposo (5,7 W), así que la energía ≈ tiempo × potencia base.
@@ -80,4 +80,4 @@ Detalle completo en [README.md](README.md). Datos en [`resultados/`](resultados/
 | Casos equivalentes que preservan (02–12) | 73 % | 73 % | 64 % |
 | Inline | ✅ | ❌ cambia comportamiento | ❌ borra la función |
 | Causa principal de los fallos | `locals()` | mocks por string | convenciones de nombres del framework; `async` |
-| Huella de carbono | — | — | 0,4 mg/op. Rope; 7,4 mg/corrida de tests |
+| Huella de carbono | — | — | 0,28 mg/op. Rope; 6,9 mg/corrida de tests |

@@ -400,7 +400,7 @@ Por tipo de operación de Rope (media de 5 repeticiones, ver `resumen.md`):
 6. **Rope hace cambios no pedidos que rompen anotaciones en string** (12: borra `Tuple`; 05: deja `Type[Configurable]`). La suite no lo detecta, pero `mypy` y `typing.get_type_hints` sí. Conviene correr `mypy` además de los tests después de Rope.
 7. **Los fallos seguros existen** (09: `return` en medio). Rope avisa y no cambia nada, igual que con `continue` en Cookiecutter.
 8. **`find_errors` no sirve para encontrar errores:** 423 avisos, ninguno real entre los revisados.
-9. **Huella de carbono:** cada refactorización de Rope emite ≈ 0,4 mg CO2eq (red colombiana) y verificarla con la suite ≈ 7,4 mg, unas 18 veces más. El costo ambiental de Rope es despreciable. El de la verificación domina, y sigue siendo indispensable.
+9. **Huella de carbono:** cada refactorización de Rope emite ≈ 0,28 mg CO2eq (red colombiana) y verificarla con la suite ≈ 6,9 mg, unas 25 veces más. El costo ambiental de Rope es despreciable. El de la verificación domina, y sigue siendo indispensable.
 10. **Lecciones metodológicas:** (a) una instalación editable puede hacer pasar en falso una refactorización que borra módulos (sección 2.1); (b) CodeCarbon necesita una revisión manual del TDP en Apple Silicon (sección 2.3).
 
 ### Comparación con PySnooper y Cookiecutter
@@ -417,7 +417,7 @@ Por tipo de operación de Rope (media de 5 repeticiones, ver `resumen.md`):
 | Causa principal de los fallos | `.format(**locals())` | mocks por string; flujo de datos | referencias por nombre propias de un framework; `async` |
 | Avisos de `find_errors` (falsos positivos) | 31/31 | 39/39 | 423 (ninguno real entre los revisados) |
 | Obstáculo extra | — | archivos `.py` que son plantillas Jinja | instalación editable que contamina; TDP de CodeCarbon |
-| Huella de carbono | — | — | 0,4 mg CO2eq/op. Rope; 7,4 mg/corrida de tests |
+| Huella de carbono | — | — | 0,28 mg CO2eq/op. Rope; 6,9 mg/corrida de tests |
 
 ---
 
